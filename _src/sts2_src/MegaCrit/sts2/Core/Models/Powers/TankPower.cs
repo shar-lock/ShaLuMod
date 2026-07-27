@@ -1,0 +1,65 @@
+﻿// Decompiled with JetBrains decompiler
+// Type: MegaCrit.Sts2.Core.Models.Powers.TankPower
+// Assembly: sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null
+// MVID: DB296A8D-D1DB-4F9A-B229-9E9A5BB4D47E
+// Assembly location: D:\shaluMod\ShaLuMod\_src\sts2.dll
+
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Powers;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.ValueProps;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+#nullable enable
+namespace MegaCrit.Sts2.Core.Models.Powers;
+
+public sealed class TankPower : PowerModel
+{
+  private const string _damageIncreaseKey = "DamageIncrease";
+  private const string _damageDecreaseKey = "DamageDecrease";
+  public const Decimal damageIncrease = 1.5M;
+  public const Decimal damageDecrease = 0.5M;
+
+  public override PowerType Type => PowerType.Buff;
+
+  public override PowerStackType StackType => PowerStackType.Single;
+
+  protected override IEnumerable<DynamicVar> CanonicalVars
+  {
+    get
+    {
+      return (IEnumerable<DynamicVar>) new \u003C\u003Ez__ReadOnlyArray<DynamicVar>(new DynamicVar[2]
+      {
+        new DynamicVar("DamageIncrease", 1.5M),
+        new DynamicVar("DamageDecrease", 0.5M)
+      });
+    }
+  }
+
+  public override async Task AfterApplied(Creature? applier, CardModel? cardSource)
+  {
+    foreach (Creature target in (IEnumerable<Creature>) this.CombatState.GetTeammatesOf(this.Owner))
+    {
+      if (target.IsAlive && target.IsPlayer && target != this.Owner)
+      {
+        GuardedPower guardedPower = await PowerCmd.Apply<GuardedPower>((PlayerChoiceContext) new ThrowingPlayerChoiceContext(), target, (Decimal) this.Amount, this.Owner, (CardModel) null);
+      }
+    }
+  }
+
+  public override Decimal ModifyDamageMultiplicative(
+    Creature? target,
+    Decimal amount,
+    ValueProp props,
+    Creature? dealer,
+    CardModel? cardSource,
+    CardPlay? cardPlay)
+  {
+    return target != this.Owner || !props.IsPoweredAttack() ? 1M : this.DynamicVars["DamageIncrease"].BaseValue;
+  }
+}

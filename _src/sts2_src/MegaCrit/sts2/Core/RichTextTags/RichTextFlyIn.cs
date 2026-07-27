@@ -1,0 +1,175 @@
+﻿// Decompiled with JetBrains decompiler
+// Type: MegaCrit.Sts2.Core.RichTextTags.RichTextFlyIn
+// Assembly: sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null
+// MVID: DB296A8D-D1DB-4F9A-B229-9E9A5BB4D47E
+// Assembly location: D:\shaluMod\ShaLuMod\_src\sts2.dll
+
+using Godot;
+using Godot.Bridge;
+using Godot.Collections;
+using Godot.NativeInterop;
+using MegaCrit.Sts2.Core.Helpers;
+using System.Collections.Generic;
+using System.ComponentModel;
+
+#nullable enable
+namespace MegaCrit.Sts2.Core.RichTextTags;
+
+[GlobalClass]
+[Tool]
+[ScriptPath("res://src/Core/RichTextTags/RichTextFlyIn.cs")]
+public class RichTextFlyIn : AbstractMegaRichTextEffect
+{
+  private static readonly Variant _xOffsetKey;
+  private static readonly Variant _yOffsetKey;
+  public string bbcode = "fly_in";
+
+  protected override string Bbcode => this.bbcode;
+
+  public override bool _ProcessCustomFX(CharFXTransform charFx)
+  {
+    if (Engine.IsEditorHint())
+      return false;
+    Dictionary env = charFx.Env;
+    Vector2 zero = Vector2.Zero;
+    Variant variant1;
+    if (env.TryGetValue(RichTextFlyIn._xOffsetKey, ref variant1))
+      zero.X = (float) ((Variant) ref variant1).AsDouble();
+    Variant variant2;
+    if (env.TryGetValue(RichTextFlyIn._yOffsetKey, ref variant2))
+      zero.Y = (float) ((Variant) ref variant2).AsDouble();
+    double num = charFx.ElapsedTime * 3.0 - (double) charFx.RelativeIndex * 0.014999999664723873;
+    Color color = charFx.Color;
+    color.A = Mathf.Clamp((float) num, 0.0f, 1f);
+    charFx.Color = color;
+    if (this.ShouldTransformText())
+    {
+      Vector2 vector2_1;
+      // ISSUE: explicit constructor call
+      ((Vector2) ref vector2_1).\u002Ector(charFx.Transform.X.X, charFx.Transform.Y.Y);
+      Vector2 vector2_2 = Vector2.op_Subtraction(((Vector2) ref zero).Lerp(vector2_1, Ease.QuadOut(color.A)), vector2_1);
+      CharFXTransform charFxTransform1 = charFx;
+      Transform2D transform1 = charFx.Transform;
+      Transform2D transform2D1 = ((Transform2D) ref transform1).TranslatedLocal(vector2_2);
+      charFxTransform1.Transform = transform2D1;
+      CharFXTransform charFxTransform2 = charFx;
+      Transform2D transform2 = charFx.Transform;
+      Transform2D transform2D2 = ((Transform2D) ref transform2).RotatedLocal((float) ((double) Ease.QuadOut(1f - color.A) * (double) Mathf.DegToRad(20f) * ((double) vector2_2.X < 0.0 ? 1.0 : -1.0)));
+      charFxTransform2.Transform = transform2D2;
+    }
+    return true;
+  }
+
+  [EditorBrowsable(EditorBrowsableState.Never)]
+  internal new static 
+  #nullable disable
+  List<MethodInfo> GetGodotMethodList()
+  {
+    return new List<MethodInfo>(1)
+    {
+      new MethodInfo(RichTextFlyIn.MethodName._ProcessCustomFX, new PropertyInfo((Variant.Type) 1L, StringName.op_Implicit(""), (PropertyHint) 0L, "", (PropertyUsageFlags) 6L, false), (MethodFlags) 1L, new List<PropertyInfo>()
+      {
+        new PropertyInfo((Variant.Type) 24L, StringName.op_Implicit("charFx"), (PropertyHint) 0L, "", (PropertyUsageFlags) 6L, new StringName("CharFXTransform"), false)
+      }, (List<Variant>) null)
+    };
+  }
+
+  [EditorBrowsable(EditorBrowsableState.Never)]
+  protected override bool InvokeGodotClassMethod(
+    in godot_string_name method,
+    NativeVariantPtrArgs args,
+    out godot_variant ret)
+  {
+    if (!StringName.op_Equality(ref method, RichTextFlyIn.MethodName._ProcessCustomFX) || ((NativeVariantPtrArgs) ref args).Count != 1)
+      return base.InvokeGodotClassMethod(in method, args, out ret);
+    bool flag = base._ProcessCustomFX(VariantUtils.ConvertTo<CharFXTransform>(ref ((NativeVariantPtrArgs) ref args)[0]));
+    ret = VariantUtils.CreateFrom<bool>(ref flag);
+    return true;
+  }
+
+  [EditorBrowsable(EditorBrowsableState.Never)]
+  protected override bool HasGodotClassMethod(in godot_string_name method)
+  {
+    return StringName.op_Equality(ref method, RichTextFlyIn.MethodName._ProcessCustomFX) || base.HasGodotClassMethod(in method);
+  }
+
+  [EditorBrowsable(EditorBrowsableState.Never)]
+  protected override bool SetGodotClassPropertyValue(
+    in godot_string_name name,
+    in godot_variant value)
+  {
+    if (!StringName.op_Equality(ref name, RichTextFlyIn.PropertyName.bbcode))
+      return ((GodotObject) this).SetGodotClassPropertyValue(ref name, ref value);
+    this.bbcode = VariantUtils.ConvertTo<string>(ref value);
+    return true;
+  }
+
+  [EditorBrowsable(EditorBrowsableState.Never)]
+  protected override bool GetGodotClassPropertyValue(
+    in godot_string_name name,
+    out godot_variant value)
+  {
+    if (StringName.op_Equality(ref name, RichTextFlyIn.PropertyName.Bbcode))
+    {
+      ref godot_variant local = ref value;
+      string bbcode = this.Bbcode;
+      godot_variant from = VariantUtils.CreateFrom<string>(ref bbcode);
+      local = from;
+      return true;
+    }
+    if (!StringName.op_Equality(ref name, RichTextFlyIn.PropertyName.bbcode))
+      return base.GetGodotClassPropertyValue(in name, out value);
+    value = VariantUtils.CreateFrom<string>(ref this.bbcode);
+    return true;
+  }
+
+  [EditorBrowsable(EditorBrowsableState.Never)]
+  internal new static List<PropertyInfo> GetGodotPropertyList()
+  {
+    return new List<PropertyInfo>()
+    {
+      new PropertyInfo((Variant.Type) 4L, RichTextFlyIn.PropertyName.bbcode, (PropertyHint) 0L, "", (PropertyUsageFlags) 4096L /*0x1000*/, false),
+      new PropertyInfo((Variant.Type) 4L, RichTextFlyIn.PropertyName.Bbcode, (PropertyHint) 0L, "", (PropertyUsageFlags) 4096L /*0x1000*/, false)
+    };
+  }
+
+  [EditorBrowsable(EditorBrowsableState.Never)]
+  protected override void SaveGodotObjectData(GodotSerializationInfo info)
+  {
+    base.SaveGodotObjectData(info);
+    info.AddProperty(RichTextFlyIn.PropertyName.bbcode, Variant.From<string>(ref this.bbcode));
+  }
+
+  [EditorBrowsable(EditorBrowsableState.Never)]
+  protected override void RestoreGodotObjectData(GodotSerializationInfo info)
+  {
+    base.RestoreGodotObjectData(info);
+    Variant variant;
+    if (!info.TryGetProperty(RichTextFlyIn.PropertyName.bbcode, ref variant))
+      return;
+    this.bbcode = ((Variant) ref variant).As<string>();
+  }
+
+  static RichTextFlyIn()
+  {
+    string str1 = "offset_x";
+    RichTextFlyIn._xOffsetKey = Variant.From<string>(ref str1);
+    string str2 = "offset_y";
+    RichTextFlyIn._yOffsetKey = Variant.From<string>(ref str2);
+  }
+
+  public new class MethodName : AbstractMegaRichTextEffect.MethodName
+  {
+    public static readonly StringName _ProcessCustomFX = StringName.op_Implicit(nameof (_ProcessCustomFX));
+  }
+
+  public new class PropertyName : AbstractMegaRichTextEffect.PropertyName
+  {
+    public new static readonly StringName Bbcode = StringName.op_Implicit(nameof (Bbcode));
+    public new static readonly StringName bbcode = StringName.op_Implicit(nameof (bbcode));
+  }
+
+  public new class SignalName : AbstractMegaRichTextEffect.SignalName
+  {
+  }
+}

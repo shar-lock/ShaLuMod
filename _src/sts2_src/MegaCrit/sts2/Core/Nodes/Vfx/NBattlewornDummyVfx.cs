@@ -1,0 +1,159 @@
+﻿// Decompiled with JetBrains decompiler
+// Type: MegaCrit.Sts2.Core.Nodes.Vfx.NBattlewornDummyVfx
+// Assembly: sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null
+// MVID: DB296A8D-D1DB-4F9A-B229-9E9A5BB4D47E
+// Assembly location: D:\shaluMod\ShaLuMod\_src\sts2.dll
+
+using Godot;
+using Godot.Bridge;
+using Godot.NativeInterop;
+using MegaCrit.Sts2.Core.Bindings.MegaSpine;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+
+#nullable enable
+namespace MegaCrit.Sts2.Core.Nodes.Vfx;
+
+[ScriptPath("res://src/Core/Nodes/Vfx/NBattlewornDummyVfx.cs")]
+public class NBattlewornDummyVfx : Node
+{
+  private MegaSprite _megaSprite;
+  private GpuParticles2D _damageParticles;
+
+  public override void _Ready()
+  {
+    this._megaSprite = new MegaSprite(Variant.op_Implicit((GodotObject) this.GetParent<Node2D>()));
+    this._megaSprite.ConnectAnimationEvent(Callable.From<GodotObject, GodotObject, GodotObject, GodotObject>(new Action<GodotObject, GodotObject, GodotObject, GodotObject>(this.OnAnimationEvent)));
+    this._damageParticles = ((Node) this.GetParent<Node2D>()).GetNode<GpuParticles2D>(NodePath.op_Implicit("ParticlesSlot/DamageParticles"));
+    this._damageParticles.Emitting = false;
+    this._damageParticles.OneShot = true;
+  }
+
+  private void OnAnimationEvent(
+    GodotObject _,
+    GodotObject __,
+    GodotObject ___,
+    GodotObject spineEvent)
+  {
+    if (!(new MegaEvent(Variant.op_Implicit(spineEvent)).GetData().GetEventName() == "fire_chips"))
+      return;
+    this.OnDamageChips();
+  }
+
+  private void OnDamageChips() => this._damageParticles.Restart();
+
+  [EditorBrowsable(EditorBrowsableState.Never)]
+  internal static 
+  #nullable disable
+  List<MethodInfo> GetGodotMethodList()
+  {
+    return new List<MethodInfo>(3)
+    {
+      new MethodInfo(NBattlewornDummyVfx.MethodName._Ready, new PropertyInfo((Variant.Type) 0L, StringName.op_Implicit(""), (PropertyHint) 0L, "", (PropertyUsageFlags) 6L, false), (MethodFlags) 1L, (List<PropertyInfo>) null, (List<Variant>) null),
+      new MethodInfo(NBattlewornDummyVfx.MethodName.OnAnimationEvent, new PropertyInfo((Variant.Type) 0L, StringName.op_Implicit(""), (PropertyHint) 0L, "", (PropertyUsageFlags) 6L, false), (MethodFlags) 1L, new List<PropertyInfo>()
+      {
+        new PropertyInfo((Variant.Type) 24L, StringName.op_Implicit("_"), (PropertyHint) 0L, "", (PropertyUsageFlags) 6L, new StringName("Object"), false),
+        new PropertyInfo((Variant.Type) 24L, StringName.op_Implicit("__"), (PropertyHint) 0L, "", (PropertyUsageFlags) 6L, new StringName("Object"), false),
+        new PropertyInfo((Variant.Type) 24L, StringName.op_Implicit("___"), (PropertyHint) 0L, "", (PropertyUsageFlags) 6L, new StringName("Object"), false),
+        new PropertyInfo((Variant.Type) 24L, StringName.op_Implicit("spineEvent"), (PropertyHint) 0L, "", (PropertyUsageFlags) 6L, new StringName("Object"), false)
+      }, (List<Variant>) null),
+      new MethodInfo(NBattlewornDummyVfx.MethodName.OnDamageChips, new PropertyInfo((Variant.Type) 0L, StringName.op_Implicit(""), (PropertyHint) 0L, "", (PropertyUsageFlags) 6L, false), (MethodFlags) 1L, (List<PropertyInfo>) null, (List<Variant>) null)
+    };
+  }
+
+  [EditorBrowsable(EditorBrowsableState.Never)]
+  protected override bool InvokeGodotClassMethod(
+    in godot_string_name method,
+    NativeVariantPtrArgs args,
+    out godot_variant ret)
+  {
+    if (StringName.op_Equality(ref method, NBattlewornDummyVfx.MethodName._Ready) && ((NativeVariantPtrArgs) ref args).Count == 0)
+    {
+      base._Ready();
+      ret = new godot_variant();
+      return true;
+    }
+    if (StringName.op_Equality(ref method, NBattlewornDummyVfx.MethodName.OnAnimationEvent) && ((NativeVariantPtrArgs) ref args).Count == 4)
+    {
+      this.OnAnimationEvent(VariantUtils.ConvertTo<GodotObject>(ref ((NativeVariantPtrArgs) ref args)[0]), VariantUtils.ConvertTo<GodotObject>(ref ((NativeVariantPtrArgs) ref args)[1]), VariantUtils.ConvertTo<GodotObject>(ref ((NativeVariantPtrArgs) ref args)[2]), VariantUtils.ConvertTo<GodotObject>(ref ((NativeVariantPtrArgs) ref args)[3]));
+      ret = new godot_variant();
+      return true;
+    }
+    if (!StringName.op_Equality(ref method, NBattlewornDummyVfx.MethodName.OnDamageChips) || ((NativeVariantPtrArgs) ref args).Count != 0)
+      return base.InvokeGodotClassMethod(ref method, args, ref ret);
+    this.OnDamageChips();
+    ret = new godot_variant();
+    return true;
+  }
+
+  [EditorBrowsable(EditorBrowsableState.Never)]
+  protected override bool HasGodotClassMethod(in godot_string_name method)
+  {
+    return StringName.op_Equality(ref method, NBattlewornDummyVfx.MethodName._Ready) || StringName.op_Equality(ref method, NBattlewornDummyVfx.MethodName.OnAnimationEvent) || StringName.op_Equality(ref method, NBattlewornDummyVfx.MethodName.OnDamageChips) || base.HasGodotClassMethod(ref method);
+  }
+
+  [EditorBrowsable(EditorBrowsableState.Never)]
+  protected override bool SetGodotClassPropertyValue(
+    in godot_string_name name,
+    in godot_variant value)
+  {
+    if (!StringName.op_Equality(ref name, NBattlewornDummyVfx.PropertyName._damageParticles))
+      return ((GodotObject) this).SetGodotClassPropertyValue(ref name, ref value);
+    this._damageParticles = VariantUtils.ConvertTo<GpuParticles2D>(ref value);
+    return true;
+  }
+
+  [EditorBrowsable(EditorBrowsableState.Never)]
+  protected override bool GetGodotClassPropertyValue(
+    in godot_string_name name,
+    out godot_variant value)
+  {
+    if (!StringName.op_Equality(ref name, NBattlewornDummyVfx.PropertyName._damageParticles))
+      return ((GodotObject) this).GetGodotClassPropertyValue(ref name, ref value);
+    value = VariantUtils.CreateFrom<GpuParticles2D>(ref this._damageParticles);
+    return true;
+  }
+
+  [EditorBrowsable(EditorBrowsableState.Never)]
+  internal static List<PropertyInfo> GetGodotPropertyList()
+  {
+    return new List<PropertyInfo>()
+    {
+      new PropertyInfo((Variant.Type) 24L, NBattlewornDummyVfx.PropertyName._damageParticles, (PropertyHint) 0L, "", (PropertyUsageFlags) 4096L /*0x1000*/, false)
+    };
+  }
+
+  [EditorBrowsable(EditorBrowsableState.Never)]
+  protected override void SaveGodotObjectData(GodotSerializationInfo info)
+  {
+    ((GodotObject) this).SaveGodotObjectData(info);
+    info.AddProperty(NBattlewornDummyVfx.PropertyName._damageParticles, Variant.From<GpuParticles2D>(ref this._damageParticles));
+  }
+
+  [EditorBrowsable(EditorBrowsableState.Never)]
+  protected override void RestoreGodotObjectData(GodotSerializationInfo info)
+  {
+    ((GodotObject) this).RestoreGodotObjectData(info);
+    Variant variant;
+    if (!info.TryGetProperty(NBattlewornDummyVfx.PropertyName._damageParticles, ref variant))
+      return;
+    this._damageParticles = ((Variant) ref variant).As<GpuParticles2D>();
+  }
+
+  public class MethodName : Node.MethodName
+  {
+    public static readonly StringName _Ready = StringName.op_Implicit(nameof (_Ready));
+    public static readonly StringName OnAnimationEvent = StringName.op_Implicit(nameof (OnAnimationEvent));
+    public static readonly StringName OnDamageChips = StringName.op_Implicit(nameof (OnDamageChips));
+  }
+
+  public class PropertyName : Node.PropertyName
+  {
+    public static readonly StringName _damageParticles = StringName.op_Implicit(nameof (_damageParticles));
+  }
+
+  public class SignalName : Node.SignalName
+  {
+  }
+}

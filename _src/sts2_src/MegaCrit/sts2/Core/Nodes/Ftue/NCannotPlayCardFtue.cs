@@ -1,0 +1,252 @@
+﻿// Decompiled with JetBrains decompiler
+// Type: MegaCrit.Sts2.Core.Nodes.Ftue.NCannotPlayCardFtue
+// Assembly: sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null
+// MVID: DB296A8D-D1DB-4F9A-B229-9E9A5BB4D47E
+// Assembly location: D:\shaluMod\ShaLuMod\_src\sts2.dll
+
+using Godot;
+using Godot.Bridge;
+using Godot.NativeInterop;
+using MegaCrit.Sts2.addons.mega_text;
+using MegaCrit.Sts2.Core.Assets;
+using MegaCrit.Sts2.Core.Helpers;
+using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Nodes.Combat;
+using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
+using MegaCrit.Sts2.Core.Nodes.Rooms;
+using MegaCrit.Sts2.Core.TestSupport;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+
+#nullable enable
+namespace MegaCrit.Sts2.Core.Nodes.Ftue;
+
+[ScriptPath("res://src/Core/Nodes/Ftue/NCannotPlayCardFtue.cs")]
+public class NCannotPlayCardFtue : NFtue
+{
+  public const string id = "cannot_play_card_ftue";
+  private static readonly string _scenePath = SceneHelper.GetScenePath("ftue/cannot_play_card_ftue");
+  private NButton _confirmButton;
+  private MegaLabel _header;
+  private MegaRichTextLabel _description;
+  private Control _sneakyHitbox;
+
+  public override void _Ready()
+  {
+    this._header = ((Node) this).GetNode<MegaLabel>(NodePath.op_Implicit("FtuePopup/Header"));
+    this._header.SetTextAutoSize(new LocString("ftues", "CANNOT_PLAY_CARD_FTUE_TITLE").GetFormattedText());
+    this._description = ((Node) this).GetNode<MegaRichTextLabel>(NodePath.op_Implicit("FtuePopup/DescriptionContainer/Description"));
+    this._description.Text = new LocString("ftues", "CANNOT_PLAY_CARD_FTUE_DESCRIPTION").GetFormattedText();
+    this._sneakyHitbox = ((Node) this).GetNode<Control>(NodePath.op_Implicit("SneakyHitbox"));
+    ((GodotObject) this._sneakyHitbox).Connect(NClickableControl.SignalName.Released, Callable.From<NButton>(new Action<NButton>(this.CloseFtueAndEndTurn)), 0U);
+    this._confirmButton = ((Node) this).GetNode<NButton>(NodePath.op_Implicit("FtuePopup/FtueConfirmButton"));
+    ((GodotObject) this._confirmButton).Connect(NClickableControl.SignalName.Released, Callable.From<NButton>(new Action<NButton>(this.CloseFtue)), 0U);
+    NEndTurnButton endTurnButton = NCombatRoom.Instance.Ui.EndTurnButton;
+    ((CanvasItem) endTurnButton).ZIndex = 1;
+    this._sneakyHitbox.GlobalPosition = endTurnButton.GlobalPosition;
+  }
+
+  public static NCannotPlayCardFtue? Create()
+  {
+    return TestMode.IsOn ? (NCannotPlayCardFtue) null : PreloadManager.Cache.GetScene(NCannotPlayCardFtue._scenePath).Instantiate<NCannotPlayCardFtue>((PackedScene.GenEditState) 0L);
+  }
+
+  private void CloseFtueAndEndTurn(NButton _)
+  {
+    NCombatRoom.Instance.Ui.EndTurnButton.SecretEndTurnLogicViaFtue();
+    this.CloseFtue(_);
+  }
+
+  private void CloseFtue(NButton _)
+  {
+    ((CanvasItem) NCombatRoom.Instance.Ui.EndTurnButton).ZIndex = 0;
+    this.CloseFtue();
+  }
+
+  [EditorBrowsable(EditorBrowsableState.Never)]
+  internal new static 
+  #nullable disable
+  List<MethodInfo> GetGodotMethodList()
+  {
+    return new List<MethodInfo>(4)
+    {
+      new MethodInfo(NCannotPlayCardFtue.MethodName._Ready, new PropertyInfo((Variant.Type) 0L, StringName.op_Implicit(""), (PropertyHint) 0L, "", (PropertyUsageFlags) 6L, false), (MethodFlags) 1L, (List<PropertyInfo>) null, (List<Variant>) null),
+      new MethodInfo(NCannotPlayCardFtue.MethodName.Create, new PropertyInfo((Variant.Type) 24L, StringName.op_Implicit(""), (PropertyHint) 0L, "", (PropertyUsageFlags) 6L, new StringName("Control"), false), (MethodFlags) 33L, (List<PropertyInfo>) null, (List<Variant>) null),
+      new MethodInfo(NCannotPlayCardFtue.MethodName.CloseFtueAndEndTurn, new PropertyInfo((Variant.Type) 0L, StringName.op_Implicit(""), (PropertyHint) 0L, "", (PropertyUsageFlags) 6L, false), (MethodFlags) 1L, new List<PropertyInfo>()
+      {
+        new PropertyInfo((Variant.Type) 24L, StringName.op_Implicit("_"), (PropertyHint) 0L, "", (PropertyUsageFlags) 6L, new StringName("Control"), false)
+      }, (List<Variant>) null),
+      new MethodInfo(NCannotPlayCardFtue.MethodName.CloseFtue, new PropertyInfo((Variant.Type) 0L, StringName.op_Implicit(""), (PropertyHint) 0L, "", (PropertyUsageFlags) 6L, false), (MethodFlags) 1L, new List<PropertyInfo>()
+      {
+        new PropertyInfo((Variant.Type) 24L, StringName.op_Implicit("_"), (PropertyHint) 0L, "", (PropertyUsageFlags) 6L, new StringName("Control"), false)
+      }, (List<Variant>) null)
+    };
+  }
+
+  [EditorBrowsable(EditorBrowsableState.Never)]
+  protected override bool InvokeGodotClassMethod(
+    in godot_string_name method,
+    NativeVariantPtrArgs args,
+    out godot_variant ret)
+  {
+    if (StringName.op_Equality(ref method, NCannotPlayCardFtue.MethodName._Ready) && ((NativeVariantPtrArgs) ref args).Count == 0)
+    {
+      ((Node) this)._Ready();
+      ret = new godot_variant();
+      return true;
+    }
+    if (StringName.op_Equality(ref method, NCannotPlayCardFtue.MethodName.Create) && ((NativeVariantPtrArgs) ref args).Count == 0)
+    {
+      NCannotPlayCardFtue ncannotPlayCardFtue = NCannotPlayCardFtue.Create();
+      ret = VariantUtils.CreateFrom<NCannotPlayCardFtue>(ref ncannotPlayCardFtue);
+      return true;
+    }
+    if (StringName.op_Equality(ref method, NCannotPlayCardFtue.MethodName.CloseFtueAndEndTurn) && ((NativeVariantPtrArgs) ref args).Count == 1)
+    {
+      this.CloseFtueAndEndTurn(VariantUtils.ConvertTo<NButton>(ref ((NativeVariantPtrArgs) ref args)[0]));
+      ret = new godot_variant();
+      return true;
+    }
+    if (!StringName.op_Equality(ref method, NCannotPlayCardFtue.MethodName.CloseFtue) || ((NativeVariantPtrArgs) ref args).Count != 1)
+      return base.InvokeGodotClassMethod(in method, args, out ret);
+    this.CloseFtue(VariantUtils.ConvertTo<NButton>(ref ((NativeVariantPtrArgs) ref args)[0]));
+    ret = new godot_variant();
+    return true;
+  }
+
+  [EditorBrowsable(EditorBrowsableState.Never)]
+  internal static bool InvokeGodotClassStaticMethod(
+    in godot_string_name method,
+    NativeVariantPtrArgs args,
+    out godot_variant ret)
+  {
+    if (StringName.op_Equality(ref method, NCannotPlayCardFtue.MethodName.Create) && ((NativeVariantPtrArgs) ref args).Count == 0)
+    {
+      NCannotPlayCardFtue ncannotPlayCardFtue = NCannotPlayCardFtue.Create();
+      ret = VariantUtils.CreateFrom<NCannotPlayCardFtue>(ref ncannotPlayCardFtue);
+      return true;
+    }
+    ret = new godot_variant();
+    return false;
+  }
+
+  [EditorBrowsable(EditorBrowsableState.Never)]
+  protected override bool HasGodotClassMethod(in godot_string_name method)
+  {
+    return StringName.op_Equality(ref method, NCannotPlayCardFtue.MethodName._Ready) || StringName.op_Equality(ref method, NCannotPlayCardFtue.MethodName.Create) || StringName.op_Equality(ref method, NCannotPlayCardFtue.MethodName.CloseFtueAndEndTurn) || StringName.op_Equality(ref method, NCannotPlayCardFtue.MethodName.CloseFtue) || base.HasGodotClassMethod(in method);
+  }
+
+  [EditorBrowsable(EditorBrowsableState.Never)]
+  protected override bool SetGodotClassPropertyValue(
+    in godot_string_name name,
+    in godot_variant value)
+  {
+    if (StringName.op_Equality(ref name, NCannotPlayCardFtue.PropertyName._confirmButton))
+    {
+      this._confirmButton = VariantUtils.ConvertTo<NButton>(ref value);
+      return true;
+    }
+    if (StringName.op_Equality(ref name, NCannotPlayCardFtue.PropertyName._header))
+    {
+      this._header = VariantUtils.ConvertTo<MegaLabel>(ref value);
+      return true;
+    }
+    if (StringName.op_Equality(ref name, NCannotPlayCardFtue.PropertyName._description))
+    {
+      this._description = VariantUtils.ConvertTo<MegaRichTextLabel>(ref value);
+      return true;
+    }
+    if (!StringName.op_Equality(ref name, NCannotPlayCardFtue.PropertyName._sneakyHitbox))
+      return ((GodotObject) this).SetGodotClassPropertyValue(ref name, ref value);
+    this._sneakyHitbox = VariantUtils.ConvertTo<Control>(ref value);
+    return true;
+  }
+
+  [EditorBrowsable(EditorBrowsableState.Never)]
+  protected override bool GetGodotClassPropertyValue(
+    in godot_string_name name,
+    out godot_variant value)
+  {
+    if (StringName.op_Equality(ref name, NCannotPlayCardFtue.PropertyName._confirmButton))
+    {
+      value = VariantUtils.CreateFrom<NButton>(ref this._confirmButton);
+      return true;
+    }
+    if (StringName.op_Equality(ref name, NCannotPlayCardFtue.PropertyName._header))
+    {
+      value = VariantUtils.CreateFrom<MegaLabel>(ref this._header);
+      return true;
+    }
+    if (StringName.op_Equality(ref name, NCannotPlayCardFtue.PropertyName._description))
+    {
+      value = VariantUtils.CreateFrom<MegaRichTextLabel>(ref this._description);
+      return true;
+    }
+    if (!StringName.op_Equality(ref name, NCannotPlayCardFtue.PropertyName._sneakyHitbox))
+      return base.GetGodotClassPropertyValue(in name, out value);
+    value = VariantUtils.CreateFrom<Control>(ref this._sneakyHitbox);
+    return true;
+  }
+
+  [EditorBrowsable(EditorBrowsableState.Never)]
+  internal new static List<PropertyInfo> GetGodotPropertyList()
+  {
+    return new List<PropertyInfo>()
+    {
+      new PropertyInfo((Variant.Type) 24L, NCannotPlayCardFtue.PropertyName._confirmButton, (PropertyHint) 0L, "", (PropertyUsageFlags) 4096L /*0x1000*/, false),
+      new PropertyInfo((Variant.Type) 24L, NCannotPlayCardFtue.PropertyName._header, (PropertyHint) 0L, "", (PropertyUsageFlags) 4096L /*0x1000*/, false),
+      new PropertyInfo((Variant.Type) 24L, NCannotPlayCardFtue.PropertyName._description, (PropertyHint) 0L, "", (PropertyUsageFlags) 4096L /*0x1000*/, false),
+      new PropertyInfo((Variant.Type) 24L, NCannotPlayCardFtue.PropertyName._sneakyHitbox, (PropertyHint) 0L, "", (PropertyUsageFlags) 4096L /*0x1000*/, false)
+    };
+  }
+
+  [EditorBrowsable(EditorBrowsableState.Never)]
+  protected override void SaveGodotObjectData(GodotSerializationInfo info)
+  {
+    base.SaveGodotObjectData(info);
+    info.AddProperty(NCannotPlayCardFtue.PropertyName._confirmButton, Variant.From<NButton>(ref this._confirmButton));
+    info.AddProperty(NCannotPlayCardFtue.PropertyName._header, Variant.From<MegaLabel>(ref this._header));
+    info.AddProperty(NCannotPlayCardFtue.PropertyName._description, Variant.From<MegaRichTextLabel>(ref this._description));
+    info.AddProperty(NCannotPlayCardFtue.PropertyName._sneakyHitbox, Variant.From<Control>(ref this._sneakyHitbox));
+  }
+
+  [EditorBrowsable(EditorBrowsableState.Never)]
+  protected override void RestoreGodotObjectData(GodotSerializationInfo info)
+  {
+    base.RestoreGodotObjectData(info);
+    Variant variant1;
+    if (info.TryGetProperty(NCannotPlayCardFtue.PropertyName._confirmButton, ref variant1))
+      this._confirmButton = ((Variant) ref variant1).As<NButton>();
+    Variant variant2;
+    if (info.TryGetProperty(NCannotPlayCardFtue.PropertyName._header, ref variant2))
+      this._header = ((Variant) ref variant2).As<MegaLabel>();
+    Variant variant3;
+    if (info.TryGetProperty(NCannotPlayCardFtue.PropertyName._description, ref variant3))
+      this._description = ((Variant) ref variant3).As<MegaRichTextLabel>();
+    Variant variant4;
+    if (!info.TryGetProperty(NCannotPlayCardFtue.PropertyName._sneakyHitbox, ref variant4))
+      return;
+    this._sneakyHitbox = ((Variant) ref variant4).As<Control>();
+  }
+
+  public new class MethodName : NFtue.MethodName
+  {
+    public static readonly StringName _Ready = StringName.op_Implicit(nameof (_Ready));
+    public static readonly StringName Create = StringName.op_Implicit(nameof (Create));
+    public static readonly StringName CloseFtueAndEndTurn = StringName.op_Implicit(nameof (CloseFtueAndEndTurn));
+    public new static readonly StringName CloseFtue = StringName.op_Implicit(nameof (CloseFtue));
+  }
+
+  public new class PropertyName : NFtue.PropertyName
+  {
+    public static readonly StringName _confirmButton = StringName.op_Implicit(nameof (_confirmButton));
+    public static readonly StringName _header = StringName.op_Implicit(nameof (_header));
+    public static readonly StringName _description = StringName.op_Implicit(nameof (_description));
+    public static readonly StringName _sneakyHitbox = StringName.op_Implicit(nameof (_sneakyHitbox));
+  }
+
+  public new class SignalName : NFtue.SignalName
+  {
+  }
+}

@@ -1,0 +1,41 @@
+﻿// Decompiled with JetBrains decompiler
+// Type: MegaCrit.Sts2.Core.Models.Cards.Enthralled
+// Assembly: sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null
+// MVID: DB296A8D-D1DB-4F9A-B229-9E9A5BB4D47E
+// Assembly location: D:\shaluMod\ShaLuMod\_src\sts2.dll
+
+using MegaCrit.Sts2.Core.Entities.Cards;
+using System.Collections.Generic;
+
+#nullable enable
+namespace MegaCrit.Sts2.Core.Models.Cards;
+
+public sealed class Enthralled : CardModel
+{
+  public Enthralled()
+    : base(2, CardType.Curse, CardRarity.Curse, TargetType.None)
+  {
+  }
+
+  public override bool CanBeGeneratedByModifiers => false;
+
+  protected override bool ShouldGlowRedInternal => true;
+
+  public override int MaxUpgradeLevel => 0;
+
+  public override IEnumerable<CardKeyword> CanonicalKeywords
+  {
+    get
+    {
+      return (IEnumerable<CardKeyword>) new \u003C\u003Ez__ReadOnlySingleElementList<CardKeyword>(CardKeyword.Eternal);
+    }
+  }
+
+  public override bool ShouldPlay(CardModel card, AutoPlayType autoPlayType)
+  {
+    if (card.Owner != this.Owner)
+      return true;
+    CardPile pile = this.Pile;
+    return (pile != null ? (pile.Type != PileType.Hand ? 1 : 0) : 1) != 0 || card is Enthralled || autoPlayType != AutoPlayType.None;
+  }
+}
