@@ -1,0 +1,14 @@
+{
+  "id": "WandiMod",
+  "name": "Wandi (Mydei)",
+  "author": "sharlock",
+  "description": "万敌（Mydei）角色模组 · 血仇 + 免死 双核流派。参考崩坏：星穹铁道「万敌」（毁灭 · 虚数）。",
+  "version": "v0.0.0",
+  "min_game_version": "0.107.0",
+  "has_pck": true,
+  "has_dll": true,
+  "dependencies": [
+    {"id": "BaseLib", "min_version": "3.3.0"}
+  ],
+  "affects_gameplay": true
+}
