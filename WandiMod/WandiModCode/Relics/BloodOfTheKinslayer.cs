@@ -1,5 +1,6 @@
 using BaseLib.Abstracts;                       // CustomRelicModel
-using MegaCrit.Sts2.Core.CardSelection;        // ThrowingPlayerChoiceContext
+using BaseLib.Extensions;                       // RemovePrefix（图标路径命名约定）
+using MegaCrit.Sts2.Core.GameActions.Multiplayer; // ThrowingPlayerChoiceContext
 using MegaCrit.Sts2.Core.Commands;             // PowerCmd / CreatureCmd
 using MegaCrit.Sts2.Core.Entities.Creatures;   // Creature
 using MegaCrit.Sts2.Core.Entities.Relics;      // RelicRarity / RelicStatus

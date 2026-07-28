@@ -1,3 +1,5 @@
 {
-  
+  "WANDIMOD-VENGEANCE_POWER.title": "Vengeance",
+  "WANDIMOD-VENGEANCE_POWER.description": "Whenever Wandi loses HP, he gains 1 Vengeance.\nEach stack of Vengeance increases his attack damage by 2%.",
+  "WANDIMOD-VENGEANCE_POWER.smartDescription": "Whenever you lose HP, gain 1 Vengeance.\nEach stack of Vengeance increases your attack damage by 2%."
 }

@@ -1,3 +1,8 @@
 {
-  
+  "WANDIMOD-BLOOD_OF_THE_KINSLAYER.title": "Blood of the Kinslayer",
+  "WANDIMOD-BLOOD_OF_THE_KINSLAYER.description": "At the start of combat, gain Vengeance.\nWhen you would die, prevent it and heal to 30% of your Max HP instead. This can trigger 4 times.",
+  "WANDIMOD-BLOOD_OF_THE_KINSLAYER.flavor": "He has slain his kin and bears the curse of the undying. Death itself refuses him.",
+  "WANDIMOD-UNDYING_ROYAL_BLOOD.title": "Undying Royal Blood",
+  "WANDIMOD-UNDYING_ROYAL_BLOOD.description": "At the start of combat, gain Vengeance.\nAt the start of each turn, gain 1 additional Vengeance. Conquer All Lands cards added to your hand are Upgraded.\nWhen you would die, prevent it and heal to 30% of your Max HP instead. This can trigger 4 times.",
+  "WANDIMOD-UNDYING_ROYAL_BLOOD.flavor": "Death itself has become his weapon. The throne of ruin awaits its king."
 }

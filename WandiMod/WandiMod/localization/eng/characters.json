@@ -1,3 +1,16 @@
 {
-  
+  "WANDIMOD-WANDI_MOD.title": "Wandi",
+  "WANDIMOD-WANDI_MOD.titleObject": "Wandi",
+  "WANDIMOD-WANDI_MOD.description": "An undying warrior of Castrum Kremnos.\nHe trades his own lifeblood for Vengeance, growing stronger with every wound—death itself cannot hold him.",
+  "WANDIMOD-WANDI_MOD.pronounObject": "him",
+  "WANDIMOD-WANDI_MOD.possessiveAdjective": "his",
+  "WANDIMOD-WANDI_MOD.pronounPossessive": "his",
+  "WANDIMOD-WANDI_MOD.pronounSubject": "he",
+  "WANDIMOD-WANDI_MOD.goldMonologue": "Gold? A king of ruin has no need for coin... but wars are bought with something.",
+  "WANDIMOD-WANDI_MOD.eventDeathPrevention": "Death refuses me. Again.",
+  "WANDIMOD-WANDI_MOD.aromaPrinciple": "I am the master of my ruin. No scent commands me.",
+  "WANDIMOD-WANDI_MOD.cardsModifierTitle": "Wandi Cards",
+  "WANDIMOD-WANDI_MOD.cardsModifierDescription": "Start the run with Wandi's deck.",
+  "WANDIMOD-WANDI_MOD.banter.alive.endTurnPing": "Finish it—my blood is already spent.",
+  "WANDIMOD-WANDI_MOD.banter.dead.endTurnPing": "Death is merely a suggestion."
 }

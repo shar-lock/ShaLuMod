@@ -18,7 +18,7 @@ public class WandiMod : PlaceholderCharacterModel
     public static readonly Color Color = new("D4AF37");
 
     public override Color NameColor => Color;
-    public override CharacterGender Gender => CharacterGender.Male;
+    public override CharacterGender Gender => CharacterGender.Masculine;
     public override int StartingHp => 75;
 
     // TODO(M3): 替换为万敌专属起手牌（5×横扫突击 + 4×御阵 + 1×血祭）

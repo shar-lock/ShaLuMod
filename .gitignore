@@ -5,3 +5,5 @@ bin/
 obj/
 /Folder.DotSettings.user
 sts2_database
+_src/sts2_src/sts2.dll
+_src/sts2_src/sts2_src.sln.DotSettings.user

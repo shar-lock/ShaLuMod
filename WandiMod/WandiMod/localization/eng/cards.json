@@ -1,3 +1,4 @@
 {
-  
+  "WANDIMOD-GILDED_SLASH.title": "Gilded Slash",
+  "WANDIMOD-GILDED_SLASH.description": "Deal {Damage:diff()} damage. Gain {Block:diff()} Block."
 }
