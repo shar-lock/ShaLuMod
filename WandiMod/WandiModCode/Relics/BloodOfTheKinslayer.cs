@@ -1,12 +1,9 @@
-using BaseLib.Abstracts;                       // CustomRelicModel
-using BaseLib.Extensions;                       // RemovePrefix（图标路径命名约定）
 using MegaCrit.Sts2.Core.GameActions.Multiplayer; // ThrowingPlayerChoiceContext
 using MegaCrit.Sts2.Core.Commands;             // PowerCmd / CreatureCmd
 using MegaCrit.Sts2.Core.Entities.Creatures;   // Creature
 using MegaCrit.Sts2.Core.Entities.Relics;      // RelicRarity / RelicStatus
 using MegaCrit.Sts2.Core.Models;               // ModelDb / RelicModel
 using MegaCrit.Sts2.Core.Saves.Runs;           // [SavedProperty]（充能存档持久化）
-using WandiMod.WandiModCode.Extensions;         // 资源路径扩展方法
 using WandiMod.WandiModCode.Powers;             // VengeancePower
 
 namespace WandiMod.WandiModCode.Relics;
@@ -18,16 +15,12 @@ namespace WandiMod.WandiModCode.Relics;
 ///   ② 受到致命伤害时免死，回复至 30% 最大生命，消耗 1 次充能（共 4 次）。
 /// 血仇的「失血叠层 / +2%/层伤害放大」逻辑在 VengeancePower 内；
 /// 免死逻辑套用原生遗物「蜥蜴尾巴 / LizardTail」（ShouldDieLate + AfterPreventingDeath）。
-/// 觉醒版「不灭王血」经先古之民欧洛巴斯的「���洛巴斯之触」替换（GetUpgradeReplacement）。
-/// 注意：起手遗物不进普通遗物池，故直接继承 CustomRelicModel（不标 [Pool]）。
+/// 觉醒版「不灭王血」经先古之民欧洛巴斯的「欧洛巴斯之触」替换（GetUpgradeReplacement）。
+/// 必须继承 WandiModRelic 以获得 [Pool]：0.109 起所有遗物模型都强制要求 PoolAttribute，
+/// 缺失会在游戏启动注册模型时直接致命错误。不进奖励池是靠 Rarity=Starter 保证的，不是靠不标 Pool。
 /// </summary>
-public class BloodOfTheKinslayer : CustomRelicModel
+public class BloodOfTheKinslayer : WandiModRelic
 {
-    // —— 资源图标路径（类名小写；缺图自动回退 relic.png 占位）——
-    public override string PackedIconPath => $"{Id.Entry.RemovePrefix().ToLowerInvariant()}.png".RelicImagePath();
-    protected override string PackedIconOutlinePath => $"{Id.Entry.RemovePrefix().ToLowerInvariant()}_outline.png".RelicImagePath();
-    protected override string BigIconPath => $"{Id.Entry.RemovePrefix().ToLowerInvariant()}.png".BigRelicImagePath();
-
     // 起手稀有度（不掉落于普通奖励）
     public override RelicRarity Rarity => RelicRarity.Starter;
 
@@ -88,7 +81,7 @@ public class BloodOfTheKinslayer : CustomRelicModel
     }
 
     /// <summary>
-    /// 先古（觉���）替换入口：欧洛巴斯之触拾起时，游戏据此把本遗物替换为「不灭王血」。
+    /// 先古（觉醒）替换入口：欧洛巴斯之触拾起时，游戏据此把本遗物替换为「不灭王血」。
     /// （BaseLib 的 StarterUpgradePatches 已让 CustomRelicModel 走此方法，无需自建先古之民。）
     /// </summary>
     public override RelicModel? GetUpgradeReplacement() => ModelDb.Relic<UndyingRoyalBlood>();

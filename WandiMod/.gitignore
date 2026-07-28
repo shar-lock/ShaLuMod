@@ -10,3 +10,7 @@ packages/
 .editorconfig
 *.user
 Directory.Build.props
+
+# 图片资源与 Godot 导入配置不入库（本地保留，发布时自动生成/打包）
+*.png
+*.import

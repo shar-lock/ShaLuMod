@@ -23,6 +23,30 @@ public class VengeancePower : WandiModPower
     public override PowerStackType StackType => PowerStackType.Counter;
 
     /// <summary>
+    /// 授予血仇（卡牌调用的统一入口）：叠 Counter 层数。
+    /// 注意：「失血自动 +1」走 AfterDamageReceived 钩子（下方），不走这里——
+    /// 这里只服务卡面写的「获得 X 血仇」效果，两条通道并存叠加。
+    /// </summary>
+    /// <param name="choiceContext">选择上下文（卡牌 OnPlay 透传）。</param>
+    /// <param name="target">获得血仇的生物（一般 = 万敌本人；为 null 记错误日志并忽略）。</param>
+    /// <param name="amount">层数（≤0 记警告并忽略，正常不会发生）。</param>
+    /// <param name="cardSource">来源牌（传 this，用于战斗记录）。</param>
+    public static async Task Grant(PlayerChoiceContext choiceContext, Creature? target, decimal amount, CardModel? cardSource = null)
+    {
+        if (target == null)
+        {
+            MainFile.Logger.Error($"[血仇] Grant 收到空 target（amount={amount}, cardSource={cardSource?.Id.Entry ?? "null"}），已忽略");
+            return;
+        }
+        if (amount <= 0)
+        {
+            MainFile.Logger.Warn($"[血仇] Grant 收到非正层数 {amount}（cardSource={cardSource?.Id.Entry ?? "null"}），已忽略");
+            return;
+        }
+        await PowerCmd.Apply<VengeancePower>(choiceContext, target, amount, target, cardSource);
+    }
+
+    /// <summary>
     /// 失血叠层：万敌每次实际掉血（未格挡伤害 > 0）时，给自己 +1 血仇。
     /// 参考 RupturePower.AfterDamageReceived。注意：每次掉血事件 +1，不是每点生命 +1。
     /// </summary>

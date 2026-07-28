@@ -1,0 +1,8 @@
+{
+  "WANDIMOD-BLOOD_OF_THE_KINSLAYER.title": "弑亲血脉",
+  "WANDIMOD-BLOOD_OF_THE_KINSLAYER.description": "战斗开始时获得血仇。\n当你即将死亡时，阻止死亡，改为回复至最大生命的 30%。可触发 4 次。",
+  "WANDIMOD-BLOOD_OF_THE_KINSLAYER.flavor": "他手刃至亲，背负不死的诅咒。死亡本身也拒绝了他。",
+  "WANDIMOD-UNDYING_ROYAL_BLOOD.title": "不灭王血",
+  "WANDIMOD-UNDYING_ROYAL_BLOOD.description": "战斗开始时获得血仇。\n每回合开始时额外获得 1 层血仇。加入你手牌的「荡平万邦」牌已升级。\n当你即将死亡时，阻止死亡，改为回复至最大生命的 30%。可触发 4 次。",
+  "WANDIMOD-UNDYING_ROYAL_BLOOD.flavor": "死亡本身已成为他的武器。废墟的王座静候其主。"
+}

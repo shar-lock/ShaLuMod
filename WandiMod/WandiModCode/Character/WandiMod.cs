@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Entities.Characters;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Relics;
+using WandiMod.WandiModCode.Cards;                  // 起手牌 HoldTheLine
 
 namespace WandiMod.WandiModCode.Character;
 
@@ -21,19 +22,20 @@ public class WandiMod : PlaceholderCharacterModel
     public override CharacterGender Gender => CharacterGender.Masculine;
     public override int StartingHp => 75;
 
-    // TODO(M3): 替换为万敌专属起手牌（5×横扫突击 + 4×御阵 + 1×血祭）
-    public override IEnumerable<CardModel> StartingDeck => [
-        ModelDb.Card<StrikeIronclad>(),
-        ModelDb.Card<StrikeIronclad>(),
-        ModelDb.Card<StrikeIronclad>(),
-        ModelDb.Card<StrikeIronclad>(),
-        ModelDb.Card<StrikeIronclad>(),
-        ModelDb.Card<DefendIronclad>(),
-        ModelDb.Card<DefendIronclad>(),
-        ModelDb.Card<DefendIronclad>(),
-        ModelDb.Card<DefendIronclad>(),
-        ModelDb.Card<DefendIronclad>()
-    ];
+        // 起手牌组（设计定稿）：4×打击（原版占位，M3 换万敌专属打击）+ 4×御敌 + 1×血祭之枪 + 1×残影。
+        // TODO(M3)：打击位换万敌专属打击卡。
+        public override IEnumerable<CardModel> StartingDeck => [
+            ModelDb.Card<StrikeIronclad>(),
+            ModelDb.Card<StrikeIronclad>(),
+            ModelDb.Card<StrikeIronclad>(),
+            ModelDb.Card<StrikeIronclad>(),
+            ModelDb.Card<HoldTheLine>(),
+            ModelDb.Card<HoldTheLine>(),
+            ModelDb.Card<HoldTheLine>(),
+            ModelDb.Card<HoldTheLine>(),
+            ModelDb.Card<BloodriteStrike>(),
+            ModelDb.Card<Cards.Afterimage>()
+        ];
 
     // 起手遗物：弑亲血脉（免死 ×4 + 战斗开始赋予血仇 Power）——角色灵魂，M2 已实装
     public override IReadOnlyList<RelicModel> StartingRelics =>
@@ -62,4 +64,7 @@ public class WandiMod : PlaceholderCharacterModel
     public override string CustomCharacterSelectIconPath => "char_select_wandi.png".CharacterUiPath();
     public override string CustomCharacterSelectLockedIconPath => "char_select_wandi_locked.png".CharacterUiPath();
     public override string CustomMapMarkerPath => "map_marker_wandi.png".CharacterUiPath();
+
+    // 选角界面大立绘：静态场景（Control + TextureRect），替代 PlaceholderCharacterModel 借用的铁甲战士动画背景
+    public override string CustomCharacterSelectBg => "res://WandiMod/scenes/char_select_bg_wandimod.tscn";
 }

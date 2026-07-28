@@ -1,5 +1,8 @@
 {
   "WANDIMOD-VENGEANCE_POWER.title": "Vengeance",
   "WANDIMOD-VENGEANCE_POWER.description": "Whenever Wandi loses HP, he gains 1 Vengeance.\nEach stack of Vengeance increases his attack damage by 2%.",
-  "WANDIMOD-VENGEANCE_POWER.smartDescription": "Whenever you lose HP, gain 1 Vengeance.\nEach stack of Vengeance increases your attack damage by 2%."
+  "WANDIMOD-VENGEANCE_POWER.smartDescription": "Whenever you lose HP, gain 1 Vengeance.\nEach stack of Vengeance increases your attack damage by 2%.",
+  "WANDIMOD-STRIFE_POWER.title": "Strife",
+  "WANDIMOD-STRIFE_POWER.description": "Wandi's temporary Max HP. Each stack of Strife grants +1 Max HP.\nWhen combat ends, all Strife is lost and Max HP returns to normal.",
+  "WANDIMOD-STRIFE_POWER.smartDescription": "Temporary Max HP. Each stack grants +1 Max HP.\nAll Strife is lost when combat ends."
 }

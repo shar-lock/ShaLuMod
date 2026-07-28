@@ -1,0 +1,16 @@
+{
+  "WANDIMOD-WANDI_MOD.title": "万敌",
+  "WANDIMOD-WANDI_MOD.titleObject": "万敌",
+  "WANDIMOD-WANDI_MOD.description": "悬锋城的不死战士。\n他以自身鲜血换取血仇，每一道伤痕都让他更强——死亡也无法将他留下。",
+  "WANDIMOD-WANDI_MOD.pronounObject": "他",
+  "WANDIMOD-WANDI_MOD.possessiveAdjective": "他的",
+  "WANDIMOD-WANDI_MOD.pronounPossessive": "他的",
+  "WANDIMOD-WANDI_MOD.pronounSubject": "他",
+  "WANDIMOD-WANDI_MOD.goldMonologue": "金子？废墟之王不需要钱币……但战争总得用点什么来换。",
+  "WANDIMOD-WANDI_MOD.eventDeathPrevention": "死亡再次拒绝了我。",
+  "WANDIMOD-WANDI_MOD.aromaPrinciple": "我是自己毁灭的主宰。没有什么香气能命令我。",
+  "WANDIMOD-WANDI_MOD.cardsModifierTitle": "万敌卡牌",
+  "WANDIMOD-WANDI_MOD.cardsModifierDescription": "以万敌的牌组开始本局游戏。",
+  "WANDIMOD-WANDI_MOD.banter.alive.endTurnPing": "了结它——我的血已经流尽了。",
+  "WANDIMOD-WANDI_MOD.banter.dead.endTurnPing": "死亡不过是个建议。"
+}

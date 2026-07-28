@@ -1,3 +1,6 @@
 {
-  
+  "WANDIMOD-STRIFE.title": "Strife",
+  "WANDIMOD-STRIFE.description": "Temporary Max HP. Gaining Strife raises your Max HP and heals you by the same amount. All Strife is lost when combat ends.",
+  "WANDIMOD-VENGEANCE.title": "Vengeance",
+  "WANDIMOD-VENGEANCE.description": "Gain a stack whenever you lose HP. Each stack increases your attack damage by 2%. Consumed by certain cards for powerful effects."
 }
