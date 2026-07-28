@@ -1,6 +1,7 @@
 ﻿using BaseLib.Abstracts;
 using BaseLib.Utils.NodeFactories;
 using WandiMod.WandiModCode.Extensions;
+using WandiMod.WandiModCode.Relics;   // 起手遗物 BloodOfTheKinslayer
 using Godot;
 using MegaCrit.Sts2.Core.Entities.Characters;
 using MegaCrit.Sts2.Core.Models;
@@ -34,10 +35,10 @@ public class WandiMod : PlaceholderCharacterModel
         ModelDb.Card<DefendIronclad>()
     ];
 
-    // TODO(M2): 替换为「弑亲血脉」遗物（4 次免死）
+    // 起手遗物：弑亲血脉（免死 ×4 + 战斗开始赋予血仇 Power）——角色灵魂，M2 已实装
     public override IReadOnlyList<RelicModel> StartingRelics =>
     [
-        ModelDb.Relic<BurningBlood>()
+        ModelDb.Relic<BloodOfTheKinslayer>()
     ];
     
     public override CardPoolModel CardPool => ModelDb.CardPool<WandiModCardPool>();
