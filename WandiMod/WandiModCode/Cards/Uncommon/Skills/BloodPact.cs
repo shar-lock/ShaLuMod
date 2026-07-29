@@ -7,6 +7,8 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;  // IntVar
 using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
 using WandiMod.WandiModCode.Powers;                 // VengeancePower
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
@@ -26,7 +28,7 @@ public class BloodPact : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new IntVar("Draw", 3).WithUpgrade(4),
+        new IntVar("Draw", 3).WithUpgradeTo(4),
         new IntVar("Vengeance", 1),
     ];
 

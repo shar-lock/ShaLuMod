@@ -5,6 +5,8 @@ using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / Car
 using MegaCrit.Sts2.Core.Localization.DynamicVars;  // IntVar
 using WandiMod.WandiModCode.Powers;                 // BloodthirstFormPower / VengeancePower（关键词）
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
@@ -25,7 +27,7 @@ public class BloodthirstForm : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new IntVar("Cap", 3).WithUpgrade(4),  // 每回合通过本能力产血仇的次数上限
+        new IntVar("Cap", 3).WithUpgradeTo(4),  // 每回合通过本能力产血仇的次数上限
     ];
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Vengeance];

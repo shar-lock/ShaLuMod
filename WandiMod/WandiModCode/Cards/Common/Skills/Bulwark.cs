@@ -4,6 +4,8 @@ using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / Car
 using MegaCrit.Sts2.Core.Localization.DynamicVars;  // IntVar
 using WandiMod.WandiModCode.Powers;                 // StrifePower / VengeancePower
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
@@ -23,8 +25,8 @@ public class Bulwark : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new IntVar("Strife", 14).WithUpgrade(18),
-        new IntVar("Vengeance", 1).WithUpgrade(2),
+        new IntVar("Strife", 14).WithUpgradeTo(18),
+        new IntVar("Vengeance", 1).WithUpgradeTo(2),
     ];
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Strife, WandiModKeywords.Vengeance];

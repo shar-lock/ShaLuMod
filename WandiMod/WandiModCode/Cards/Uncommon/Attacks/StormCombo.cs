@@ -7,6 +7,8 @@ using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
 using WandiMod.WandiModCode.Character;              // WandiModCard
 using WandiMod.WandiModCode.Powers;                 // VengeancePower
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
@@ -29,7 +31,7 @@ public class StormCombo : WandiModCard
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         new DamageVar(4, ValueProp.Move),               // 每段基础伤害 4（升级不变）
-        new IntVar("BloodHitBonus", 0).WithUpgrade(1),  // 段数 = 血仇 + 此值（0→1）
+        new IntVar("BloodHitBonus", 0).WithUpgradeTo(1),  // 段数 = 血仇 + 此值（0→1）
     ];
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Vengeance];
@@ -57,7 +59,7 @@ public class StormCombo : WandiModCard
         for (int i = 0; i < hits; i++)
         {
             await DamageCmd.Attack(dmg)
-                .FromCard(this)
+                .FromCard(this, cardPlay)
                 .Targeting(cardPlay.Target)
                 .WithValueProp(ValueProp.Move)
                 .Execute(choiceContext);

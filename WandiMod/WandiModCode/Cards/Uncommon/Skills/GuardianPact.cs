@@ -5,6 +5,8 @@ using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / Car
 using MegaCrit.Sts2.Core.Localization.DynamicVars;  // IntVar
 using WandiMod.WandiModCode.Powers;                 // GuardianPactPower
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 // 联机
@@ -34,7 +36,7 @@ public class GuardianPact : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new IntVar("AllyReduce", 50).WithUpgrade(75),  // 队友减伤百分比
+        new IntVar("AllyReduce", 50).WithUpgradeTo(75),  // 队友减伤百分比
     ];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

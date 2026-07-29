@@ -5,6 +5,8 @@ using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / Car
 using MegaCrit.Sts2.Core.Localization.DynamicVars;  // IntVar
 using WandiMod.WandiModCode.Powers;                 // VengeancePower
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
@@ -24,7 +26,7 @@ public class Lifepath : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new IntVar("Draw", 2).WithUpgrade(3),
+        new IntVar("Draw", 2).WithUpgradeTo(3),
         new IntVar("Vengeance", 1),
     ];
 

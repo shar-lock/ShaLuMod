@@ -6,6 +6,8 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;  // DamageVar / IntVar
 using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
 using WandiMod.WandiModCode.Character;              // WandiModCard
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
@@ -25,8 +27,8 @@ public class DesperateThrust : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(8, ValueProp.Move).WithUpgrade(11),
-        new IntVar("Bonus", 4).WithUpgrade(6),   // HP<50% 时的额外伤害
+        new DamageVar(8, ValueProp.Move).WithUpgradeTo(11),
+        new IntVar("Bonus", 4).WithUpgradeTo(6),   // HP<50% 时的额外伤害
     ];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -50,7 +52,7 @@ public class DesperateThrust : WandiModCard
             dmg += DynamicVars["Bonus"].IntValue;
 
         await DamageCmd.Attack(dmg)
-            .FromCard(this)
+            .FromCard(this, cardPlay)
             .Targeting(cardPlay.Target)
             .WithValueProp(ValueProp.Move)
             .Execute(choiceContext);

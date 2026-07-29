@@ -114,5 +114,7 @@
   "WANDIMOD-LASTING_FOCUS.title": "战意持久",
   "WANDIMOD-LASTING_FOCUS.description": "将你的生命值减少至生命上限的 50%，受到的伤害降低 {ReducePct:diff()}%。",
   "WANDIMOD-BLOODTHIRST_FORM.title": "嗜血形态",
-  "WANDIMOD-BLOODTHIRST_FORM.description": "HP≤50% 时，攻击造成伤害获得 1 层[gold]血仇[/gold]（每回合 ≤{Cap:diff()}）。"
+  "WANDIMOD-BLOODTHIRST_FORM.description": "HP≤50% 时，攻击造成伤害获得 1 层[gold]血仇[/gold]（每回合 ≤{Cap:diff()}）。",
+  "WANDIMOD-CONQUER_ALL_LANDS.title": "荡平万邦",
+  "WANDIMOD-CONQUER_ALL_LANDS.description": "对全体敌人造成 {CalculatedDamage:diff()} 点伤害。\n此伤害包含你已损失生命的 {ExtraDamage:diff()}%。"
 }

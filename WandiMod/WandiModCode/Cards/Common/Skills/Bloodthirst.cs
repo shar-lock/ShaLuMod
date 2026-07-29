@@ -8,6 +8,8 @@ using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
 using WandiMod.WandiModCode.Character;              // WandiModCard
 using WandiMod.WandiModCode.Powers;                 // VengeancePower
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
@@ -28,7 +30,7 @@ public class Bloodthirst : WandiModCard
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         new HpLossVar(2),
-        new IntVar("Strength", 1).WithUpgrade(2),
+        new IntVar("Strength", 1).WithUpgradeTo(2),
         new IntVar("Vengeance", 2),
     ];
 

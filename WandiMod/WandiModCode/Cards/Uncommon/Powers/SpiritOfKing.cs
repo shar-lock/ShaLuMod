@@ -5,12 +5,14 @@ using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / Car
 using MegaCrit.Sts2.Core.Localization.DynamicVars;  // IntVar
 using WandiMod.WandiModCode.Powers;                 // SpiritOfKingPower
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
 /// 王之意志 / Spirit of King（罕见 · 能力 · 固有）
 /// [荡平万邦]的伤害额外提高 20%。升级：25%。
-/// —— 放大终结技（荡平万邦由血仇≥7 生成），固有保证起手可铺。
+/// —— 放大终结技（荡平万邦由血仇≥8 生成），固有保证起手可铺。
 /// 百分比随升级态传入 Power 的 Amount（20→25），由 SpiritOfKingPower.ModifyDamageMultiplicative 读取。
 /// </summary>
 public class SpiritOfKing : WandiModCard
@@ -25,7 +27,7 @@ public class SpiritOfKing : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new IntVar("BonusPct", 20).WithUpgrade(25),  // 荡平万邦伤害额外提升百分比
+        new IntVar("BonusPct", 20).WithUpgradeTo(25),  // 荡平万邦伤害额外提升百分比
     ];
 
     // 固有：起手必摸到

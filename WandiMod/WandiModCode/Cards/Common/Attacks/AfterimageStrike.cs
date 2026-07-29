@@ -6,6 +6,8 @@ using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / Car
 using MegaCrit.Sts2.Core.Localization.DynamicVars;  // HpLossVar / DamageVar
 using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
@@ -26,7 +28,7 @@ public class AfterimageStrike : WandiModCard
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         new HpLossVar(2),
-        new DamageVar(7, ValueProp.Move).WithUpgrade(10),
+        new DamageVar(7, ValueProp.Move).WithUpgradeTo(10),
     ];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

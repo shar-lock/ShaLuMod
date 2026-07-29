@@ -6,6 +6,8 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;  // BlockVar / IntVar
 using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
 using WandiMod.WandiModCode.Powers;                 // VengeancePower（关键词）
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 // 联机
@@ -36,7 +38,7 @@ public class KingsBlessing : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new BlockVar(14, ValueProp.Move).WithUpgrade(20),  // 给每个队友的格挡
+        new BlockVar(14, ValueProp.Move).WithUpgradeTo(20),  // 给每个队友的格挡
         new IntVar("HpLoss", 5),                            // 每个队友失去的生命值（固定 5）
     ];
 

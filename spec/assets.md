@@ -65,11 +65,15 @@ WandiMod/WandiMod/images/          ← 磁盘根目录（= Godot res://WandiMod/
 | 属性（WandiModPower 基类自动设置） | 目录 | 尺寸 | 必须？ |
 |---|---|---|---|
 | `CustomPackedIconPath`（小图标，显示在角色身上） | `images/powers/{name}.png` | 64×64 或 84×84 | ✅ |
-| `CustomBigIconPath`（大图标，Power 列表/悬停） | `images/powers/big/{name}.png` | 128×128 | 可选 |
+| `CustomBigIconPath`（大图标，Power 列表/悬停） | `images/powers/big/{name}.png` | 128×128（可用至 256×256） | 可选 |
 
 - 回退：找不到 → `power.png`
-- `{name}` = Power 类名小写，如 `VengeancePower` → `vengeancepower.png`
+- `{name}` = 类名转 snake_case 小写（`Id.Entry.RemovePrefix().ToLowerInvariant()`），如 `VengeancePower` → `vengeance_power.png`
 - **能力卡（Card）有卡牌图片（card_portraits），Power 类有 Power 图标（powers）——两套不同的图片**
+- **尺寸不是硬性要求**：图标由游戏 `NPower` 场景的 `TextureRect` 按固定大小缩放渲染（已核实源码），
+  大于标注尺寸的正方形素材可直接用（GPU 线性过滤缩到 64px，画质良好，推荐 128/256 边长做超采样）；
+  小于 64px 会放大模糊，不要用。**必须 1:1 正方形**（非方图会被压扁或留边）。
+  省事做法：一张 256×256 同时放 `powers/` 和 `powers/big/` 两处。
 
 ### 遗物图标
 

@@ -5,6 +5,8 @@ using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / Car
 using MegaCrit.Sts2.Core.Localization.DynamicVars;  // IntVar
 using WandiMod.WandiModCode.Powers;                 // StrifePower
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
@@ -24,8 +26,8 @@ public class BloodCleanse : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new IntVar("Strife", 6).WithUpgrade(9),
-        new IntVar("Heal", 0).WithUpgrade(3),   // 基础不回血，升级后才回 3
+        new IntVar("Strife", 6).WithUpgradeTo(9),
+        new IntVar("Heal", 0).WithUpgradeTo(3),   // 基础不回血，升级后才回 3
     ];
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Strife];

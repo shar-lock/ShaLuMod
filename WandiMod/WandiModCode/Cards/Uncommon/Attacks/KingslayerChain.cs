@@ -7,6 +7,8 @@ using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
 using WandiMod.WandiModCode.Character;              // WandiModCard
 using WandiMod.WandiModCode.Powers;                 // VengeancePower
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
@@ -27,9 +29,9 @@ public class KingslayerChain : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(5, ValueProp.Move).WithUpgrade(6),  // 每段基础伤害 5→6
+        new DamageVar(5, ValueProp.Move).WithUpgradeTo(6),  // 每段基础伤害 5→6
         new RepeatVar(2),                                  // 固定 2 段（升级不变）
-        new IntVar("BloodBonus", 5).WithUpgrade(6),        // 每段消耗 1 血仇的额外伤害 5→6
+        new IntVar("BloodBonus", 5).WithUpgradeTo(6),        // 每段消耗 1 血仇的额外伤害 5→6
     ];
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Vengeance];
@@ -60,7 +62,7 @@ public class KingslayerChain : WandiModCard
                 consumed++;
             }
             await DamageCmd.Attack(dmg)
-                .FromCard(this)
+                .FromCard(this, cardPlay)
                 .Targeting(cardPlay.Target)
                 .WithValueProp(ValueProp.Move)
                 .Execute(choiceContext);

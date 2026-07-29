@@ -7,6 +7,8 @@ using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
 using System.Linq;                                  // SelectMany / Any（击杀结果判定）
 using WandiMod.WandiModCode.Character;              // WandiModCard
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
@@ -28,7 +30,7 @@ public class RuinSpear : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(16, ValueProp.Move).WithUpgrade(22),
+        new DamageVar(16, ValueProp.Move).WithUpgradeTo(22),
         new IntVar("Energy", 3),                    // 击杀时回能（升级不变）
     ];
 

@@ -7,6 +7,8 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;  // DamageVar / IntVar
 using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
 using WandiMod.WandiModCode.Character;              // WandiModCard
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
@@ -28,8 +30,8 @@ public class BloodDrinkCounter : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(8, ValueProp.Move).WithUpgrade(11),
-        new IntVar("LifestealPct", 30).WithUpgrade(40),
+        new DamageVar(8, ValueProp.Move).WithUpgradeTo(11),
+        new IntVar("LifestealPct", 30).WithUpgradeTo(40),
     ];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

@@ -6,6 +6,8 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;  // IntVar
 using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
 using WandiMod.WandiModCode.Character;              // WandiModCard
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
@@ -27,7 +29,7 @@ public class LifepathSlash : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new IntVar("MaxHpPct", 20).WithUpgrade(30),  // 最大生命百分比 20→30（运算时 /100）
+        new IntVar("MaxHpPct", 20).WithUpgradeTo(30),  // 最大生命百分比 20→30（运算时 /100）
     ];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -43,7 +45,7 @@ public class LifepathSlash : WandiModCard
         decimal dmg = creature.MaxHp * pct;
 
         await DamageCmd.Attack(dmg)
-            .FromCard(this)
+            .FromCard(this, cardPlay)
             .Targeting(cardPlay.Target)
             .WithValueProp(ValueProp.Move)
             .Execute(choiceContext);

@@ -4,6 +4,8 @@ using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / Car
 using MegaCrit.Sts2.Core.Localization.DynamicVars;  // IntVar
 using WandiMod.WandiModCode.Powers;                 // StrifePower
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
@@ -23,7 +25,7 @@ public class Sanctuary : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new IntVar("MissingHpPct", 25).WithUpgrade(30),  // 已损失生命的百分比（整数，运算时 /100）
+        new IntVar("MissingHpPct", 25).WithUpgradeTo(30),  // 已损失生命的百分比（整数，运算时 /100）
     ];
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Strife];

@@ -8,6 +8,8 @@ using MegaCrit.Sts2.Core.Models.Powers;             // VulnerablePower（原生�
 using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
 using WandiMod.WandiModCode.Character;              // WandiModCard
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
@@ -28,7 +30,7 @@ public class VajraBreak : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(12, ValueProp.Move).WithUpgrade(16),
+        new DamageVar(12, ValueProp.Move).WithUpgradeTo(16),
         new IntVar("Vulnerable", 2),                // 易伤层数（升级不变）
     ];
 

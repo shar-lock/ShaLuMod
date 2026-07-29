@@ -4,6 +4,8 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;   // PlayerChoiceContext
 using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / CardRarity / TargetType / CardKeyword
 using MegaCrit.Sts2.Core.Localization.DynamicVars;  // IntVar
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
@@ -24,7 +26,7 @@ public class Vitalize : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new IntVar("MissingHpPct", 10).WithUpgrade(12),  // 已损失生命的百分比（整数，运算时 /100）
+        new IntVar("MissingHpPct", 10).WithUpgradeTo(12),  // 已损失生命的百分比（整数，运算时 /100）
     ];
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];

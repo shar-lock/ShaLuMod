@@ -8,6 +8,8 @@ using MegaCrit.Sts2.Core.Models.Powers;             // WeakPower（原生虚弱�
 using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
 using WandiMod.WandiModCode.Character;              // WandiModCard
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
@@ -28,8 +30,8 @@ public class SweepingArmy : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(10, ValueProp.Move).WithUpgrade(14),
-        new IntVar("Weak", 1).WithUpgrade(2),
+        new DamageVar(10, ValueProp.Move).WithUpgradeTo(14),
+        new IntVar("Weak", 1).WithUpgradeTo(2),
     ];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

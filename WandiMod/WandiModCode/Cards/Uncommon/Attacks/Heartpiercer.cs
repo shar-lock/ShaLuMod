@@ -7,6 +7,8 @@ using MegaCrit.Sts2.Core.Models.Powers;             // VulnerablePower（读取�
 using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
 using WandiMod.WandiModCode.Character;              // WandiModCard
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
@@ -28,8 +30,8 @@ public class Heartpiercer : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(9, ValueProp.Move).WithUpgrade(12),
-        new IntVar("Bonus", 5).WithUpgrade(6),      // 目标有易伤时的额外伤害
+        new DamageVar(9, ValueProp.Move).WithUpgradeTo(12),
+        new IntVar("Bonus", 5).WithUpgradeTo(6),      // 目标有易伤时的额外伤害
     ];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -47,7 +49,7 @@ public class Heartpiercer : WandiModCard
             dmg += DynamicVars["Bonus"].IntValue;
 
         await DamageCmd.Attack(dmg)
-            .FromCard(this)
+            .FromCard(this, cardPlay)
             .Targeting(cardPlay.Target)
             .WithValueProp(ValueProp.Move)
             .Execute(choiceContext);

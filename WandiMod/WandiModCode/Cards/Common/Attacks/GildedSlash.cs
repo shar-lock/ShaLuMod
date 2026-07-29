@@ -7,6 +7,8 @@ using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
 using WandiMod.WandiModCode.Character;              // WandiModCard（基类，自带 [Pool] 自动入池）
 using WandiMod.WandiModCode.Powers;                 // StrifePower
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
@@ -27,8 +29,8 @@ public class GildedSlash : WandiModCard
     // 基础数值（真相源）。WithUpgrade 设定升级后的数值，逻辑代码无需改动。
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(14, ValueProp.Move).WithUpgrade(18),
-        new IntVar("Strife", 3).WithUpgrade(4),
+        new DamageVar(14, ValueProp.Move).WithUpgradeTo(18),
+        new IntVar("Strife", 3).WithUpgradeTo(4),
     ];
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Strife];

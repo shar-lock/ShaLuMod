@@ -4,6 +4,8 @@ using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / Car
 using MegaCrit.Sts2.Core.Localization.DynamicVars;  // IntVar
 using WandiMod.WandiModCode.Powers;                 // StrifePower
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
@@ -25,7 +27,7 @@ public class HoldTheLine : WandiModCard
     // WithUpgrade 设定升级后的数值，逻辑代码无需改动（读到的就是升级后值）。
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new IntVar("Strife", 4).WithUpgrade(6),
+        new IntVar("Strife", 4).WithUpgradeTo(6),
     ];
 
     // 关键词词条（tooltip 文案见 card_keywords.json 的 WANDIMOD-STRIFE）

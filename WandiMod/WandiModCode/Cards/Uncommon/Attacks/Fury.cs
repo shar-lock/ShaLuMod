@@ -7,6 +7,8 @@ using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
 using WandiMod.WandiModCode.Character;              // WandiModCard
 using WandiMod.WandiModCode.Powers;                 // VengeancePower
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
@@ -28,7 +30,7 @@ public class Fury : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new IntVar("Multiplier", 3).WithUpgrade(4),  // 血仇 → 伤害 倍率 3→4
+        new IntVar("Multiplier", 3).WithUpgradeTo(4),  // 血仇 → 伤害 倍率 3→4
     ];
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Vengeance, CardKeyword.Exhaust];
@@ -53,7 +55,7 @@ public class Fury : WandiModCard
         }
 
         await DamageCmd.Attack(dmg)
-            .FromCard(this)
+            .FromCard(this, cardPlay)
             .Targeting(cardPlay.Target)
             .WithValueProp(ValueProp.Move)
             .Execute(choiceContext);

@@ -6,6 +6,8 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;  // IntVar
 using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
 using WandiMod.WandiModCode.Character;              // WandiModCard
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
@@ -27,7 +29,7 @@ public class MyriadDeaths : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new IntVar("MissingHpPct", 40).WithUpgrade(50),  // 已损失生命百分比 40→50（运算时 /100）
+        new IntVar("MissingHpPct", 40).WithUpgradeTo(50),  // 已损失生命百分比 40→50（运算时 /100）
     ];
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
@@ -61,7 +63,7 @@ public class MyriadDeaths : WandiModCard
         foreach (var enemy in enemies)
         {
             await DamageCmd.Attack(dmg)
-                .FromCard(this)
+                .FromCard(this, cardPlay)
                 .Targeting(enemy)
                 .WithValueProp(ValueProp.Move)
                 .Execute(choiceContext);

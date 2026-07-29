@@ -8,6 +8,8 @@ using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
 using WandiMod.WandiModCode.Character;              // WandiModCard
 using WandiMod.WandiModCode.Powers;                 // FatalThrustPower（临时降力量）
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
@@ -29,7 +31,7 @@ public class FatalThrust : WandiModCard
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         new DamageVar(14, ValueProp.Move),                // 基础伤害 14（升级不变）
-        new IntVar("StrengthLoss", 6).WithUpgrade(8),     // 降低力量 6→8
+        new IntVar("StrengthLoss", 6).WithUpgradeTo(8),     // 降低力量 6→8
     ];
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust, CardKeyword.Retain];

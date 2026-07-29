@@ -4,6 +4,8 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;   // PlayerChoiceContext
 using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / CardRarity / TargetType / CardKeyword
 using MegaCrit.Sts2.Core.Localization.DynamicVars;  // IntVar
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
@@ -23,7 +25,7 @@ public class FocusSurge : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new IntVar("Energy", 1).WithUpgrade(2),
+        new IntVar("Energy", 1).WithUpgradeTo(2),
         new IntVar("Draw", 1),
     ];
 

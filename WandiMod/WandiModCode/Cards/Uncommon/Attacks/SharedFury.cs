@@ -6,6 +6,8 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;  // IntVar
 using MegaCrit.Sts2.Core.Models.Powers;             // StrengthPower（原生力量）
 using WandiMod.WandiModCode.Powers;                 // VengeancePower（关键词）
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 // 联机
@@ -36,7 +38,7 @@ public class SharedFury : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new IntVar("Strength", 2).WithUpgrade(3),
+        new IntVar("Strength", 2).WithUpgradeTo(3),
     ];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

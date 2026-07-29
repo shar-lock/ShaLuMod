@@ -6,6 +6,8 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;  // IntVar
 using WandiMod.WandiModCode.Character;              // WandiModCard
 using WandiMod.WandiModCode.Powers;                 // VengeancePower
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
@@ -25,7 +27,7 @@ public class Nirvana : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new IntVar("BloodCost", 2).WithUpgrade(1),  // 需消耗的血仇层数 2→1
+        new IntVar("BloodCost", 2).WithUpgradeTo(1),  // 需消耗的血仇层数 2→1
         new IntVar("Energy", 2),                     // 获得的能量（固定 2）
     ];
 

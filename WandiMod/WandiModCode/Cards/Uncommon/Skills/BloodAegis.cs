@@ -6,6 +6,8 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;  // HpLossVar / IntVar
 using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
 using WandiMod.WandiModCode.Powers;                 // StrifePower / VengeancePower
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
@@ -27,7 +29,7 @@ public class BloodAegis : WandiModCard
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         new HpLossVar(4),
-        new IntVar("Strife", 10).WithUpgrade(15),
+        new IntVar("Strife", 10).WithUpgradeTo(15),
         new IntVar("Vengeance", 1),
     ];
 

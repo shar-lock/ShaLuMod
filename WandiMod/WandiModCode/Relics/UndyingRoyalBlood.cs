@@ -10,11 +10,11 @@ namespace WandiMod.WandiModCode.Relics;
 
 /// <summary>
 /// 不灭王血 / Undying Royal Blood —— 弑亲血脉的先古（觉醒）版本，经先古之民欧洛巴斯的「欧洛巴斯之触」替换而得。
-/// 继承弑亲血脉的全部效果（战斗开始赋予血仇、4 次免死回 30%、血仇≥7 生成荡平万邦），并强化：
+/// 继承弑亲血脉的全部效果（战斗开始赋予血仇、4 次免死回 30%、血仇≥8 生成荡平万邦），并强化：
 ///   ① 每回合开始额外 +1 血仇（下方 AfterSideTurnStart）；
-///   ② 血仇≥7 触发生成的「荡平万邦」为升级���——由 VengeancePower 的 7 层触发处查本遗物是否在场决定
-///      （升级态卡牌获取 API 待运行时确认，见 VengeancePower 内 TODO）。
-/// 不进普通遗物池（只能经欧洛巴斯���换获得）。
+///   ② 血仇≥8 触发生成的「荡平万邦」为升级版——由 VengeancePower 的触发处查本遗物是否在场，
+///      在场则对新建可变实例调 CardCmd.Upgrade（原版 Jackpot/ManifestAuthority 写法，已落地）。
+/// 不进普通遗物池（只能经欧洛巴斯替换获得）。
 /// </summary>
 public class UndyingRoyalBlood : BloodOfTheKinslayer
 {

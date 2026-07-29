@@ -8,6 +8,8 @@ using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
 using WandiMod.WandiModCode.Character;              // WandiModCard
 using WandiMod.WandiModCode.Powers;                 // VengeancePower
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
@@ -27,8 +29,8 @@ public class BloodsipSpear : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(7, ValueProp.Move).WithUpgrade(10),
-        new IntVar("Heal", 2).WithUpgrade(3),
+        new DamageVar(7, ValueProp.Move).WithUpgradeTo(10),
+        new IntVar("Heal", 2).WithUpgradeTo(3),
     ];
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Vengeance];

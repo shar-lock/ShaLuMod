@@ -7,6 +7,8 @@ using MegaCrit.Sts2.Core.Models.Powers;             // VulnerablePower（原生�
 using WandiMod.WandiModCode.Character;              // WandiModCard
 using WandiMod.WandiModCode.Powers;                 // VengeancePower
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
@@ -27,7 +29,7 @@ public class VengefulHeart : WandiModCard
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         new IntVar("BloodCost", 1),                  // 需消耗的血仇（固定 1）
-        new IntVar("Vulnerable", 1).WithUpgrade(2),  // 施加的易伤层数 1→2
+        new IntVar("Vulnerable", 1).WithUpgradeTo(2),  // 施加的易伤层数 1→2
     ];
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Vengeance];

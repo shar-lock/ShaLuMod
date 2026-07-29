@@ -7,6 +7,8 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;  // HpLossVar / DamageVar / I
 using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
 using WandiMod.WandiModCode.Powers;                 // VengeancePower
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
@@ -28,7 +30,7 @@ public class BloodRite : WandiModCard
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         new HpLossVar(3),
-        new DamageVar(12, ValueProp.Move).WithUpgrade(16),
+        new DamageVar(12, ValueProp.Move).WithUpgradeTo(16),
         new IntVar("Vengeance", 1),
     ];
 

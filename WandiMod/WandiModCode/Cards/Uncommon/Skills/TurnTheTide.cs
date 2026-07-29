@@ -5,6 +5,8 @@ using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / Car
 using MegaCrit.Sts2.Core.Localization.DynamicVars;  // IntVar
 using WandiMod.WandiModCode.Powers;                 // StrifePower
 
+using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
@@ -24,9 +26,9 @@ public class TurnTheTide : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new IntVar("StrifeHigh", 18).WithUpgrade(24),  // HP≤30% 时的大额纷争
-        new IntVar("StrifeLow", 6).WithUpgrade(9),     // HP>30% 时的小额纷争
-        new IntVar("Heal", 4).WithUpgrade(6),          // HP≤30% 时的回血
+        new IntVar("StrifeHigh", 18).WithUpgradeTo(24),  // HP≤30% 时的大额纷争
+        new IntVar("StrifeLow", 6).WithUpgradeTo(9),     // HP>30% 时的小额纷争
+        new IntVar("Heal", 4).WithUpgradeTo(6),          // HP≤30% 时的回血
     ];
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Strife];

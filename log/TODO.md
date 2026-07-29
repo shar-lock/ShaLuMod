@@ -21,7 +21,7 @@
 
 | 问题 | 文件 | 说明 |
 |---|---|---|
-| 觉醒版荡平万邦 | VengeancePower 7 层触发处 | 升级态卡牌获取 API 待确认（ToUpgraded?） |
+| ~~觉醒版荡平万邦~~ | VengeancePower 7 层触发处 | ✅ `CombatState.CreateCard` 建可变实例 + `CardCmd.Upgrade` 就地升级（原版 Jackpot 写法） |
 | 弑亲血脉充能角标 | BloodOfTheKinslayer.cs | counter 显示 API（SetCounter/ChangeCounter）待确认 |
 
 ## M3 待开发
@@ -37,5 +37,5 @@
 
 | 问题 | 说明 |
 |---|---|
-| 8 个独立 Power 类本地化 | FatalThrustPower 等 8 个需 powers.json 条目（Rider Generate） |
+| ~~8 个独立 Power 类本地化~~ | ✅ 已补 eng/zhs powers.json（含荡平万邦卡牌词条） |
 | 本机 images 目录缺失 | .gitignore 忽略 png，需从其他机器拷贝或创建占位图 |

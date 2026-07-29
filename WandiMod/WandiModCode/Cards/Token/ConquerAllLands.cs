@@ -1,9 +1,11 @@
 using BaseLib.Abstracts;                        // CustomCardModel
 using BaseLib.Extensions;                       // RemovePrefix（资源路径用）
+using BaseLib.Utils;                            // [Pool]
 using MegaCrit.Sts2.Core.Commands;              // DamageCmd
 using MegaCrit.Sts2.Core.Entities.Cards;        // CardType / CardRarity / TargetType / CardKeyword / CardPlay
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;// PlayerChoiceContext
 using MegaCrit.Sts2.Core.Localization.DynamicVars;// DamageVar / IntVar
+using MegaCrit.Sts2.Core.Models.CardPools;       // TokenCardPool（原版机制卡池）
 using MegaCrit.Sts2.Core.ValueProps;            // ValueProp
 using WandiMod.WandiModCode.Extensions;          // CardImagePath / BigCardImagePath（资源路径）
 
@@ -11,23 +13,31 @@ namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
 /// 荡平万邦 / Conquer all lands!（机制卡 · 攻击 · 0 费）
-/// 由起手遗物「弑亲血脉」在血仇 ≥ 7 时生成到手牌（保留 + 消耗）。
-/// 效果：对全体敌方造成 14 伤 + 「已损失生命」20% + 「敌方最大生命」5%（升级：20 伤 + 30%）。
+/// 由起手遗物「弑亲血脉」在血仇 ≥ 8 时生成到手牌（保留 + 消耗）。
+/// 效果：对全体敌方造成 14 伤 + 「已损失生命」25%（升级：20 伤 + 35%）。
 ///
 /// 实现说明：
-///   - 不入卡池（仅由遗物生成）——直接继承 CustomCardModel 不标 [Pool]，稀有度用 Token
-///     （参考原生 Soul/灵魂、Apparition：生成卡均无 Pool、用 Token/Ancient 稀有度，不掉落）。
-///     卡牌不像遗物那样强制要求 PoolAttribute（原生 Token 卡即为先例），无需担心启动崩溃。
-///   - 三段加法伤害（14 + MissingHp×20% + 敌MaxHp×5%）不适合 CalculatedDamageVar 的 base×倍率模型，
-///     故 OnPlay 里逐敌用 DamageCmd 手动结算（ValueProp.Move 自动吃力量加成）。
+///   - 机制卡归属**原版 TokenCardPool**（[Pool(typeof(TokenCardPool))]，与原版 Soul/Shiv 同池）：
+///       ① BaseLib CustomCardModel 构造时（autoAdd 默认 true）强制要求 PoolAttribute，缺失启动即崩；
+///       ② 游戏 CardModel.Pool 找不到所属池会抛 InvalidProgramException（手牌渲染必触达）；
+///       ③ Token 池不是奖励/商店/战斗内生成的取数源，Token 稀有度也不会被稀有度掷骰选中 → 不入掉落。
+///     （曾误判「卡牌不像遗物那样强制 PoolAttribute」——原生 Token 卡不经过 BaseLib 注册，由
+///       TokenCardPool.GenerateAllCards 显式列出，自定义卡必须通过 [Pool] 注入，见 log/TODO。）
+///   - 伤害用 **CalculatedDamageVar**（原版 BodySlam/PerfectedStrike 写法）：
+///       公式 = CalculationBase(14→20) + ExtraDamage(25→35) × multiplier（已损失生命/100），
+///       卡面伤害数字/描述 {CalculatedDamage:diff()} 实时显示含动态加成的总伤（指向敌人时刷新），
+///       且与 OnPlay 结算同源，不会出现「显示与实打不一致」。
+///   - 全体一致的伤害 → 一次性 AoE（TargetingAllOpponents，原版 Sow/CrashLanding 写法，
+///     一次攻击动画、全体同时结算）。
 /// </summary>
+[Pool(typeof(TokenCardPool))]
 public class ConquerAllLands : CustomCardModel
 {
     public ConquerAllLands() : base(
-        cost: 0,
-        type: CardType.Attack,
-        rarity: CardRarity.Token,       // Token = 生成卡稀有度，不入掉落池（参考原生 Soul/灵魂）
-        target: TargetType.AllEnemies)
+        0,
+        CardType.Attack,
+        CardRarity.Token,       // Token = 生成卡稀有度，不入掉落池（参考原生 Soul/灵魂）
+        TargetType.AllEnemies)
     {
     }
 
@@ -35,11 +45,17 @@ public class ConquerAllLands : CustomCardModel
     public override string CustomPortraitPath => $"{Id.Entry.RemovePrefix().ToLowerInvariant()}.png".BigCardImagePath();
     public override string PortraitPath => $"{Id.Entry.RemovePrefix().ToLowerInvariant()}.png".CardImagePath();
 
-    // 数值（真相源）：基础伤害 14→20；已损失生命百分比 20→30（IntVar 存整数，运算时 /100）
+    // 数值（真相源）：基础 14→20（CalculationBase）+ 已损失生命百分比 25→35（ExtraDamage，单位 %）。
+    // CalculatedDamageVar 公式 = CalculationBase + ExtraDamage × multiplier（已损失生命/100）——
+    // 卡面预览（UpdateCardPreview）与实际结算（AttackCommand.Execute 内 Calculate(null)）共用此公式。
+    // multiplier 必须是静态 lambda（WithMultiplier 运行时强制），经 card 参数读当前 Creature 状态；
+    // 战斗外 Owner.Creature 为 null → 返回 0（卡面只显示基础值）。
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(14, ValueProp.Move).WithUpgrade(20),
-        new IntVar("MissingHpPct", 20).WithUpgrade(30),
+        new CalculationBaseVar(14m).WithUpgradeTo(20),
+        new ExtraDamageVar(25m).WithUpgradeTo(35),
+        new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, _) =>
+            card.Owner.Creature == null ? 0m : (card.Owner.Creature.MaxHp - card.Owner.Creature.CurrentHp) / 100m),
     ];
 
     // 词条：保留（留手）+ 消耗（打出后消失，防囤积）
@@ -59,33 +75,22 @@ public class ConquerAllLands : CustomCardModel
             MainFile.Logger.Error("[荡平万邦] CombatState 为空，无法取敌方列表，效果未触发");
             return;
         }
-
-        decimal baseDmg = DynamicVars.Damage.BaseValue;                   // 14 / 20
-        decimal missingPct = DynamicVars["MissingHpPct"].IntValue / 100m; // 0.20 / 0.30
-        const decimal enemyMaxPct = 0.05m;                                 // 敌方最大生命 5%（固定，不随升级变）
-        decimal missingHp = creature.MaxHp - creature.CurrentHp;          // 已损失生命
-        // 对所有敌人相同的基础 + MissingHp 部分
-        decimal fixedPart = baseDmg + missingHp * missingPct;
-
-        var enemies = CombatState.HittableEnemies.ToList();
-        if (enemies.Count == 0)
+        if (!CombatState.HittableEnemies.Any())
         {
             MainFile.Logger.Warn("[荡平万邦] 没有可命中的敌人，伤害落空");
             return;
         }
 
-        // 逐敌结算：每个敌人额外加「其最大生命 5%」（因敌而异，故逐个打）
-        foreach (var enemy in enemies)
-        {
-            decimal total = fixedPart + enemy.MaxHp * enemyMaxPct;
-            // ValueProp.Move → 受力量加成（走 Hook.ModifyDamage）；FromCard 关联本牌用于战斗记录/VFX
-            await DamageCmd.Attack(total)
-                .FromCard(this)
-                .Targeting(enemy)
-                .WithValueProp(ValueProp.Move)
-                .Execute(choiceContext);
-        }
+        // 一次性全体攻击：DamageCmd.Attack(CalculatedDamageVar) → 执行时以 Calculate(null) 取值，
+        // 与卡面预览显示的总伤同源。TargetingAllOpponents = 原版 AoE（一次攻击动画、全体同时结算）。
+        // Props = Move（构造 CalculatedDamageVar 时声明）→ 受力量/血仇等伤害加成。
+        await DamageCmd.Attack(DynamicVars.CalculatedDamage)
+            .FromCard(this, cardPlay)
+            .TargetingAllOpponents(CombatState)
+            .WithHitFx("vfx/vfx_attack_slash")
+            .Execute(choiceContext);
 
-        MainFile.Logger.Info($"[荡平万邦] 打出：基础 {baseDmg} + 已损失生命 {missingHp}×{missingPct} = {fixedPart}（每敌再 + 其MaxHp×{enemyMaxPct}），命中 {enemies.Count} 个敌人");
+        MainFile.Logger.Info($"[荡平万邦] 打出：对全体造成 {DynamicVars.CalculatedDamage.Calculate(null)} 伤" +
+            $"（基础 {DynamicVars.CalculationBase.BaseValue} + 已损失生命 {creature.MaxHp - creature.CurrentHp}×{DynamicVars.ExtraDamage.BaseValue}%）");
     }
 }
