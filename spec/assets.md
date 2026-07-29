@@ -1,0 +1,131 @@
+# 图片资源注册规范
+
+> ⚠️ **`*.png` 和 `*.import` 被 `.gitignore` 忽略——图片不入版本控制，每个开发者本地维护。**
+> 新机器 clone 后需要自行创建 `images/` 目录 + 占位图，否则游戏内显示空白。
+
+## 核心逻辑：类名 → 路径
+
+所有图片路径由代码自动生成，**你不需要手动注册图片**——只需把 PNG 放到正确的目录、用正确的文件名。
+
+```
+类名 PascalCase → Id.Entry.RemovePrefix().ToLowerInvariant() → 文件名
+例：BloodRite → "WandiMod:BloodRite" → RemovePrefix → "BloodRite" → ToLowerInvariant → "bloodrite"
+→ 文件名 = bloodrite.png（全小写，无下划线，无分隔符）
+```
+
+> **注意**：是类名直接小写（`bloodrite.png`），**不是** snake_case（`blood_rite.png`）。
+
+## 目录结构
+
+```
+WandiMod/WandiMod/images/          ← 磁盘根目录（= Godot res://WandiMod/images/）
+├── card_portraits/
+│   ├── big/           ← 卡牌大图（必须，1000×760）
+│   │   ├── card.png             （占位回退图）
+│   │   └── bloodrite.png        （BloodRite 的大图）
+│   ├── bloodrite.png            （卡牌小图，可选 250×190，不放则游戏自动缩放大图）
+│   ├── card.png                 （占位回退图）
+│   └── beta/
+│       └── bloodrite.png        （Beta 美术，可选）
+├── powers/
+│   ├── big/           ← 能力大图（可选）
+│   │   ├── power.png
+│   │   └── vengeancepower.png
+│   ├── vengeancepower.png       ← Power 图标
+│   └── power.png                （占位回退图）
+├── relics/
+│   ├── big/           ← 遗物大图（可选）
+│   │   ├── relic.png
+│   │   └── bloodofthekinslayer.png
+│   ├── bloodofthekinslayer.png           ← 遗物图标
+│   ├── bloodofthekinslayer_outline.png   ← 遗物轮廓（必须配套）
+│   ├── relic.png                          （占位回退）
+│   └── relic_outline.png                  （占位回退）
+└── charui/            ← 角色界面（图标/选择/能量等）
+    ├── character_icon_wandi.png
+    ├── char_select_wandi.png
+    └── ...
+```
+
+## 各类型详解
+
+### 卡牌图片
+
+| 属性（WandiModCard 基类自动设置） | 目录 | 尺寸 | 必须？ |
+|---|---|---|---|
+| `CustomPortraitPath`（大图，卡牌详情/战斗） | `images/card_portraits/big/{name}.png` | 1000×760（或 500×380） | ✅ 必须 |
+| `PortraitPath`（小图，手牌/牌堆） | `images/card_portraits/{name}.png` | 250×190 | 可选（缺失则缩放大图） |
+| `BetaPortraitPath`（Beta 美术） | `images/card_portraits/beta/{name}.png` | 250×190 | 可选 |
+
+- 回退：找不到 → `card.png`（也找不到则空白）
+- **只需要放 big/ 下的一张大图就能用**
+
+### Power 图标
+
+| 属性（WandiModPower 基类自动设置） | 目录 | 尺寸 | 必须？ |
+|---|---|---|---|
+| `CustomPackedIconPath`（小图标，显示在角色身上） | `images/powers/{name}.png` | 64×64 或 84×84 | ✅ |
+| `CustomBigIconPath`（大图标，Power 列表/悬停） | `images/powers/big/{name}.png` | 128×128 | 可选 |
+
+- 回退：找不到 → `power.png`
+- `{name}` = Power 类名小写，如 `VengeancePower` → `vengeancepower.png`
+- **能力卡（Card）有卡牌图片（card_portraits），Power 类有 Power 图标（powers）——两套不同的图片**
+
+### 遗物图标
+
+| 属性（WandiModRelic 基类自动设置） | 目录 | 尺寸 | 必须？ |
+|---|---|---|---|
+| `PackedIconPath`（小图标，遗物栏） | `images/relics/{name}.png` | 128×128 | ✅ |
+| `PackedIconOutlinePath`（轮廓） | `images/relics/{name}_outline.png` | 128×128 | ✅ |
+| `BigIconPath`（大图标，遗物详情） | `images/relics/big/{name}.png` | 256×256 | 可选 |
+
+- 回退：找不到 → `relic.png` / `relic_outline.png`
+- **图标和轮廓必须成对**（`xxx.png` + `xxx_outline.png`）
+
+### 角色界面
+
+在 `WandiMod.cs` 中手动覆写路径（不走 RemovePrefix 机制，直接写字符串）：
+
+| 属性 | 目录 | 文件名（硬编码在 WandiMod.cs） |
+|---|---|---|
+| `CustomIconTexturePath` | `images/charui/` | `character_icon_wandi.png` |
+| `CustomCharacterSelectIconPath` | | `char_select_wandi.png` |
+| `CustomCharacterSelectLockedIconPath` | | `char_select_wandi_locked.png` |
+| `CustomMapMarkerPath` | | `map_marker_wandi.png` |
+
+- `CharacterUiPath()` **没有回退机制**——文件缺失直接空白
+
+## 回退链（StringExtensions.cs）
+
+```csharp
+// 以卡牌为例（其他类型同理）
+path = "res://WandiMod/images/card_portraits/big/bloodrite.png";
+if (ResourceLoader.Exists(path)) return path;       // ✅ 找到 → 用自定义图
+MainFile.Logger.Info("Could not find...");          // ⚠️ 日志记录
+return "res://WandiMod/images/card_portraits/big/card.png";  // 回退到占位图
+// 占位图也找不到 → ResourceLoader 返回 null → 游戏显示空白
+```
+
+## Build vs Publish
+
+| 操作 | 图片生效？ |
+|---|---|
+| Build（锤子） | ❌ 只编译 .dll，不打包图片 |
+| **Publish** | ✅ MegaDot headless 打包所有资源（含图片）到 .pck |
+
+**加新图后必须 Publish**，否则游戏看不到图片。
+
+## 快速操作：给一张新卡加图片
+
+1. 画一张 1000×760 的 PNG（或 500×380 也行，会放大）
+2. 命名 = 类名全小写，如 `BloodRite` → `bloodrite.png`
+3. 放到 `WandiMod/WandiMod/images/card_portraits/big/`
+4. Publish
+5. 完成——不需要改任何代码
+
+## 排查
+
+- **日志里出现 `Could not find card image path: ...`** → 文件名或路径不对，检查是否全小写、是否在 `big/` 目录
+- **游戏内显示空白** → 占位图（card.png）也不存在，需要创建占位图或正确图片
+- **Publish 后仍然看不到** → 确认图片在 `WandiMod/WandiMod/images/` 下（不是 `WandiMod/images/`）
+- **新机器 clone 后没有 images 目录** → 正常（png 被 gitignore），需要手动创建目录结构 + 占位图
