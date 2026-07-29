@@ -12,6 +12,8 @@ Do not try to `dotnet build` the templates in place — they reference `sts2.dll
 
 仓库根的 `WandiMod/` 是一个独立的角色 mod 工程（基于 CharacterModTemplate 实例化），与板分发并存。**在 `WandiMod/` 下做任何开发前，必须先读取 [`spec/`](spec/) 目录下的全部 md**——那里记录了已确立的开发约束（中文注释 / 日志规范、血仇与纷争机制、关键词高亮、卡牌 / 遗物开发模式、构建与 API 参考）。`spec/README.md` 是索引。违反一些约束会导致编译错误或游戏启动崩溃。
 
+**开发记录规范**：每次开发完毕后，**必须更新 [`log/TODO.md`](log/TODO.md)（待办）并在 [`log/YYYY/MM/DD/dev-log.md`](log/) 写当天记录**（做了什么 + commit hash）。下次开发前先读 `log/TODO.md` 和最近一次 dev-log，优先处理 TODO。规范详见 [`log/README.md`](log/README.md)。
+
 ## Commands
 
 - `dotnet pack` (run in repo root) — produces the `Alchyr.Sts2.Templates.<version>.nupkg` template package.

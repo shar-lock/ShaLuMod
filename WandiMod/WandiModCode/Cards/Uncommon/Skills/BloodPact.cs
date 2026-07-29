@@ -43,8 +43,8 @@ public class BloodPact : WandiModCard
         }
 
         // 失去「手牌数」点生命（动态结算：手牌越多越痛）
-        // TODO: 运行时确认 Owner.Player.Hand.Cards 的读取 API（数量 / 是否包含本张正在打出的牌）
-        int handCount = Owner.Player.Hand.Cards.Count();
+        // PileType.Hand.GetPile(Owner).Cards.Count——参考原生 Anointed
+        int handCount = PileType.Hand.GetPile(Owner).Cards.Count;
         if (handCount > 0)
         {
             // Unblockable|Unpowered|Move：全额计入失血，不走格挡/不吃力量，触发血仇自动 +1

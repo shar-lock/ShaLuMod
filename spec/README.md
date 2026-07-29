@@ -16,6 +16,12 @@
 | [build-reference.md](build-reference.md) | 构建约束 + API / 数据参考路径 |
 | [assets.md](assets.md) | 图片资源注册（卡牌/Power/遗物/角色界面的路径、命名、尺寸、回退、Publish） |
 
+## 开发记录
+
+开发进度和待办在 [`log/`](../log/) 目录，按 `YYYY/MM/DD/dev-log.md` 归档：
+- [`log/TODO.md`](../log/TODO.md) — 始终最新的待办（运行时确认/未完成项）
+- [`log/README.md`](../log/README.md) — 记录规范（开发前读 TODO，开发后写 dev-log + 更新 TODO）
+
 ## 快速定位
 
 | 要找 | 去哪 |

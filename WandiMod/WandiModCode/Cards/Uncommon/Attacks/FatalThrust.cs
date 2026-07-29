@@ -4,9 +4,9 @@ using MegaCrit.Sts2.Core.Commands;                  // PowerCmd
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;   // PlayerChoiceContext
 using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / CardRarity / TargetType / CardKeyword
 using MegaCrit.Sts2.Core.Localization.DynamicVars;  // DamageVar / IntVar
-using MegaCrit.Sts2.Core.Models.Powers;             // StrengthPower（原生力量）
 using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
 using WandiMod.WandiModCode.Character;              // WandiModCard
+using WandiMod.WandiModCode.Powers;                 // FatalThrustPower（临时降力量）
 
 namespace WandiMod.WandiModCode.Cards;
 
@@ -14,11 +14,7 @@ namespace WandiMod.WandiModCode.Cards;
 /// 致命突刺 / Fatal Thrust（罕见 · 攻击 · 消耗 · 保留）
 /// 造成 14 伤害；降低目标 6 点力量（1 回合）。升级：降 8 点力量。
 /// —— 保留（Retain）让本牌可攒在手，等敌方爆发回合再打出破甲；消耗保证一次性（不可反复刷新）。
-///
-/// TODO: 「1 回合」临时降低力量机制运行时确认——目前用 PowerCmd.Apply 负层数 StrengthPower 实现。
-///   原生 StrengthPower 是 Buff 且层数持久（参考 Bloodthirst 的正向施加），这里的 -6 力量会持续到
-///   战斗结束而非 1 回合。需确认游戏是否有 LoseStrengthPower / 临时 duration 钩子（原生 StS 的
-///   LoseStrengthPower/ShrinkPower-power 等），确认后改为临时降低版本。
+/// 临时降力量走 FatalThrustPower : TemporaryStrengthPower（参考原生 PiercingWail/尖啸）。
 /// </summary>
 public class FatalThrust : WandiModCard
 {
@@ -49,10 +45,11 @@ public class FatalThrust : WandiModCard
         // ① 标准攻击（DamageVar 走 CommonActions.CardAttack，自动吃力量/血仇放大）
         await CommonActions.CardAttack(this, cardPlay).Execute(choiceContext);
 
-        // ② 降低目标力量（负层数 StrengthPower = 减力量；TODO: 永久 vs 1 回合待确认）
+        // ② 临时降低目标力量（1 回合）—— FatalThrustPower : TemporaryStrengthPower
+        //    传正数 loss；TemporaryStrengthPower 内部用 Sign=-1 转为负 StrengthPower，回合结束自动恢复
         int loss = DynamicVars["StrengthLoss"].IntValue;
-        await PowerCmd.Apply<StrengthPower>(choiceContext, cardPlay.Target, -loss, Owner.Creature, this);
+        await PowerCmd.Apply<FatalThrustPower>(choiceContext, cardPlay.Target, loss, Owner.Creature, this);
 
-        MainFile.Logger.Info($"[致命突刺] 打出 {DynamicVars.Damage.BaseValue} 伤，降低目标 {loss} 力量（临时降低机制 TODO）");
+        MainFile.Logger.Info($"[致命突刺] 打出 {DynamicVars.Damage.BaseValue} 伤，临时降低目标 {loss} 力量（1 回合）");
     }
 }
