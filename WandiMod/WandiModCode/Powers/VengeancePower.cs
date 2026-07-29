@@ -5,6 +5,8 @@ using MegaCrit.Sts2.Core.Entities.Powers;           // PowerType / PowerStackTyp
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;   // PlayerChoiceContext / DamageResult
 using MegaCrit.Sts2.Core.Models;                    // PowerModel（M2.3 钩子参数用）
 using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
+using WandiMod.WandiModCode.Cards;                  // ConquerAllLands（7 层触发生成荡平万邦）
+using WandiMod.WandiModCode.Relics;                 // UndyingRoyalBlood（觉醒判定）
 
 namespace WandiMod.WandiModCode.Powers;
 
@@ -14,7 +16,7 @@ namespace WandiMod.WandiModCode.Powers;
 ///   1. 失血叠层：每当万敌失去生命（自伤或受击）→ +1 层（钩子 AfterDamageReceived，参考原生 RupturePower）。
 ///   2. 伤害放大：每层血仇使万敌的攻击牌伤害 +2%（钩子 ModifyDamageMultiplicative，参考原生 WeakPower）。
 /// 由起手遗物「弑亲血脉」在战斗开始时赋予（BeforeCombatStart）。
-/// （M2.3 将在此 Power 上加「血仇 ≥ 7 → 消耗 7 层、扣 5% 当前血、生成荡平万邦」的触发。）
+///   3. 满 7 触发：血仇 ≥ 7 时消耗 7 层、扣 5% 当前血、生成「荡平万邦」到手牌（钩子 AfterPowerAmountChanged）。
 /// </summary>
 public class VengeancePower : WandiModPower
 {
@@ -85,5 +87,42 @@ public class VengeancePower : WandiModPower
 
         // 每层 +2%，例如 5 层 → ×1.10
         return 1m + 0.02m * Amount;
+    }
+
+    /// <summary>
+    /// 满 7 触发荡平万邦：血仇 ≥ 7 时消耗 7 层、扣当前血 5%（至少 1）、生成「荡平万邦」到手牌。
+    /// 钩子 AfterPowerAmountChanged 在任意 Power 层数变化时分发到所有监听者，故需过滤「本 Power + 正向变化」。
+    /// 参考 OutbreakPower.AfterPowerAmountChanged。
+    /// </summary>
+    public override async Task AfterPowerAmountChanged(
+        PlayerChoiceContext choiceContext,
+        PowerModel power,
+        decimal amount,
+        Creature? applier,
+        CardModel? cardSource)
+    {
+        // 只关心本血仇 Power 的正向变化：消耗层（amount < 0）会被过滤，避免「消耗→触发→消耗」递归
+        if (power != this || amount <= 0)
+            return;
+        // 未达 7 不触发
+        if (Amount < 7)
+            return;
+
+        // ① 消耗 7 层（PowerCmd.Apply 负值；Counter 型累减）
+        await PowerCmd.Apply<VengeancePower>(choiceContext, Owner, -7, Owner, null);
+
+        // ② 扣当前血 5%（至少 1）。Unblockable|Unpowered → 全额计入失血、不吃力量；
+        //    会触发上面的 AfterDamageReceived 再 +1 层（设计内的副反馈，不会无限循环：消耗 7 后远低于阈值）
+        decimal loss = Math.Max(1m, Owner.CurrentHp * 0.05m);
+        await CreatureCmd.Damage(choiceContext, Owner, loss,
+            ValueProp.Unblockable | ValueProp.Unpowered | ValueProp.Move, null, null);
+
+        // ③ 生成荡平万邦到手牌。觉醒遗物「不灭王血」在场时应给升级版（升级 API 待运行时确认，目前先给基础版）
+        bool awakened = Owner.Player?.GetRelic<UndyingRoyalBlood>() != null;
+        CardModel card = ModelDb.Card<ConquerAllLands>();
+        // TODO: 觉醒时取升级版卡牌——确认 API（ToUpgraded()? MakeUpgraded()? CardCmd.Upgrade?）后补
+        await CardPileCmd.AddGeneratedCardToCombat(card, PileType.Hand, Owner.Player);
+
+        MainFile.Logger.Info($"[血仇] ≥7 触发荡平万邦：消耗 7 层，扣血 {loss}，生成荡平万邦到手牌（觉醒={awakened}）");
     }
 }

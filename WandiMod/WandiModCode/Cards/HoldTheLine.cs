@@ -8,7 +8,7 @@ namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
 /// 御敌 / Hold the Line（起手 · 技能，原「防御」位）
-/// 获得 5 点【纷争】。升级：8 点。
+/// 获得 4 点【纷争】。升级：6 点。
 /// —— 万敌没有格挡：他抬临时生命上限硬扛伤害（机制详见 StrifePower）。
 /// </summary>
 public class HoldTheLine : WandiModCard

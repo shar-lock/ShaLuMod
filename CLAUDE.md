@@ -8,6 +8,10 @@ This repo distributes **`dotnet new` templates** for Slay the Spire 2 mods. It i
 
 Do not try to `dotnet build` the templates in place — they reference `sts2.dll` / `0Harmony.dll` from a local Slay the Spire 2 install and will only compile once instantiated by `dotnet new` on a developer's machine.
 
+## WandiMod 开发（万敌角色 mod）— 必读
+
+仓库根的 `WandiMod/` 是一个独立的角色 mod 工程（基于 CharacterModTemplate 实例化），与板分发并存。**在 `WandiMod/` 下做任何开发前，必须先读取 [`spec/`](spec/) 目录下的全部 md**——那里记录了已确立的开发约束（中文注释 / 日志规范、血仇与纷争机制、关键词高亮、卡牌 / 遗物开发模式、构建与 API 参考）。`spec/README.md` 是索引。违反一些约束会导致编译错误或游戏启动崩溃。
+
 ## Commands
 
 - `dotnet pack` (run in repo root) — produces the `Alchyr.Sts2.Templates.<version>.nupkg` template package.
@@ -31,15 +35,16 @@ The three templates are near-identical in structure; the content/character varia
 
 Each template uses `sourceName` for whole-word renaming when instantiated:
 
-| Template | `sourceName` | Becomes |
-|---|---|---|
-| ModTemplate | `ModTemplate` | user's project name |
-| ContentModTemplate | `ContentMod` | user's project name |
-| CharacterModTemplate | `CharMod` | user's project name |
+| Template             | `sourceName`  | Becomes             |
+| -------------------- | --------------- | ------------------- |
+| ModTemplate          | `ModTemplate` | user's project name |
+| ContentModTemplate   | `ContentMod`  | user's project name |
+| CharacterModTemplate | `CharMod`     | user's project name |
 
 When editing files under `content/`, every occurrence of the `sourceName` (in namespaces, class names, folder names, file names, `.json` manifest `id`, the `ModId` constant in `MainFile.cs`, etc.) will be substituted at instantiation time. Keep this consistent — do not introduce hardcoded references to one template's name inside a different template, and do not break the `Id.Entry.RemovePrefix()` convention (the sourceName is used as the prefix stripped to derive asset filenames).
 
 Symbols declared in `template.json` and their replacement tokens:
+
 - `{ModAuthor}` — required parameter, replaces into manifest `author`.
 - `{PublicizeSts}` — bool, replaces into the csproj `<ItemGroup Condition="{PublicizeSts}">` controlling `Krafs.Publicizer`.
 - `{NullableChecks}` — `enable`/`disable`, replaces into `<Nullable>`.
@@ -57,6 +62,7 @@ The build pipeline lives entirely inside each template's `.csproj` + `Sts2PathDi
 7. **`GodotPublish` target**: on `Publish`, runs MegaDot headless (`--headless --export-pack "BasicExport"`) to produce the `.pck` containing assets/localization, then copies it to the mods folder. Requires `<GodotPath>` in `Directory.Build.props` to point at `MegaDot_v4.5.1-stable_mono_win64.exe` (or equivalent). The Godot version must not be newer than what shipped with the game, or the `.pck` won't load.
 
 Two asset conventions matter when editing template code:
+
 - Images live under `<ModName>/images/{card_portraits,powers,relics,charui}/` with optional `big/` siblings. The `StringExtensions.cs` in each template (`ImagePath`, `CardImagePath`, `BigCardImagePath`, `PowerImagePath`, `RelicImagePath`, `CharacterUiPath`, etc.) builds `res://<ModId>/images/...` paths and **falls back to a placeholder** (`card.png`, `power.png`, `relic.png`) when the named file is missing — so partial assets still work.
 - Localization lives in `<ModName>/localization/eng/*.json` (`cards`, `relics`, `powers`, `ancients`, `characters`, `card_keywords`, `static_hover_tips`). Empty arrays are valid. The analyzer surfaces "Generate localization" code-fixes for new model classes.
 
@@ -75,7 +81,8 @@ Fields: `id` (do not change — drives file loading), `name`, `author`, `descrip
 ## Reference: wiki pointers
 
 When a task is about *using* these templates (rather than editing them), defer to `ModTemplate-StS2.wiki/`:
+
 - `Setup.md` — full end-user setup, including the `Put solution and project in same directory` Rider requirement and the Godot path troubleshooting.
 - `Common-Commands-Cookbook.md` — canonical patterns for `CanonicalVars`, `DynamicVars`, and the `*Cmd` builders (`DamageCmd`, `PowerCmd`, `CardCmd`, `CardPileCmd`, `CardSelectCmd`). Use this when implementing model behavior.
 - `Modding-Basics.md` — manifest fields, mod file layout, where files go, branch/version policy.
-- `Testing-and-Debugging.md` — dev console (open with any of `` ~ `` `` ` `` `*` `'` `Shift+8`), log locations (`%appdata%/SlayTheSpire2/logs/godot.log` on Windows), multiplayer local testing (`steam_appid.txt` containing `2868840`, `-fastmp host_standard` / `-fastmp join`), attaching Rider/VS debugger.
+- `Testing-and-Debugging.md` — dev console (open with any of ``~`` `` ` `` `*` `'` `Shift+8`), log locations (`%appdata%/SlayTheSpire2/logs/godot.log` on Windows), multiplayer local testing (`steam_appid.txt` containing `2868840`, `-fastmp host_standard` / `-fastmp join`), attaching Rider/VS debugger.
