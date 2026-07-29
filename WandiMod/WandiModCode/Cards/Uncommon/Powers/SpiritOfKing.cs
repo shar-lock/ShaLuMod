@@ -1,0 +1,46 @@
+using BaseLib.Extensions;                           // WithUpgrade
+using MegaCrit.Sts2.Core.Commands;                 // PowerCmd
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;   // PlayerChoiceContext
+using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / CardRarity / TargetType / CardKeyword
+using MegaCrit.Sts2.Core.Localization.DynamicVars;  // IntVar
+using WandiMod.WandiModCode.Powers;                 // SpiritOfKingPower
+
+namespace WandiMod.WandiModCode.Cards;
+
+/// <summary>
+/// 王之意志 / Spirit of King（罕见 · 能力 · 固有）
+/// [荡平万邦]的伤害额外提高 20%。升级：25%。
+/// —— 放大终结技（荡平万邦由血仇≥7 生成），固有保证起手可铺。
+/// 百分比随升级态传入 Power 的 Amount（20→25），由 SpiritOfKingPower.ModifyDamageMultiplicative 读取。
+/// </summary>
+public class SpiritOfKing : WandiModCard
+{
+    public SpiritOfKing() : base(
+        cost: 1,
+        type: CardType.Power,
+        rarity: CardRarity.Uncommon,
+        target: TargetType.Self)
+    {
+    }
+
+    protected override IEnumerable<DynamicVar> CanonicalVars =>
+    [
+        new IntVar("BonusPct", 20).WithUpgrade(25),  // 荡平万邦伤害额外提升百分比
+    ];
+
+    // 固有：起手必摸到
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Innate];
+
+    protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+    {
+        if (Owner.Creature == null)
+        {
+            MainFile.Logger.Error("[王之意志] OnPlay 时 Owner.Creature 为空，能力未授予");
+            return;
+        }
+        // Amount = 伤害提升百分比（20/25），SpiritOfKingPower 据此返回 1 + Amount/100
+        int pct = DynamicVars["BonusPct"].IntValue;
+        await PowerCmd.Apply<SpiritOfKingPower>(choiceContext, Owner.Creature, pct, Owner.Creature, this);
+        MainFile.Logger.Info($"[王之意志] 授予王之意志：荡平万邦伤害 +{pct}%");
+    }
+}

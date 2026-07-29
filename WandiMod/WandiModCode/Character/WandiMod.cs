@@ -25,10 +25,10 @@ public class WandiMod : PlaceholderCharacterModel
         // 起手牌组（设计定稿）：4×打击（原版占位，M3 换万敌专属打击）+ 4×御敌 + 1×血祭之枪 + 1×残影。
         // TODO(M3)：打击位换万敌专属打击卡。
         public override IEnumerable<CardModel> StartingDeck => [
-            ModelDb.Card<StrikeIronclad>(),
-            ModelDb.Card<StrikeIronclad>(),
-            ModelDb.Card<StrikeIronclad>(),
-            ModelDb.Card<StrikeIronclad>(),
+            ModelDb.Card<Cards.Strike>(),
+            ModelDb.Card<Cards.Strike>(),
+            ModelDb.Card<Cards.Strike>(),
+            ModelDb.Card<Cards.Strike>(),
             ModelDb.Card<HoldTheLine>(),
             ModelDb.Card<HoldTheLine>(),
             ModelDb.Card<HoldTheLine>(),

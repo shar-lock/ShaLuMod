@@ -1,5 +1,18 @@
 # 卡牌开发
 
+## 目录结构
+卡牌按 `稀有度/类型/xxx.cs` 归档（namespace 统一 `WandiMod.WandiModCode.Cards`，与文件夹无关）：
+```
+Cards/
+├── Basic/{Attacks,Skills}/     起手牌
+├── Common/{Attacks,Skills}/    普通池
+├── Uncommon/{Attacks,Skills,Powers}/  罕见池（待开发）
+├── Rare/{Attacks,Skills,Powers}/      稀有池（待开发）
+├── Token/                      机制卡/生成卡（不入池）
+├── WandiModCard.cs             基类（留根）
+└── WandiModKeywords.cs         关键词定义（留根）
+```
+
 ## 基类与构造
 继承 `WandiModCard`（自带 `[Pool(WandiModCardPool)]` 自动入万敌卡池）。
 ```csharp
