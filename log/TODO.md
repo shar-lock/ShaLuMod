@@ -41,3 +41,4 @@
 | ~~14+ Power 类本地化~~ | ✅ 07/30 补齐 12 个新 Power（eng+zhs） |
 | 本机 images 目录缺失 | .gitignore 忽略 png |
 | FatalThrustPower STS003 | 继承原生 TemporaryStrengthPower 无 ID 前缀，警告容忍（显示走 OriginModel 卡牌） |
+| ~~血仇读层算伤卡的层数口径~~ | ✅ 已决定保留：狂怒/噬仇/暴风连击/噬魂/诛天焚骨仍读真实 Amount（不砍数值），隐藏的保底 1 层对这些伤害卡仍算数，作为兜底机制 |

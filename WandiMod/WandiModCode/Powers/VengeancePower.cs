@@ -1,10 +1,13 @@
+using HarmonyLib;                                   // Traverse / HarmonyPatch（显示补丁用）
 using MegaCrit.Sts2.Core.Commands;                 // PowerCmd（失血时给自己叠层）
 using MegaCrit.Sts2.Core.Entities.Cards;            // CardModel / CardPlay
 using MegaCrit.Sts2.Core.Entities.Creatures;        // Creature
 using MegaCrit.Sts2.Core.Entities.Powers;           // PowerType / PowerStackType
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;   // PlayerChoiceContext / DamageResult
 using MegaCrit.Sts2.Core.Models;                    // PowerModel（M2.3 钩子参数用）
+using MegaCrit.Sts2.Core.Nodes.Combat;              // NPower（显示补丁目标）
 using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
+using MegaCrit.Sts2.addons.mega_text;               // MegaLabel（清空数字标签）
 using WandiMod.WandiModCode.Cards;                  // ConquerAllLands（8 层触发生成荡平万邦）
 using WandiMod.WandiModCode.Relics;                 // UndyingRoyalBlood（觉醒判定）
 
@@ -14,22 +17,44 @@ namespace WandiMod.WandiModCode.Powers;
 /// 血仇（Vengeance）—— 万敌的核心计数型 Power（Buff + Counter）。
 /// 机制：
 ///   1. 失血叠层：每当万敌失去生命（自伤或受击）→ +1 层（钩子 AfterDamageReceived，参考原生 RupturePower）。
-///   2. 伤害放大：每层血仇使万敌的攻击牌伤害 +2%（钩子 ModifyDamageMultiplicative，参考原生 WeakPower）。
-/// 由起手遗物「弑亲血脉」在战斗开始时赋予（BeforeCombatStart）。
-///   3. 满 8 触发：血仇 ≥ 8 时消耗至保底 1 层、扣 5% 当前血、生成「荡平万邦」到手牌（钩子 AfterPowerAmountChanged）。
-///      保底 1 层的原因：层数归零会被游戏自动移除能力（PowerModel.ShouldRemoveDueToAmount），
-///      能力移除后「掉血叠层」钩子随之失效，血仇将永远无法再叠加；保底 1 层绕开该机制，稳态仍是每 7 次失血触发一轮。
+///   2. 伤害放大：每层【有效】血仇使万敌的攻击牌伤害 +2%（钩子 ModifyDamageMultiplicative，参考原生 WeakPower）。
+///      「有效层数 = 真实层数 - 1」——保底那 1 层是结构性储备（维持 Power 存活），不提供任何增伤。
+///      由起手遗物「弑亲血脉」在战斗开始时赋予（BeforeCombatStart，初始 1 层 = 0 有效层）。
+///   3. 成长型触发：血仇累积到「上次基准 + 7」时消耗 4 层、扣 5% 当前血、生成「荡平万邦」到手牌（钩子 AfterPowerAmountChanged）。
+///      消耗 4 &lt; 累积 7 → 净留 +3，触发基准逐次抬高（触发点 8→11→14...，消耗后 4→7→10...），血仇**逐轮成长**而非重置——
+///      给「血仇叠层流」提供真正的局内数值成长（战斗越久、血仇越高、增伤越强）。
+///      不会归零：触发留 ≥4 层；消耗卡（复仇心/涅槃）由 IsPlayable 门控保底 ≥1 层。故 Amount 始终 ≥1，
+///      不会触发 PowerModel.ShouldRemoveDueToAmount 自动移除（能力移除会让掉血叠层钩子失效，血仇永远无法再叠加）。
+///
+/// 玩家可见模型（与真实 Amount 的换算）：
+///   - 状态栏显示数字 = 真实层数 - 1（override DisplayAmount）。
+///   - 1 层（保底）→ 显示为空（不展示数字），且 0% 增伤——「1 层血仇不触发任何效果」。
+///   - 8 层触发荡平万邦时，玩家看到的是「7 层」触发（显示值=真实值-1）。
+///   - 显示为空需 Harmony 补丁（VengeancePowerDisplayPatch）：原生 Counter 型 Power 在 DisplayAmount=0 时会显示 "0"。
 /// </summary>
 public class VengeancePower : WandiModPower
 {
-    /// <summary>触发阈值：血仇达到 8 层时触发荡平万邦。</summary>
-    private const int TriggerThreshold = 8;
-    /// <summary>触发后保底保留层数（不可为 0，见类注释）。</summary>
-    private const int FloorAfterTrigger = 1;
+    /// <summary>每次触发需新累积的层数（基准线 +7 才触发）。</summary>
+    private const int GainPerTrigger = 7;
+    /// <summary>每次触发固定消耗的层数（不清空；消耗 4 &lt; 累积 7 → 净留 +3，血仇逐轮成长）。</summary>
+    private const int ConsumeOnTrigger = 4;
+
+    /// <summary>
+    /// 成长型触发基准线：上次触发「消耗后」的血仇值。下次触发条件 = 基准 + GainPerTrigger。
+    /// 初始 1（= 开局血仇）→ 首次触发在 8 层；每次触发后基准抬高 → 触发点 8→11→14...，血仇净成长 +3/轮。
+    /// 战斗实例字段（每战 Power 重建即重置为 1）；AfterPowerAmountChanged 只在层数变化时触发、存档恢复不触发，重载不会误触发。
+    /// </summary>
+    private int _lastTriggerBase = 1;
 
     // 增益型、计数叠加型 Power
     public override PowerType Type => PowerType.Buff;
     public override PowerStackType StackType => PowerStackType.Counter;
+
+    /// <summary>
+    /// 状态栏显示数字 = 真实层数 - 1。保底 1 层（真实）对应显示值 0（= 不展示数字，见 VengeancePowerDisplayPatch）。
+    /// 例：真实 1→显示 0、真实 2→显示 1、真实 8→显示 7（触发荡平万邦时玩家看到的「7 层」）。
+    /// </summary>
+    public override int DisplayAmount => Math.Max(0, Amount - 1);
 
     /// <summary>
     /// 授予血仇（卡牌调用的统一入口）：叠 Counter 层数。
@@ -92,12 +117,14 @@ public class VengeancePower : WandiModPower
         if (dealer != Owner || !props.IsPoweredAttack())
             return 1m;
 
-        // 每层 +2%，例如 5 层 → ×1.10
-        return 1m + 0.02m * Amount;
+        // 有效层数（真实-1）× 2%：真实 2 层（有效1）→×1.02、真实 8 层（有效7）→×1.14；保底 1 层=0 有效=无增伤
+        int effective = Math.Max(0, Amount - 1);
+        return 1m + 0.02m * effective;
     }
 
     /// <summary>
-    /// 满 8 触发荡平万邦：血仇 ≥ 8 时消耗至保底 1 层、扣当前血 5%（至少 1）、生成「荡平万邦」到手牌。
+    /// 成长型触发荡平万邦：血仇累积到「上次基准 + 7」时消耗 4 层（不清空）、扣当前血 5%（至少 1）、生成「荡平万邦」到手牌。
+    /// 触发基准随每次触发抬高（8→11→14...），血仇净成长 +3/轮——给血仇叠层流提供局内数值成长。
     /// 钩子 AfterPowerAmountChanged 在任意 Power 层数变化时分发到所有监听者，故需过滤「本 Power + 正向变化」。
     /// 参考 OutbreakPower.AfterPowerAmountChanged。
     /// </summary>
@@ -111,15 +138,16 @@ public class VengeancePower : WandiModPower
         // 只关心本血仇 Power 的正向变化：消耗层（amount < 0）会被过滤，避免「消耗→触发→消耗」递归
         if (power != this || amount <= 0)
             return;
-        // 未达 8 层不触发
-        if (Amount < TriggerThreshold)
+        // 成长型触发：累积到「上次基准 + 7」才触发。基准随每次触发抬高 → 触发点 8→11→14...，血仇逐轮成长。
+        if (Amount < _lastTriggerBase + GainPerTrigger)
             return;
 
-        // ① 消耗至保底 1 层（PowerCmd.Apply 负值；Counter 型累减）。
-        //    绝不能消耗到 0：层数 ≤0 时游戏自动移除本能力（ShouldRemoveDueToAmount），
-        //    能力移除后 AfterDamageReceived 掉血叠层钩子随之失效，血仇将永远无法再叠加。
-        int consume = Amount - FloorAfterTrigger;
+        // ① 固定消耗 4 层（PowerCmd.Apply 负值；Counter 型累减）。不清空——保留剩余层让血仇累积成长。
+        //    触发时 Amount ≥ 基准+7，消耗 4 后仍 ≥ 基准+3，远离 0；不会触发 ShouldRemoveDueToAmount 自动移除。
+        int consume = ConsumeOnTrigger;
         await PowerCmd.Apply<VengeancePower>(choiceContext, Owner, -consume, Owner, null);
+        // 更新触发基准为「消耗后的当前值」：下次需再累积 7 层（8→4→基准4→下次11；11→7→基准7→下次14...）。
+        _lastTriggerBase = Amount;
 
         // ② 扣当前血 5%（至少 1）。Unblockable|Unpowered → 全额计入失血、不吃力量；
         //    会触发上面的 AfterDamageReceived 再 +1 层（设计内的副反馈，不会无限循环：消耗后远低于阈值）
@@ -132,7 +160,7 @@ public class VengeancePower : WandiModPower
         //    访问 card.Owner 时触发 AssertMutable → CanonicalModelException（参考原版 Turbo 造 Void 写法）。
         if (CombatState == null || Owner.Player == null)
         {
-            MainFile.Logger.Error("[血仇] ≥8 触发时 CombatState/Owner.Player 为空，荡平万邦未生成（层数已消耗）");
+            MainFile.Logger.Error("[血仇] 成长触发时 CombatState/Owner.Player 为空，荡平万邦未生成（层数已消耗）");
             return;
         }
         CardModel card = CombatState.CreateCard<ConquerAllLands>(Owner.Player);
@@ -142,6 +170,29 @@ public class VengeancePower : WandiModPower
             CardCmd.Upgrade(card);
         await CardPileCmd.AddGeneratedCardToCombat(card, PileType.Hand, Owner.Player);
 
-        MainFile.Logger.Info($"[血仇] ≥8 触发荡平万邦：消耗 {consume} 层（保底 {FloorAfterTrigger} 层），扣血 {loss}，生成荡平万邦到手牌（觉醒={awakened}）");
+        MainFile.Logger.Info($"[血仇] 成长触发荡平万邦：消耗 {consume} 层，当前 {Amount} 层，下次触发基准 {_lastTriggerBase}（需累积到 {_lastTriggerBase + GainPerTrigger}），扣血 {loss}，生成荡平万邦（觉醒={awakened}）");
+    }
+}
+
+/// <summary>
+/// Harmony 补丁：血仇 Power 显示值 ≤ 0（即真实层数 = 1 保底）时，隐藏状态栏左下角的数字。
+/// 原生 NPower.RefreshAmount 对 Counter 型 Power 写死显示 DisplayAmount.ToString()——
+/// DisplayAmount = 0 时会显示 "0"。此处 Postfix 在 RefreshAmount 之后把血仇的标签清空，
+/// 实现「1 层不展示任何数字」。参考 BloodburnEmblemHealPatch（同款 Harmony Postfix 范式）。
+/// </summary>
+[HarmonyPatch(typeof(NPower), "RefreshAmount")]
+static class VengeancePowerDisplayPatch
+{
+    [HarmonyPostfix]
+    static void Postfix(NPower __instance)
+    {
+        var model = __instance.Model;
+        // 仅作用于血仇：显示值（真实层数 - 1）> 0 时照常显示数字，≤ 0 时清空
+        if (model is not VengeancePower || model.DisplayAmount > 0)
+            return;
+
+        // _amountLabel 是 NPower 的私有字段（MegaLabel），用 Traverse 取出后清空文字
+        var label = Traverse.Create(__instance).Field("_amountLabel").GetValue<MegaLabel>();
+        label?.SetTextAutoSize("");
     }
 }

@@ -37,7 +37,7 @@ public class BloodDrinkCounter : WandiModCard
         var creature = Owner.Creature;
         if (creature == null)
         {
-            MainFile.Logger.Error("[饮血反击] OnPlay 时 Owner.Creature 为空，吸���未触发");
+            MainFile.Logger.Error("[饮血反击] OnPlay 时 Owner.Creature 为空，吸血未触发");
             return;
         }
 

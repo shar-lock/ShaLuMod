@@ -12,7 +12,7 @@ namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
 /// 断筋 / Hamstring（普通 · 攻击）
-/// 造成 5 ���伤害，给予目标 1 层虚弱。升级：8 伤，2 层虚弱。
+/// 造成 5 点伤害，给予目标 1 层虚弱。升级：8 伤，2 层虚弱。
 /// —— 攻击+减益工具件，与穿心枪（罕见·目标有易伤+5）形成上下位配合。
 /// </summary>
 public class Hamstring : WandiModCard

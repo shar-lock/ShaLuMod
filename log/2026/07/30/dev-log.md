@@ -34,3 +34,37 @@
 - DeathDenialPower：免死既不消耗也不移除 → 打出即永久免死。补：免死触发后 Remove 自身；下一次我方回合开始过期移除（保护窗口=本回合剩余+敌方阶段）。
 
 **部署**：`dotnet publish` 已通过，dll+pck 已落地游戏。
+
+---
+
+### 血仇核心机制优化（2 项）
+
+**① 血仇消耗卡条件打出（GrandFinale 式）**
+- 固定血仇消耗卡只有 **复仇心 VengefulHeart**、**涅槃 Nirvana** 两张（声明 `new IntVar("BloodCost", N)`）。
+- 在 `WandiModCard` 基类统一接管（参考原生 PactsEnd/GrandFinale）：
+  - `IsPlayable`：血仇不足（消耗后跌破保底 1 层，即 `blood <= BloodCost`）→ 灰显不可打出（不会白花能量）；充足 → 可打出。
+  - `ShouldGlowGoldInternal`：血仇充足时金边高亮（仅战斗内，避免牌库误亮）。
+  - 条件 = `GetPowerAmount<VengeancePower>() > BloodCost`（留 1 层保底）。
+- 两张卡自身零改动（基类通过 `HasBloodCost` 自动识别 BloodCost 变量）。
+- 决策点：采用 GrandFinale 式（灰显不可打出）而非 PactsEnd 式（始终可打出+fizzle），因为血仇卡有 1-2 费，灰显更省心。
+
+**② 血仇 UI 显示 = 真实层数 - 1**
+- `VengeancePower.DisplayAmount => Max(0, Amount-1)`：1 层（保底）→ 显示 0、2 层→显示 1、8 层→显示 7。
+- `ModifyDamageMultiplicative` 改用有效层数（Amount-1）：1 层 = 0% 增伤（保底层无效果），与显示值一致。
+- 触发阈值不变（真实 8 层 = 显示 7 层触发荡平万邦，符合「7 层触发」）。
+- **1 层显示空白**：原生 NPower.RefreshAmount 对 Counter 型写死显示 `DisplayAmount.ToString()`（=0 时显示 "0"）。加 `VengeancePowerDisplayPatch`（Harmony Postfix on NPower.RefreshAmount），血仇显示值≤0 时清空标签 → 真正「不展示任何数字」。
+
+**读血仇层数算伤卡（已决定，不改）**：狂怒/噬仇/暴风连击/噬魂/诛天焚骨的王座仍读真实 Amount（不砍数值）。隐藏的保底 1 层对这些伤害卡仍算数——作为兜底机制保留（显示值 Amount-1 与它们结算用的真实 Amount 差 1，是有意为之）。
+
+---
+
+### 血仇触发机制：成长型（消耗 4 + 抬高基准线，非固定阈值）
+
+- **设计**：原本「满 8 清空到保底 1」（振荡，无成长）。改为**成长型**——每累积 7 层消耗 4 层（不清空），触发基准线逐次抬高 → 血仇逐轮成长 +3，越打越高增伤。
+- **成长循环**（玩家视角 / 真实层）：触发点 8→11→14...（视角 7→10→13...），消耗后留 4→7→10...（视角 3→6→9...），每次再累积 7 层（含 5% 自伤反馈 +1）。例：8 层触发 → 消耗 4 → 4 层 → 自伤反馈 +1 → 5 层；之后每次受击 +1，到 11 层再次触发 → 消耗 4 → 7 层 → 反馈 → 8 层；以此类推。
+- **代码**（`VengeancePower`）：删除固定 `TriggerThreshold`/`FloorAfterTrigger`，改为 `GainPerTrigger=7` + `ConsumeOnTrigger=4` + 战斗实例字段 `_lastTriggerBase=1`。触发条件 `Amount >= _lastTriggerBase + GainPerTrigger`；触发后 `_lastTriggerBase = Amount`（消耗后的值）。日志输出消耗/当前/下次基准。
+- **为何用实例字段而非 [SavedProperty]**：基准线是战斗内、每战重置的语义（新战 Power 重建 → 重置 1）；[SavedProperty] 偏 run 级、可能跨战残留。且 `AfterPowerAmountChanged` 只在层数变化时触发、存档恢复不触发，重载不会误触发。
+- **顺带修复**：`VengeancePower.cs` 第27行「能力」的「力」字是 GBK 污染的 3×U+FFFD，已用 Python 代码点级替换修复。
+- **安全性**：触发留 ≥ 基准+3（远高于 0）、消耗卡由 IsPlayable 门控保底 ≥1，Amount 始终 ≥1，不会触发 ShouldRemoveDueToAmount 自动移除。
+- **文档同步**：`spec/core-mechanics.md`（成长触发行 + 要点）、`doc/万敌Mod-设计方案.md` 4.3（成长循环 + 显示说明）。其余文档只提「血仇≥8 生成荡平万邦」（首触发阈值未变），无需改。
+
