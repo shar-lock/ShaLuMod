@@ -174,5 +174,13 @@
   "WANDIMOD-GODSLAYER_ASCENSION.title": "弑神登神",
   "WANDIMOD-GODSLAYER_ASCENSION.description": "回合开始+2 [gold]血仇[/gold]；攻击牌额外造成等同于[gold]血仇[/gold]层数的伤害；攻击造成伤害回复 2% 最大生命。",
   "WANDIMOD-BLOODRITE_REGICIDE.title": "血祭·诛王枪",
-  "WANDIMOD-BLOODRITE_REGICIDE.description": "造成 10 点伤害；获得 2 [gold]血仇[/gold]，并额外造成「已损失生命」20% 的伤害。"
+  "WANDIMOD-BLOODRITE_REGICIDE.description": "造成 10 点伤害；获得 2 [gold]血仇[/gold]，并额外造成「已损失生命」20% 的伤害。",
+  "WANDIMOD-LACERATE.title": "裂伤",
+  "WANDIMOD-LACERATE.description": "造成 {Damage:diff()} 点伤害，获得 {Strife:diff()} 点[gold]纷争[/gold]。",
+  "WANDIMOD-HAMSTRING.title": "断筋",
+  "WANDIMOD-HAMSTRING.description": "造成 {Damage:diff()} 点伤害，给予目标 {Weak:diff()} 层虚弱。",
+  "WANDIMOD-COAGULATE.title": "凝血",
+  "WANDIMOD-COAGULATE.description": "获得 {Strife:diff()} 点[gold]纷争[/gold]。",
+  "WANDIMOD-PREPARATIONS.title": "备战",
+  "WANDIMOD-PREPARATIONS.description": "获得 {Strife:diff()} 点[gold]纷争[/gold]，抽 {Draw:diff()} 张牌。"
 }

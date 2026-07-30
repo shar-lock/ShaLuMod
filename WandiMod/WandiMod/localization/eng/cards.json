@@ -174,5 +174,13 @@
   "WANDIMOD-GODSLAYER_ASCENSION.title": "Godslayer Ascension",
   "WANDIMOD-GODSLAYER_ASCENSION.description": "Turn start: +2 [gold]Vengeance[/gold]. Attacks deal extra damage = [gold]Vengeance[/gold] stacks. Attacking heals 2% Max HP.",
   "WANDIMOD-BLOODRITE_REGICIDE.title": "Bloodrite Regicide",
-  "WANDIMOD-BLOODRITE_REGICIDE.description": "Deal 10 damage. Gain 2 [gold]Vengeance[/gold]. Extra damage = 20% of Missing HP."
+  "WANDIMOD-BLOODRITE_REGICIDE.description": "Deal 10 damage. Gain 2 [gold]Vengeance[/gold]. Extra damage = 20% of Missing HP.",
+  "WANDIMOD-LACERATE.title": "Lacerate",
+  "WANDIMOD-LACERATE.description": "Deal {Damage:diff()} damage. Gain {Strife:diff()} [gold]Strife[/gold].",
+  "WANDIMOD-HAMSTRING.title": "Hamstring",
+  "WANDIMOD-HAMSTRING.description": "Deal {Damage:diff()} damage. Apply {Weak:diff()} Weak.",
+  "WANDIMOD-COAGULATE.title": "Coagulate",
+  "WANDIMOD-COAGULATE.description": "Gain {Strife:diff()} [gold]Strife[/gold].",
+  "WANDIMOD-PREPARATIONS.title": "Preparations",
+  "WANDIMOD-PREPARATIONS.description": "Gain {Strife:diff()} [gold]Strife[/gold]. Draw {Draw:diff()} cards."
 }
