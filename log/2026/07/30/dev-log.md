@@ -87,3 +87,35 @@
 - powers.json：删冗余死键 `WANDIMOD-BLOOD_DRINK_COUNTER_POWER`（eng+zhs 各 3 键）。
 
 **遗留**（写入 TODO）：P0 起手 Strike 接线；P1 简化（GodslayerAscension per-hit 回血、对局外掉血）；P2 待验证（Indomitable 战后回血持久化、GuardianPact 联机时序、2 Harmony 补丁更新回归）。
+
+---
+
+### 本机审查：拉取 8 个新提交后的复核与补漏
+
+**审查结论**：血仇成长型触发/显示补丁/BloodCost 门控/死亡拒绝重做/饮血反击简化/4 新普通卡/3 新遗物/P0 修复/主题配色 —— 设计与实现均核对通过（Harmony 补丁目标 `NPower.RefreshAmount`/`_amountLabel`/`CreatureCmd.Heal(creature,amount)` 已对反编译源码逐一验证）。
+
+**补漏 4 处（另一台机器再次未构建即提交）**：
+- `BloodiedSpearhead.cs` 缺 `using MegaCrit.Sts2.Core.Models`（CardModel）——编译错误。
+- 3 件新遗物缺 `.flavor` 风味文本（STS001 阻断构建）——eng+zhs 补齐。
+- `powers.json` DEATH_DENIAL_POWER 文案残留旧「免死」语义（重做后应为吸血）——eng+zhs 更新。
+- `BloodDrinkCounterPower.cs.uid` 孤儿文件（.cs 已删）——删除。
+
+**部署**：修复后 `dotnet publish` 通过，已落地游戏。
+
+---
+
+### 全面审查（二轮）+ 设计稿对齐修复
+
+**审查范围**：全代码（92 卡 / 5 遗物 / 21 Power）× 三份设计文档 × TODO × 素材目录。
+
+**新发现与处理**：
+1. **4 张卡设计稿↔代码不一致**（另一台机器在 36332fd/9004b9e 只改了 doc 没改 code）——用户决定代码对齐设计稿：
+   - 巨灵之躯 5/8 → **15/18** 纷争；横扫 8/12 → **7/10**；血潮 8/12 → **9/13**
+   - 净血重做：移除减益+纷争 → **选择消耗一张手牌 + 7/13 纷争**（Scavenge 范式：`CardSelectCmd.FromHand(ExhaustSelectionPrompt)` + `CardCmd.Exhaust`），关键词加 Exhaust，本地化 eng/zhs 同步
+2. **起手 Strike「未接线」P0 系误报**：嵌套命名空间解析规则下 `Cards.Strike` 本就指向 `WandiMod.WandiModCode.Cards.Strike`（嵌套命名空间优先于 using）。已显式化引用消除歧义，TODO 关闭。游戏内确认血红牌框即可彻底归档。
+3. **双机素材隐患**：images/ 被 gitignore，另一台机器无素材，在那边 publish 会丢全部图片。**发布约定：只有本机执行 `dotnet publish`，另一台机器只写代码**（已记入 TODO）。
+4. TODO.md 卡牌总数 88 → **92**（补基本卡 4 行）。
+
+**结论**：代码层无大规模待开发项；剩余为 P1 机制补充（弑神登神 per-hit 回血、弑亲血脉对局外掉血桥接）+ 游戏内测试 + 美术素材（92 卡立绘 / 11 Power 图标 / 5 遗物图 / 战斗形象 / 能量计数器）。
+
+**部署**：`dotnet publish` 通过（0 错误，仅 3 CS8604 + 1 已知 STS003 警告），dll/pck 已落地游戏（19:37）。

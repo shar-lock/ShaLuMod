@@ -90,7 +90,7 @@
   "WANDIMOD-VITALIZE.title": "强身",
   "WANDIMOD-VITALIZE.description": "回复「已损失生命」{MissingHpPct:diff()}% 的生命。",
   "WANDIMOD-BLOOD_CLEANSE.title": "净血",
-  "WANDIMOD-BLOOD_CLEANSE.description": "移除自身 1 个减益，获得 {Strife:diff()} 点[gold]纷争[/gold]。",
+  "WANDIMOD-BLOOD_CLEANSE.description": "选择消耗一张手牌，获得 {Strife:diff()} 点[gold]纷争[/gold]。",
   "WANDIMOD-FOCUS_SURGE.title": "战意凝聚",
   "WANDIMOD-FOCUS_SURGE.description": "获得 {Energy:diff()} 点能量，抽 {Draw:diff()} 张牌。",
   "WANDIMOD-BLOOD_AEGIS.title": "鲜血护盾",

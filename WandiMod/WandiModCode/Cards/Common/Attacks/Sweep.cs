@@ -12,7 +12,7 @@ namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
 /// 横扫 / Sweep（普通 · 攻击 · AoE）
-/// 对所有敌人造成 8 点伤害。升级：12 伤害。
+/// 对所有敌人造成 7 点伤害。升级：10 伤害。
 /// —— AoE 写法参考原版 Stomp：DamageCmd.Attack(...).FromCard(...).TargetingAllOpponents(CombatState)。
 /// </summary>
 public class Sweep : WandiModCard
@@ -27,7 +27,7 @@ public class Sweep : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(8, ValueProp.Move).WithUpgradeTo(12),
+        new DamageVar(7, ValueProp.Move).WithUpgradeTo(10),
     ];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

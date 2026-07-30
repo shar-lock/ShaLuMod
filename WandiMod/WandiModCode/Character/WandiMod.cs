@@ -24,13 +24,14 @@ public class WandiMod : PlaceholderCharacterModel
     public override CharacterGender Gender => CharacterGender.Masculine;
     public override int StartingHp => 75;
 
-        // 起手牌组（设计定稿）：4×打击（原版占位，M3 换万敌专属打击）+ 4×御敌 + 1×血祭之枪 + 1×残影。
-        // TODO(M3)：打击位换万敌专属打击卡。
+        // 起手牌组（设计定稿）：4×打击 + 4×御敌 + 1×血祭之枪 + 1×残影。
+        // 打击显式限定命名空间——嵌套命名空间解析规则下 Cards.Strike 本就指向万敌专属 Strike，
+        // 写全消除与原版 MegaCrit...Cards.Strike 的歧义疑虑。
         public override IEnumerable<CardModel> StartingDeck => [
-            ModelDb.Card<Cards.Strike>(),
-            ModelDb.Card<Cards.Strike>(),
-            ModelDb.Card<Cards.Strike>(),
-            ModelDb.Card<Cards.Strike>(),
+            ModelDb.Card<WandiModCode.Cards.Strike>(),
+            ModelDb.Card<WandiModCode.Cards.Strike>(),
+            ModelDb.Card<WandiModCode.Cards.Strike>(),
+            ModelDb.Card<WandiModCode.Cards.Strike>(),
             ModelDb.Card<HoldTheLine>(),
             ModelDb.Card<HoldTheLine>(),
             ModelDb.Card<HoldTheLine>(),

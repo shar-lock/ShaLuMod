@@ -14,7 +14,7 @@ namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
 /// 血潮 / Blood Tide Surge（罕见 · 攻击 · AoE）
-/// 失去 3 点生命，对所有敌人造成 8 点伤害，获得 1 层【血仇】。升级：12 伤害。
+/// 失去 3 点生命，对所有敌人造成 9 点伤害，获得 1 层【血仇】。升级：13 伤害。
 /// —— BloodRite 的 AoE 升级版：自伤在前（产 1 层血仇，经 AfterDamageReceived 钩子放大本张全体伤害），
 ///    再全体攻击，最后额外授予 1 层血仇（卡面效果）。
 /// </summary>
@@ -31,7 +31,7 @@ public class BloodTideSurge : WandiModCard
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         new HpLossVar(3),
-        new DamageVar(8, ValueProp.Move).WithUpgradeTo(12),
+        new DamageVar(9, ValueProp.Move).WithUpgradeTo(13),
         new IntVar("Vengeance", 1),
     ];
 

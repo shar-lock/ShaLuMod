@@ -7,11 +7,12 @@
 | 批次 | 数量 | 状态 |
 |---|---|---|
 | 机制卡 | 1 | ✅ |
+| 基本卡 | 4 | ✅ |
 | 普通卡 | 20 | ✅ |
 | 罕见卡 | 38 | ✅ |
 | 稀有卡 | 27 | ✅ |
 | 先古卡 | 2 | ✅ |
-| **合计** | **88** | **全部完成** |
+| **合计** | **92** | **全部完成** |
 
 ## TODO 机制修复状态（9 项 → 7✅ + 2 接受简化）
 
@@ -34,7 +35,15 @@
 | 项 | 状态 |
 |---|---|
 | ~~5 张能力卡 amount=0 授予 Power 不附着（弑神登神/力敌万邦/血仇主宰/毁灭意志/死亡拒绝）~~ | ✅ 已修复（0→1；PowerCmd.Apply 在 amount==0 时 bail 不附着） |
-| 起手牌组打击位用原版 `Cards.Strike`，万敌专属 [Strike.cs](../WandiMod/WandiModCode/Cards/Basic/Attacks/Strike.cs) 未接线 | ⏸ 待修：改 `ModelDb.Card<WandiMod.WandiModCode.Cards.Strike>()` |
+| ~~起手牌组打击位用原版 `Cards.Strike`~~ | ✅ 误报澄清（07/30 二轮审查）：嵌套命名空间解析规则下 `Cards.Strike` 本就解析为 `WandiMod.WandiModCode.Cards.Strike`（嵌套命名空间优先于 using），起手已是专属打击；已显式化引用消除歧义。游戏内抽一局确认牌框为血红即可彻底关闭 |
+
+### ~~设计稿↔代码不一致~~ ✅（07/30 二轮审查发现，用户决定代码对齐设计稿）
+| 卡 | 处理 |
+|---|---|
+| 巨灵之躯 TitanBody | ✅ 5/8 → 15/18 |
+| 横扫 Sweep | ✅ 8/12 → 7/10 |
+| 血潮 BloodTideSurge | ✅ 8/12 → 9/13 |
+| 净血 BloodCleanse | ✅ 重做为「选择消耗一张手牌 + 7/13 纷争」（Scavenge 范式），本地化 eng/zhs 同步 |
 
 ### P1 — 简化（偏离设计稿，能跑；9-项表里的 ReaperSpear/Bodyguard 不重复）
 | 卡/Power | ��计 | 现状 |
@@ -66,6 +75,6 @@
 | 问题 | 说明 |
 |---|---|
 | ~~14+ Power 类本地化~~ | ✅ 07/30 补齐 12 个新 Power（eng+zhs） |
-| 本机 images 目录缺失 | .gitignore 忽略 png |
+| 本机 images 目录缺失 | .gitignore 忽略 png → **发布约定（07/30 定）：只有本机（含 images/ 素材）执行 dotnet publish，另一台机器只写代码不发布**，否则 pck 丢全部图片素材 |
 | FatalThrustPower STS003 | 继承原生 TemporaryStrengthPower 无 ID 前缀，警告容忍（显示走 OriginModel 卡牌） |
 | ~~血仇读层算伤卡的层数口径~~ | ✅ 已决定保留：狂怒/噬仇/暴风连击/噬魂/诛天焚骨仍读真实 Amount（不砍数值），隐藏的保底 1 层对这些伤害卡仍算数，作为兜底机制 |

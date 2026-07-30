@@ -90,7 +90,7 @@
   "WANDIMOD-VITALIZE.title": "Vitalize",
   "WANDIMOD-VITALIZE.description": "Heal for {MissingHpPct:diff()}% of Missing HP.",
   "WANDIMOD-BLOOD_CLEANSE.title": "Blood Cleanse",
-  "WANDIMOD-BLOOD_CLEANSE.description": "Remove 1 debuff. Gain {Strife:diff()} [gold]Strife[/gold].",
+  "WANDIMOD-BLOOD_CLEANSE.description": "Choose 1 card in your hand to Exhaust. Gain {Strife:diff()} [gold]Strife[/gold].",
   "WANDIMOD-FOCUS_SURGE.title": "Focus Surge",
   "WANDIMOD-FOCUS_SURGE.description": "Gain {Energy:diff()} energy. Draw {Draw:diff()} cards.",
   "WANDIMOD-BLOOD_AEGIS.title": "Blood Aegis",

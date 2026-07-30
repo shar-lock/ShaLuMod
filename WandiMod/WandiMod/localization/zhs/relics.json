@@ -7,8 +7,11 @@
   "WANDIMOD-UNDYING_ROYAL_BLOOD.flavor": "死亡本身已成为他的武器。废墟的王座静候其主。",
   "WANDIMOD-BLOODIED_SPEARHEAD.title": "沾血枪尖",
   "WANDIMOD-BLOODIED_SPEARHEAD.description": "每当你因打出的卡牌失去生命，获得 1 点[gold]血仇[/gold]。",
+  "WANDIMOD-BLOODIED_SPEARHEAD.flavor": "枪尖上的血从未干涸，每一滴都记在他的账上。",
   "WANDIMOD-BLOODBURN_EMBLEM.title": "焚血勋章",
   "WANDIMOD-BLOODBURN_EMBLEM.description": "每当你回复血量，获得 1 点[gold]血仇[/gold]。",
+  "WANDIMOD-BLOODBURN_EMBLEM.flavor": "以血为燃料铸成的勋章，佩戴它的人从不畏惧燃烧。",
   "WANDIMOD-ALTAR_OF_VENGEANCE.title": "血仇圣坛",
-  "WANDIMOD-ALTAR_OF_VENGEANCE.description": "敌方单位死亡后恢复 2% 最大生命值的血量。"
+  "WANDIMOD-ALTAR_OF_VENGEANCE.description": "敌方单位死亡后恢复 2% 最大生命值的血量。",
+  "WANDIMOD-ALTAR_OF_VENGEANCE.flavor": "祭坛只接受一种祭品：敌人的死亡。"
 }
