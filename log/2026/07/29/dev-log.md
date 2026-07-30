@@ -76,3 +76,11 @@
 - 纷争（Strife）机�����临时最大生命上限 + Grant + AfterCombatEnd 还原
 - M2 普通卡批次（12 张：御敌/蓄势/坚壁/誓约之枪 等）
 - 构建链路打通（Rider + .NET SDK + MegaDot）
+
+### M3 稀有卡 + 先古卡全量实装
+- 27 张稀有卡（10 攻击 + 9 技能 + 8 能力 + 2 联机）
+- 2 张先古卡：弑神登神（ITomeCard）+ 血祭·诛王枪（BloodriteStrike ITranscendenceCard）
+- 10 个新 Power 类（RivalAllLandsPower, UndyingSovereigntyPower, VengeanceDominionPower, WillOfDestructionPower, FountainOfLifePower, BloodbathPower, FrenzyPower, BloodResonancePower, DeathDenialPower, GodslayerAscensionPower）
+- 全部本地化（zhs+eng cards.json，29×2=58 条新条目，总 176 条）
+- BloodriteStrike 修改：加 ITranscendenceCard → GetTranscendenceTransformedCard 返回 BloodriteRegicide
+- **全部 88 张卡牌代码开发完成**

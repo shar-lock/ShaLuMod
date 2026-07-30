@@ -1,41 +1,41 @@
 # 待办（TODO）
 
 > 运行时确认 / 未完成项。**完成后标 ✅**。
-> AI 每次开发前读这里，优先处理高优先项。
 
-## 罕见卡运行时确认
-
-| 文件 | 问题 | 状态 |
-|---|---|---|
-| ~~FatalThrust~~ | 临时降力量 | ✅ FatalThrustPower : TemporaryStrengthPower（参考 PiercingWail） |
-| ~~LastStand~~ | 手牌遍历 | ✅ PileType.Hand.GetPile(Owner).Cards（参考 BulletTime） |
-| ~~BloodPact~~ | 手牌数 | ✅ 同上 .Count（参考 Anointed） |
-| ~~Tenacity~~ | 卡牌选择消耗 | ✅ CardSelectCmd.FromHand + CardCmd.Exhaust（参考 Purity） |
-| ~~SharedFury~~ | 联机队友力量 | ✅ 已正确实现 GetTeammatesOf（参考 Rally） |
-| ~~KingsBlessing~~ | 联机队友格挡 | ✅ 同上 + GainBlock（参考 Rally） |
-| BloodDrinkCounter | 精确吸血 | 可接受简化（基础伤害×%） |
-| BloodCleanse | 移除减益 | 原版无直接 API，建议简化（只给纷争） |
-| GuardianPact | 联机伤害转移 | 需自定义 Power（伤害修改 hook） |
-
-## M2 遗留
-
-| 问题 | 文件 | 说明 |
-|---|---|---|
-| ~~觉醒版荡平万邦~~ | VengeancePower 7 层触发处 | ✅ `CombatState.CreateCard` 建可变实例 + `CardCmd.Upgrade` 就地升级（原版 Jackpot 写法） |
-| 弑亲血脉充能角标 | BloodOfTheKinslayer.cs | counter 显示 API（SetCounter/ChangeCounter）待确认 |
-
-## M3 待开发
+## 全卡牌开发状态
 
 | 批次 | 数量 | 状态 |
 |---|---|---|
-| 普通卡 | 20 | 已完成 |
-| 罕见卡 | 38 | 已完成（3 项可接受简化/复杂处理） |
-| 稀有卡 | 27 | 未开始 |
-| 先古卡 | 2 | 未开始 |
+| 机制卡 | 1 | ✅ |
+| 普通卡 | 20 | ✅ |
+| 罕见卡 | 38 | ✅（3 项可接受简化） |
+| 稀有卡 | 27 | ✅ |
+| 先古卡 | 2 | ✅ |
+| **合计** | **88** | **全部完成** |
+
+## 运行时待确认
+
+| 文件 | 问题 | 状态 |
+|---|---|---|
+| ReaperSpear | 设计稿「HP≤50%费用变0」简化为固定1费+加伤 | 可接受简化 |
+| GoldenBastion | 设计稿「下回合+X力量」简化为本回合力量 | // TODO 标注 |
+| HolyBloodBaptism | 移除自身全部减益 API | // TODO 标注 |
+| Bodyguard | 追踪本回合失血→给队友纷争 | 简化为直接给纷争 |
+| BloodDrinkCounter | 精确吸血 | 简化为基础伤害×% |
+| BloodCleanse | 移除减益 | 简化为只给纷争 |
+| GuardianPact | 联机伤害转移 | 需自定义 Power |
+| 浴血奋战 Bloodbath | 荡平万邦单体×1.5 | 需改 ConquerAllLands.OnPlay 加检查 |
+| 血仇主宰 VengeanceDominion | 各消耗血仇卡需加不消耗检查 | // TODO 标注 |
+
+## M2 遗留
+
+| 问题 | 说明 |
+|---|---|
+| 弑亲血脉充能角标 | counter 显示 API 待确认 |
 
 ## 其他
 
 | 问题 | 说明 |
 |---|---|
-| ~~8 个独立 Power 类本地化~~ | ✅ 已补 eng/zhs powers.json（含荡平万邦卡牌词条） |
-| 本机 images 目录缺失 | .gitignore 忽略 png，需从其他机器拷贝或创建占位图 |
+| 10+ 新 Power 类本地化 | powers.json 需补条目（Rider Generate） |
+| 本机 images 目录缺失 | .gitignore 忽略 png |
