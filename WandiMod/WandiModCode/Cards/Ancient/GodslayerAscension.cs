@@ -18,5 +18,6 @@ public class GodslayerAscension : WandiModCard, ITomeCard
     protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
-        => await PowerCmd.Apply<GodslayerAscensionPower>(choiceContext, Owner.Creature, 0, Owner.Creature, this);
+        // amount=1：PowerCmd.Apply 在 amount==0 时直接 bail 不附着（PowerCmd.cs:84），标记/形态型 Power 须传 1（对齐原生 Barricade）
+        => await PowerCmd.Apply<GodslayerAscensionPower>(choiceContext, Owner.Creature, 1, Owner.Creature, this);
 }

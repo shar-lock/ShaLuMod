@@ -68,3 +68,22 @@
 - **安全性**：触发留 ≥ 基准+3（远高于 0）、消耗卡由 IsPlayable 门控保底 ≥1，Amount 始终 ≥1，不会触发 ShouldRemoveDueToAmount 自动移除。
 - **文档同步**：`spec/core-mechanics.md`（成长触发行 + 要点）、`doc/万敌Mod-设计方案.md` 4.3（成长循环 + 显示说明）。其余文档只提「血仇≥8 生成荡平万邦」（首触发阈值未变），无需改。
 
+
+---
+
+### 全面代码审计 + P0 修复 + 文档同步
+
+**3 路并行审计**（本地化 / 注册生命周期 / 设计一致性）+ 直接核查，结论：
+- ✅ 本地化完整（92 卡 / 21 Power / 5 遗物，eng+zhs 齐全）、[Pool] 全覆盖、联机卡 5 张、先古卡接口、Power 归零风险（除下方 P0）、起手接线、卡牌 1:1 覆盖。
+
+**P0 修复**：5 张能力卡 `PowerCmd.Apply<...>(..., 0, ...)` → `1`。
+- 根因：`PowerCmd.Apply` 在 `amount==0` 时直接 bail 不附着（PowerCmd.cs:84），整张卡 no-op。
+- 涉及：弑神登神 / 力敌万邦 / 血仇主宰 / 毁灭意志 / 死亡拒绝。对齐原生 Barricade（标记/形态型 Power 传 1）。
+
+**文档全面同步**（文档 ↔ 代码一致）：
+- 力敌万邦：遵从卡牌设计稿（回合+2血仇+抽牌），移除遗物/设计方案里虚构的「+25% 强化态」。
+- 遗物设计.md：旧触发（积累8减7保底1）→ 成长型（累积7消耗4）；对局外掉血桥接标注「未实装」；StrifePower `entryMaxHp` → 动态 clamp（`MaxHp−2×当前层`）；counter API `SetCounter/ChangeCounter` → `ShowCounter+DisplayAmount+InvokeDisplayAmountChanged`；「待核实项」→「已确认项」。
+- 设计方案.md §五草案表：万死无悔 20%→40/50、灾厄之矛 50%→70/80、御敌 5→4/6 纷争；力敌万邦去强化态。
+- powers.json：删冗余死键 `WANDIMOD-BLOOD_DRINK_COUNTER_POWER`（eng+zhs 各 3 键）。
+
+**遗留**（写入 TODO）：P0 起手 Strike 接线；P1 简化（GodslayerAscension per-hit 回血、对局外掉血）；P2 待验证（Indomitable 战后回血持久化、GuardianPact 联机时序、2 Harmony 补丁更新回归）。

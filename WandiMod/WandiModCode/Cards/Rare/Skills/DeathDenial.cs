@@ -28,7 +28,8 @@ public class DeathDenial : WandiModCard
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         // 施加临时能力：下一张攻击牌造成伤害后等量回血，然后自毁
-        await PowerCmd.Apply<DeathDenialPower>(choiceContext, Owner.Creature, 0, Owner.Creature, this);
+        // amount=1：PowerCmd.Apply 在 amount==0 时不附着（PowerCmd.cs:84），临时 Power 传 1（触发后自毁，1 不影响逻辑）
+        await PowerCmd.Apply<DeathDenialPower>(choiceContext, Owner.Creature, 1, Owner.Creature, this);
         MainFile.Logger.Info("[死亡拒绝] 施加临时能力：下一张攻击牌全额吸血");
     }
 }

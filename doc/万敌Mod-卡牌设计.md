@@ -296,7 +296,7 @@
 ### 机制实装钩子（均已反编译确认，见 `_src/sts2_src`）
 
 - **血仇 Power**：`CustomPowerModel`，`Buff + Counter`；伤害放大走 `ModifyDamageMultiplicative`（参考 `WeakPower`）；失血叠层走 `AfterDamageReceived`（参考 `RupturePower`）。
-- **纷争 Power（StrifePower）**：`CustomPowerModel`，`Buff + Counter`，层数 = 当前临时上限总量。获得 X 层 → `CreatureCmd.SetMaxHp(creature, MaxHp + X)` + `CreatureCmd.Heal(creature, X)`（**不用** `GainMaxHp`——它会把数值计入地图历史 `MaxHpGained` 永久统计，必须和永久提升隔离）；Apply 时 clamp 到「入场 MaxHP ×100% − 当前层数」。`AfterCombatEnd` → `SetMaxHp(当前 MaxHP − 层数)`（只扣临时量，战斗中发生的永久提升自然保留）+ 当前血超出则截断 + 移除自身。%纷争来源按入场值结算（Power 建立 / 战斗开始时记录 `entryMaxHp`）。
+- **纷争 Power（StrifePower）**：`CustomPowerModel`，`Buff + Counter`，层数 = 当前临时上限总量。获得 X 层 → `CreatureCmd.SetMaxHp(creature, MaxHp + X)` + `CreatureCmd.Heal(creature, X)`（**不用** `GainMaxHp`——它会把数值计入地图历史 `MaxHpGained` 永久统计，必须和永久提升隔离）；Apply 时**动态 clamp** 到「`MaxHp − 2×当前层数`」（纷争最多把上限翻倍；战斗中永久提升自动并入基数，无需记录入场值）。`AfterCombatEnd` → `SetMaxHp(当前 MaxHP − 层数)`（只扣临时量，战斗中发生的永久提升自然保留）+ 当前血超出则截断 + 移除自身。%纷争来源按当前含纷争上限算请求值，再经动态 clamp 封顶（防自我增殖）。
 - **自伤**：`CreatureCmd.Damage` 对自己；**免死**：`ShouldDieLate` + `AfterPreventingDeath`（参考 `LizardTail`）。
 - **MissingHp / MaxHp**：`creature.CurrentHp` / `creature.MaxHp`。
 - **回合钩子**：`AfterSideTurnStart`；「格挡被击破」触发待确认精确 hook（浴血奋战）。
@@ -306,11 +306,11 @@
 - `WandiMod/localization/eng/cards.json`；Rider「Generate localization」生成骨架后填文案。
 - 「纷争」需在 `card_keywords.json` 注册词条（卡牌描述里大量引用），`powers.json` 加 `StrifePower` 条目。
 - 占位符参考原版：`{Damage:diff()}`、`{VengeancePower:diff()}` 等；纷争数值用 `{StrifePower:diff()}`。
-- **待办：补** `localization/zhs/*.json`——当前仅 eng，中文客户端全部回退英文显示。
+- ✅ `localization/zhs/*.json` 已补齐（92 卡 / 21 Power / 5 遗物，eng + zhs 双语完整）。
 
 ### 待核实项
 
-- 「格挡被击破」事件的精确回调（浴血奋战，针对**敌方**格挡）——反编译 `CreatureCmd` 格挡结算路径确认。
+- ✅ 浴血奋战单体加成：不走「格挡被击破」hook，改为 `ConquerAllLands` 的 `WithMultiplier` lambda 检查 `BloodbathPower` 存在 + `HittableEnemies.Count()==1`（单体时倍率并入）。
 - 「HP 阈值」是动态判定（每张牌 OnPlay 读 `CurrentHp/MaxHp`），无需专门 hook。
-- 纷争 Power：`entryMaxHp` 记录时点（`BeforeCombatStart` vs 首次 Apply 时）；战斗结束结算顺序——先纷争还原截断，再执行「不屈」等 AfterCombatEnd 回血（按还原后上限结算）。
+- ✅ 纷争 Power 上限用动态 clamp（`MaxHp − 2×当前层`），无需记录 `entryMaxHp`；战斗结束结算顺序——先纷争还原截断，再执行「不屈」等 AfterCombatEnd 回血（按还原后上限结算）。
 - 数值均为起点，用 dev console 在游戏内迭代平衡。

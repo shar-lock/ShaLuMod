@@ -17,7 +17,7 @@
 - `[SavedProperty] int Charges`（计数器，存档持久化）。
 - `ShouldDieLate(Creature)` → `creature != Owner.Creature || Charges <= 0`（返回 false = 拦截死亡）。
 - `AfterPreventingDeath(Creature)` → `Flash(); Charges--; CreatureCmd.Heal(...)`。
-- 计数器角标数字显示 API 待确认（`SetCounter` / `ChangeCounter`，见代码 TODO）。
+- 计数器角标数字显示 = `ShowCounter`（bool）+ `DisplayAmount`（int）+ `InvokeDisplayAmountChanged()`（参考原生 PenNib；原生**无** `SetCounter`/`ChangeCounter`）。
 
 ## 战斗开始赋予 Power
 重写 `BeforeCombatStart()`（参考 `BeltBuckle`）→ `PowerCmd.Apply<XPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, ...)`。

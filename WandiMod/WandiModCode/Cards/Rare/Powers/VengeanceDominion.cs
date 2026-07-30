@@ -12,5 +12,6 @@ public class VengeanceDominion : WandiModCard
     public VengeanceDominion() : base(3, CardType.Power, CardRarity.Rare, TargetType.Self) { }
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Ethereal, WandiModKeywords.Vengeance];
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
-        => await PowerCmd.Apply<VengeanceDominionPower>(choiceContext, Owner.Creature, 0, Owner.Creature, this);
+        // amount=1：PowerCmd.Apply 在 amount==0 时不附着（PowerCmd.cs:84），标记型 Power 传 1（对齐原生 Barricade）
+        => await PowerCmd.Apply<VengeanceDominionPower>(choiceContext, Owner.Creature, 1, Owner.Creature, this);
 }

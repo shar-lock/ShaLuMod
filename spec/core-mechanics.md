@@ -13,7 +13,7 @@
 | 成长触发 | `AfterPowerAmountChanged(ctx,power,amount,applier,cardSource)` | OutbreakPower | `power==this && amount>0 && Amount>=_lastTriggerBase+7` → **消耗 4 层** + 扣 5% 当前血 + 生成荡平万邦；基准 `_lastTriggerBase` 抬高 → 触发点 8→11→14...，血仇净成长 +3/轮 |
 | 卡牌授予入口 | `static Grant(ctx,target,amount,cardSource)` | — | 卡面「获得 X 血仇」走这个；带守卫 + 日志 |
 
-> **玩家可见模型**：状态栏显示 = 真实层数 − 1（override `DisplayAmount`）。真实 1 层（储备）→ 显示为空 + 0% 增伤；满 8 层触发时玩家看到的是「7 层」。原生 Counter 型 Power 在 `DisplayAmount=0` 会显示 "0"，故加 Harmony 补丁 `VengeancePowerDisplayPatch`（Postfix on `NPower.RefreshAmount`，血仇显示值≤0 时清空标���）实现真正空白。
+> **玩家可见模型**：状态栏显示 = 真实层数 − 1（override `DisplayAmount`）。真实 1 层（储备）→ 显示为空 + 0% 增伤；满 8 层触发时玩家看到的是「7 层」。原生 Counter 型 Power 在 `DisplayAmount=0` 会显示 "0"，故加 Harmony 补丁 `VengeancePowerDisplayPatch`（Postfix on `NPower.RefreshAmount`，血仇显示值≤0 时清空标签）实现真正空白。
 >
 > **成长触发要点**：触发条件是「累积到 `_lastTriggerBase + 7`」（非固定阈值）。消耗 4 用 `PowerCmd.Apply<-4>`（amount<0 被 `amount>0` 过滤，避免递归）；**不清空**——消耗后把 `_lastTriggerBase` 更新为当前值，下次需再累积 7 层 → 触发点逐次抬高 8→11→14...，消耗后留 4→7→10...，血仇**逐轮成长 +3**（不是往复振荡）。扣血用 `CreatureCmd.Damage(self, Unblockable|Unpowered|Move)`（触发失血叠层 +1，设计内副反馈）；生成荡平万邦用 `CardPileCmd.AddGeneratedCardToCombat(card, PileType.Hand, player)`；觉醒时（`Owner.Player.GetRelic<UndyingRoyalBlood>()!=null`）用 `CardCmd.Upgrade` 给升级版。`_lastTriggerBase` 是战斗实例字段（每战重置为 1）。
 >
