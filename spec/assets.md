@@ -216,15 +216,76 @@ public override CustomEnergyCounter? CustomEnergyCounter =>
 
 附带：`EnergyLabelOutlineColor`（能量数字的描边色，CharacterModel 上，可单独 override）。
 
-## 4. 战斗角色模型（"游戏操作的角色也是战士"） — `CustomVisualPath`
+## 4. 战斗角色模型 — `CustomVisualPath` / `CreateCustomVisuals()`
 
-战斗里的角色立绘/模型来自 `creature_visuals/{id}` 场景（[CharacterModel.cs:115-122](../_src/sts2_src/MegaCrit/sts2/Core/Models/CharacterModel.cs#L115)）：
+战斗里的角色立绘来自 `creature_visuals/{id}` 场景，实例化为 `NCreatureVisuals` 节点（[CharacterModel.cs:120-122](../_src/sts2_src/MegaCrit/sts2/Core/Models/CharacterModel.cs#L120)）。`PlaceholderCharacterModel` 默认指向 `creature_visuals/ironclad` → 战士模型。
+
+### NCreatureVisuals 需要的子节点（[NCreatureVisualsFactory](../BaseLib-StS2/Utils/NodeFactories/NCreatureVisualsFactory.cs)）
+
+| 节点 | 类型 | 必须？ | 作用 |
+|---|---|---|---|
+| `%Visuals` | Node2D / Sprite2D（`unique_name_in_owner=true`） | ✅ 必须 | 角色立绘/动画本体 |
+| `Bounds` | Control | 可选（缺省 240×280） | **受击框/点击区**（敌方选目标、鼠标点选） |
+| `%CenterPos` / `IntentPos` / `%OrbPos` / `%TalkPos` | Marker2D | 可选 | 锚点（意图图标/宝珠/对话气泡位置），缺则按 Bounds 自动生成 |
+| `%PhobiaModeVisuals` | Node2D | 可选 | 恐惧模式视觉（玩家角色一般不用） |
+
+> 缺失的 `Bounds` / 锚点节点由工厂按 Bounds 尺寸**自动补齐**；只有 `%Visuals` 必须自己提供。
+
+### 三种配置方式（由简到繁）
+
+#### 方式 A：单张立绘 PNG（最简，静态立绘，推荐先上）
+
+BaseLib 工厂能从一张 Texture2D 直接生成完整 `NCreatureVisuals`（自动建 `Bounds`=图×1.1 + `Sprite2D` 居中，见 [工厂 CreateBareFromResource(Texture2D)](../BaseLib-StS2/Utils/NodeFactories/NCreatureVisualsFactory.cs#L24)）。在 `WandiMod.cs` override：
+
 ```csharp
-public override string CustomVisualPath => SceneHelper.GetScenePath("creature_visuals/wandi");
+using BaseLib.Utils.NodeFactories;   // NodeFactory<NCreatureVisuals>
+using Godot;
+
+public override NCreatureVisuals? CreateCustomVisuals()
+{
+    // 单张立绘 → 自动生成战斗视觉（静态）。Bounds 按图片尺寸×1.1 自适应。
+    var tex = ResourceLoader.Load<Texture2D>("charui/wandi_combat.png".ImagePath());
+    return NodeFactory<NCreatureVisuals>.CreateFromResource(tex);
+}
 ```
-- `PlaceholderCharacterModel` 默认指向 `creature_visuals/ironclad` → 战士模型。
-- 替换需要一整套角色视觉资源（立绘 + 动画 + 受击框等），**工作量大**，通常需美术 + Godot 场景。
-- 临时方案：保持战士模型，先用主题色（边框/能量/名字色）区分角色身份。
+
+- 只需**一张透明 PNG**（角色立绘），无需 Godot 场景、无需动画。
+- 代价：**静态**（无受击/攻击/死亡动画），但能立刻去掉"战士脸"。
+
+#### 方式 B：自定义场景（.tscn，支持动画，最灵活）
+
+override `CustomVisualPath` 指向自己的场景，`CreateCustomVisuals()` 返回 null（走默认 `Instantiate<NCreatureVisuals>()` + BaseLib 自动转换）：
+
+```csharp
+public override string? CustomVisualPath => "res://WandiMod/scenes/creature_visuals/wandi.tscn";
+public override NCreatureVisuals? CreateCustomVisuals() => null;  // 走场景 + 自动转换
+```
+
+在 MegaDot/Godot 编辑器里搭 `.tscn`（根节点 `Node2D`）：
+- 子节点 `%Visuals`（`Sprite2D`，或 `AnimationPlayer`+`Sprite2D`）放立绘/动画。
+- 可选子节点 `Bounds`（`Control`）精确调整受击框。
+- 其余锚点（`CenterPos` 等）缺省自动补。
+
+⚠️ 工厂**不自动建 AnimationPlayer**——动画要在场景里自己加（`AnimationPlayer` 或 Spine `.skel`+`.atlas`+`.png`），见 [auto_conversion.md「Known Limitations」](../BaseLib-StS2/docs/auto_conversion.md)。
+
+#### 方式 C：全代码构建（`CreateCustomVisuals` 返回自建节点）
+
+完整程序化控制。可 `NodeFactory<NCreatureVisuals>.CreateFromScene(scenePath)` 从场景建，或方式 A 的 `CreateFromResource(texture)`，再自行微调 Bounds / 锚点 / 动画状态。
+
+### 需要的资源
+
+| 资源 | 类型 | 尺寸 | 说明 |
+|---|---|---|---|
+| 立绘 | **透明 PNG** | 约 240×280 起步（Bounds 默认），更大更清晰（工厂按图×1.1 自适应） | 角色半身/全身立绘，**透明背景**；放 `images/charui/wandi_combat.png` |
+| 受击框 Bounds | 场景 `Control` | 默认 240×280 | 决定点击/选区；场景方式可调，PNG 方式按图自动 |
+| 动画（可选） | `AnimationPlayer` 或 Spine `.skel`+`.atlas`+`.png` | — | 受击/攻击/死亡/待机；仅方式 B/C 支持 |
+
+### 参考原生 / 覆盖范围
+
+- 想看战士立绘的结构与尺寸作参照：用 wiki [Extracting-Assets-and-Text](../ModTemplate-StS2.wiki/Extracting-Assets-and-Text.md) 提取 `creature_visuals/ironclad` 场景与贴图。
+- **覆盖范围差异**：方式 B（注册场景路径）能透明覆盖所有 `Instantiate<NCreatureVisuals>` 路径——含玩家战斗、**怪物图鉴（Bestiary）、游戏结束界面（GameOverScreen）**；方式 A（`CreateCustomVisuals`）只覆盖玩家战斗内的 `CreateVisuals()`。
+
+> ⚠️ 场景/图片改动后**必须 Publish**（Build 只编译 .dll，不打包资源）。方式 A 仅需立绘 PNG + Publish + 改 `WandiMod.cs`（Build）。
 
 ## 5. 其他仍在用战士的主题项（按需覆写）
 
@@ -252,7 +313,7 @@ public override string CustomVisualPath => SceneHelper.GetScenePath("creature_vi
 | 🔴 高 | 补 `charui/big_energy.png` + `text_energy.png`（卡牌能量图标） | 2 张 PNG + Publish | 小 |
 | 🟡 中 | `CustomEnergyCounter` legacy 换能量球颜色 | ⚠️ **需配 PNG**（pathFunc 按图层重建能量球，缺图→球空白；非纯代码） | 中 |
 | 🟠 大 | `CustomEnergyCounterPath` 自定义场景（换能量背景面板） | Godot 场景 + Publish | 中 |
-| 🟠 大 | `CustomVisualPath` 战斗角色模型 | 整套美术 + 场景 | 大 |
+| 🟡 中 | 战斗角色模型（[详见 §4](#4-战斗角色模型--customvisualpath--createcustomvisuals)） | 方式 A 单张 PNG（静态，小）/ 方式 B 场景+动画（大） | 小～大 |
 
 > 当前主题色统一为**血红色**（`B71C1C`，HSV: H=0/S=1/V=0.6）。HSV 是近似值，**需游戏内微调**（V 调深浅）。
 >
