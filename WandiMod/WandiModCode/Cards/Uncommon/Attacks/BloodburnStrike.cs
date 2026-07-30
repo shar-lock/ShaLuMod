@@ -49,8 +49,9 @@ public class BloodburnStrike : WandiModCard
         await CommonActions.CardAttack(this, cardPlay).Execute(choiceContext);
 
         // ② 血仇 = 0 = 本战斗未失血 → 抽牌（奖励「干净」状态）
+        // 血仇真实层数保底1层（地板层不显示），因此「无有效血仇」= null 或 Amount<=1
         int blood = creature?.GetPower<VengeancePower>()?.Amount ?? 0;
-        if (blood == 0)
+        if (blood <= 1)
         {
             int draw = DynamicVars["Draw"].IntValue;
             await CardPileCmd.Draw(choiceContext, draw, Owner);

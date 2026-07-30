@@ -1,7 +1,6 @@
 using BaseLib.Abstracts;                        // ITranscendenceCard
 using BaseLib.Extensions;                       // WithUpgrade
 using BaseLib.Utils;                            // CommonActions
-using MegaCrit.Sts2.Core.Commands;              // CardCmd
 using MegaCrit.Sts2.Core.Entities.Cards;        // CardPlay / CardType / CardRarity / TargetType / CardKeyword
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;// PlayerChoiceContext
 using MegaCrit.Sts2.Core.Localization.DynamicVars;// DamageVar / IntVar
@@ -43,17 +42,15 @@ public class BloodriteStrike : WandiModCard, ITranscendenceCard
     }
 
     /// <summary>
-    /// ITranscendenceCard：返回先古超越形态「血祭·诛王枪」。
-    /// 游戏在欧洛巴斯古老牙齿替换时调用此方法。
+    /// ITranscendenceCard：返回先古超越形态「血祭·诛王枪」的**规范（canonical）模型**。
+    /// 契约（以 MutableModelException 换来的教训）：BaseLib 补丁会把本方法的返回值当作 canonicalCard
+    /// 传给 RunState.CreateCard → 内部 ToMutable() 要求规范实例——
+    /// 若在这里返回 ToMutable()/已升级的可变实例，AssertCanonical 直接崩溃（欧洛巴斯事件卡死）。
+    /// 升级态/附魔由原版 ArchaicTooth.GetTranscendenceTransformedCard 流程自行复制，无需在此处理。
     /// </summary>
     public CardModel GetTranscendenceTransformedCard()
     {
-        // 创建可变实例（参考荡平万邦的 CombatState.CreateCard 写法——但这里是模型层，用 ModelDb + ToMutable）
-        var card = ModelDb.Card<BloodriteRegicide>().ToMutable();
-        // 若原牌已升级，先古版也给升级态
-        if (IsUpgraded)
-            CardCmd.Upgrade(card);
-        MainFile.Logger.Info($"[血祭之枪] 先古替换为血祭·诛王枪（原牌升级={IsUpgraded}）");
-        return card;
+        MainFile.Logger.Info($"[血祭之枪] 先古替换为血祭·诛王枪（原牌升级={IsUpgraded}，由原版流程复制升级态）");
+        return ModelDb.Card<BloodriteRegicide>();
     }
 }

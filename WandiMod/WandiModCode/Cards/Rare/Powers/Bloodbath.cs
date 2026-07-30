@@ -12,7 +12,13 @@ namespace WandiMod.WandiModCode.Cards;
 public class Bloodbath : WandiModCard
 {
     public Bloodbath() : base(1, CardType.Power, CardRarity.Rare, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Multiplier", 150).WithUpgradeTo(200)]; // 整数百分比：150=1.5×
+    // 提升百分比（50=伤害×1.5，100=伤害×2）：卡面 {Multiplier:diff()}% 直接显示 50%/100%
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Multiplier", 50).WithUpgradeTo(100)];
+    // 荡平万邦词条（悬停卡牌可见荡平万邦词条说明）
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.ConquerAllLands];
+    /// <summary>悬停提示：荡平万邦卡牌预览（描述提到荡平万邦，玩家可实时查看其效果）。</summary>
+    protected override IEnumerable<MegaCrit.Sts2.Core.HoverTips.IHoverTip> ExtraHoverTips =>
+        [MegaCrit.Sts2.Core.HoverTips.HoverTipFactory.FromCard<ConquerAllLands>()];
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
         => await PowerCmd.Apply<BloodbathPower>(choiceContext, Owner.Creature, DynamicVars["Multiplier"].IntValue, Owner.Creature, this);
 }

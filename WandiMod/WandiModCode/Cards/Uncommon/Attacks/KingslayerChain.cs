@@ -55,7 +55,8 @@ public class KingslayerChain : WandiModCard
         {
             decimal dmg = baseDmg;
             var vengeance = creature.GetPower<VengeancePower>();
-            if (vengeance != null && vengeance.Amount > 0)
+            // 保底1层：Amount>=2 才允许消耗（Amount==1 是地板层，耗掉会把血仇 Power 移除）
+            if (vengeance != null && vengeance.Amount >= 2)
             {
                 await PowerCmd.Apply<VengeancePower>(choiceContext, creature, -1, creature, null);
                 dmg += bonus;

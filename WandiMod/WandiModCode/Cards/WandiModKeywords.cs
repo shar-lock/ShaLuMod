@@ -25,4 +25,9 @@ public class WandiModKeywords
     [CustomEnum]
     [KeywordProperties(AutoKeywordPosition.None)]
     public static CardKeyword Vengeance;
+
+    /// <summary>荡平万邦：血仇 8 层生成的衍生攻击牌（悬停可实时预览卡牌效果）。</summary>
+    [CustomEnum]
+    [KeywordProperties(AutoKeywordPosition.None)]
+    public static CardKeyword ConquerAllLands;
 }

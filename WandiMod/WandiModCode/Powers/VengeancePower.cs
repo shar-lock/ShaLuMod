@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;            // CardModel / CardPlay
 using MegaCrit.Sts2.Core.Entities.Creatures;        // Creature
 using MegaCrit.Sts2.Core.Entities.Powers;           // PowerType / PowerStackType
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;   // PlayerChoiceContext / DamageResult
+using MegaCrit.Sts2.Core.HoverTips;                 // IHoverTip / HoverTipFactory（悬停预览荡平万邦）
 using MegaCrit.Sts2.Core.Models;                    // PowerModel（M2.3 钩子参数用）
 using MegaCrit.Sts2.Core.Nodes.Combat;              // NPower（显示补丁目标）
 using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
@@ -55,6 +56,14 @@ public class VengeancePower : WandiModPower
     /// 例：真实 1→显示 0、真实 2→显示 1、真实 8→显示 7（触发荡平万邦时玩家看到的「7 层」）。
     /// </summary>
     public override int DisplayAmount => Math.Max(0, Amount - 1);
+
+    /// <summary>
+    /// 悬停提示：荡平万邦卡牌预览——血仇描述里提到触发产物，玩家悬停血仇图标即可实时查看荡平万邦效果。
+    /// </summary>
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+    [
+        HoverTipFactory.FromCard<ConquerAllLands>(),
+    ];
 
     /// <summary>
     /// 授予血仇（卡牌调用的统一入口）：叠 Counter 层数。

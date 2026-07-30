@@ -40,14 +40,14 @@ public class BloodsipSpear : WandiModCard
         // ① 造成伤害（读 DamageVar）
         await CommonActions.CardAttack(this, cardPlay).Execute(choiceContext);
 
-        // ② 血仇 > 0 = 本战斗失过血 → 回血
+        // ② 有效血仇（真实层数>=2，即显示层数>0）= 本战斗失过血 → 回血
         var creature = Owner.Creature;
         if (creature == null)
         {
             MainFile.Logger.Error("[饮血枪] OnPlay 时 Owner.Creature 为空，回血未触发");
             return;
         }
-        if (creature.GetPower<VengeancePower>() is { Amount: > 0 })
+        if (creature.GetPower<VengeancePower>() is { Amount: >= 2 })
         {
             int heal = DynamicVars["Heal"].IntValue;
             await CreatureCmd.Heal(creature, heal);

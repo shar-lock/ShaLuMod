@@ -181,6 +181,12 @@ return "res://WandiMod/images/card_portraits/big/card.png";  // 回退到占位�
 | `BigEnergyIconPath`（牌面大图标） | `images/charui/` | `big_energy.png` |
 | `TextEnergyIconPath`（文本 `{E}` 小图标） | `images/charui/` | `text_energy.png` |
 
+**卡牌/遗物描述文本内嵌能量图标的写法**：直接在描述字符串里写 BBCode
+`[img]res://WandiMod/images/charui/text_energy.png[/img]`（数字照常走 `{Energy:diff()}` 等变量）。
+不建议用原版 `{Var:energyIcons()}` 格式化器——BaseLib 的 `CustomEnergyIconPatches.TextIconPatch`
+会把整个占位输出替换成单张 `[img]`（连数量数字一起吞掉），「获得 2 点能量」会丢失数量信息。
+（万敌已用例：涅槃 / 湮灭之枪 / 蓄能突涌 / 黄金之瓮。）
+
 - 或用 `EnergyColorName` 指向 `images/atlases/ui_atlas.sprites/card/energy_{name}.tres`（高级）。
 - 走 [CustomEnergyIconPatches.cs](../BaseLib-StS2/Patches/UI/CustomEnergyIconPatches.cs) 的 Harmony 补丁分发。
 

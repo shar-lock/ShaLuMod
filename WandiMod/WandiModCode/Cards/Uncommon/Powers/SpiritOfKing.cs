@@ -30,8 +30,12 @@ public class SpiritOfKing : WandiModCard
         new IntVar("BonusPct", 20).WithUpgradeTo(25),  // 荡平万邦伤害额外提升百分比
     ];
 
-    // 固有：起手必摸到
-    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Innate];
+    // 固有：起手必摸到；荡平万邦词条（悬停卡牌可见荡平万邦词条说明）
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Innate, WandiModKeywords.ConquerAllLands];
+
+    /// <summary>悬停提示：荡平万邦卡牌预览（描述提到荡平万邦，玩家可实时查看其效果）。</summary>
+    protected override IEnumerable<MegaCrit.Sts2.Core.HoverTips.IHoverTip> ExtraHoverTips =>
+        [MegaCrit.Sts2.Core.HoverTips.HoverTipFactory.FromCard<ConquerAllLands>()];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {

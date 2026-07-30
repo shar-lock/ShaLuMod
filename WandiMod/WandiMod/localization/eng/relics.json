@@ -1,9 +1,9 @@
 {
   "WANDIMOD-BLOOD_OF_THE_KINSLAYER.title": "Blood of the Kinslayer",
-  "WANDIMOD-BLOOD_OF_THE_KINSLAYER.description": "At the start of combat, gain Vengeance.\nWhen you would die, prevent it and heal to 30% of your Max HP instead. This can trigger 4 times.",
+  "WANDIMOD-BLOOD_OF_THE_KINSLAYER.description": "At the start of combat, gain [gold]Vengeance[/gold].\nWhen you would die, prevent it and heal to 30% of your Max HP instead. This can trigger {Charges} times.",
   "WANDIMOD-BLOOD_OF_THE_KINSLAYER.flavor": "He has slain his kin and bears the curse of the undying. Death itself refuses him.",
   "WANDIMOD-UNDYING_ROYAL_BLOOD.title": "Undying Royal Blood",
-  "WANDIMOD-UNDYING_ROYAL_BLOOD.description": "At the start of combat, gain Vengeance.\nAt the start of each turn, gain 1 additional Vengeance. Conquer All Lands cards added to your hand are Upgraded.\nWhen you would die, prevent it and heal to 30% of your Max HP instead. This can trigger 4 times.",
+  "WANDIMOD-UNDYING_ROYAL_BLOOD.description": "At the start of combat, gain [gold]Vengeance[/gold]. At the start of each turn, gain 1 additional [gold]Vengeance[/gold]. [gold]Conquer all lands![/gold] cards added to your hand are Upgraded.\nWhen you would die, prevent it and heal to 30% of your Max HP instead. This can trigger {Charges} times.",
   "WANDIMOD-UNDYING_ROYAL_BLOOD.flavor": "Death itself has become his weapon. The throne of ruin awaits its king.",
   "WANDIMOD-BLOODIED_SPEARHEAD.title": "Bloodied Spearhead",
   "WANDIMOD-BLOODIED_SPEARHEAD.description": "Whenever you lose HP from a card you play, gain 1 [gold]Vengeance[/gold].",
@@ -13,5 +13,8 @@
   "WANDIMOD-BLOODBURN_EMBLEM.flavor": "An emblem forged with blood as fuel. Whoever wears it never fears the burning.",
   "WANDIMOD-ALTAR_OF_VENGEANCE.title": "Altar of Vengeance",
   "WANDIMOD-ALTAR_OF_VENGEANCE.description": "When an enemy dies, heal for 2% of your Max HP.",
-  "WANDIMOD-ALTAR_OF_VENGEANCE.flavor": "The altar accepts only one offering: the death of his enemies."
+  "WANDIMOD-ALTAR_OF_VENGEANCE.flavor": "The altar accepts only one offering: the death of his enemies.",
+  "WANDIMOD-CRIMSON_SIGIL.title": "Crimson Sigil",
+  "WANDIMOD-CRIMSON_SIGIL.description": "At the start of combat, add a [gold]Conquer All Lands[/gold] to your hand.",
+  "WANDIMOD-CRIMSON_SIGIL.flavor": "The seal is pressed in his own blood. The pact has but one clause: pay first, then power."
 }

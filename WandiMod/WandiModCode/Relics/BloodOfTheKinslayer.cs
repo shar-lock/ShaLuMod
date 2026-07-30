@@ -2,8 +2,11 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer; // ThrowingPlayerChoiceContext
 using MegaCrit.Sts2.Core.Commands;             // PowerCmd / CreatureCmd
 using MegaCrit.Sts2.Core.Entities.Creatures;   // Creature
 using MegaCrit.Sts2.Core.Entities.Relics;      // RelicRarity / RelicStatus
+using MegaCrit.Sts2.Core.HoverTips;            // IHoverTip / HoverTipFactory（悬停提示：血仇词条 + 荡平万邦预览）
+using MegaCrit.Sts2.Core.Localization.DynamicVars; // DynamicVar / IntVar（描述变量：{Charges} 实时显示剩余免死次数）
 using MegaCrit.Sts2.Core.Models;               // ModelDb / RelicModel
 using MegaCrit.Sts2.Core.Saves.Runs;           // [SavedProperty]（充能存档持久化）
+using WandiMod.WandiModCode.Cards;              // ConquerAllLands / WandiModKeywords（悬停提示用）
 using WandiMod.WandiModCode.Powers;             // VengeancePower
 
 namespace WandiMod.WandiModCode.Relics;
@@ -25,6 +28,12 @@ public class BloodOfTheKinslayer : WandiModRelic
     public override RelicRarity Rarity => RelicRarity.Starter;
 
     /// <summary>
+    /// 描述变量：{Charges} 让遗物描述里的免死次数实时跟随剩余充能（参考原版 WingedBoots 的
+    /// DynamicVars["Rooms"].BaseValue 同步写法——遗物描述经 DynamicVars.AddTo 智能格式化）。
+    /// </summary>
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Charges", 4)];
+
+    /// <summary>
     /// 免死充能次数（剩 0 则免死失效）。初始 4 次，致敬星铁天赋「4 次免死」。
     /// [SavedProperty] 保证充能跨存档持久化。参考 LizardTail 的 [SavedProperty] bool WasUsed（这里用 int）。
     /// </summary>
@@ -36,12 +45,22 @@ public class BloodOfTheKinslayer : WandiModRelic
         {
             AssertMutable();
             _charges = value;
+            DynamicVars["Charges"].BaseValue = value;  // 同步描述变量 → 悬停描述实时显示剩余次数
             if (IsUsedUp)
                 Status = RelicStatus.Disabled;
             InvokeDisplayAmountChanged();  // 刷新角标（参考 PenNib.UpdateDisplay）
         }
     }
     private int _charges = 4;
+
+    /// <summary>
+    /// 悬停提示：血仇关键词词条（玩家可在遗物描述里点「血仇」看机制）+ 荡平万邦卡牌预览。
+    /// </summary>
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+    [
+        HoverTipFactory.FromKeyword(WandiModKeywords.Vengeance),
+        HoverTipFactory.FromCard<ConquerAllLands>(),
+    ];
 
     // 遗物角标计数器：显示剩余免死次数（参考 PenNib.ShowCounter + DisplayAmount）
     public override bool ShowCounter => !IsUsedUp;

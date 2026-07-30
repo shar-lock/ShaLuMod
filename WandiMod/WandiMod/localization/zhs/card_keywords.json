@@ -1,6 +1,8 @@
 {
   "WANDIMOD-STRIFE.title": "纷争",
-  "WANDIMOD-STRIFE.description": "临时生命上限。获得纷争时提升等量的最大生命并回复等量生命。战斗结束时失去全部纷争。",
+  "WANDIMOD-STRIFE.description": "临时生命上限。获得纷争时提升等量的最大生命并回复等量生命值。战斗结束时失去全部纷争。",
   "WANDIMOD-VENGEANCE.title": "血仇",
-  "WANDIMOD-VENGEANCE.description": "每当你失去生命时获得 1 层。每层使你的攻击伤害提高 2%。部分卡牌会消耗血仇以换取强力效果。"
+  "WANDIMOD-VENGEANCE.description": "每当你失去生命值时获得1层。每层使你的攻击伤害提高2%。每累积7层：消耗4层并失去5%当前生命值，将1张[gold]荡平万邦[/gold]放入手牌。",
+  "WANDIMOD-CONQUERALLLANDS.title": "荡平万邦",
+  "WANDIMOD-CONQUERALLLANDS.description": "血仇每累积7层时生成的0费攻击牌：对全体敌人造成伤害，此伤害包含你已损失生命的一部分。保留，消耗。"
 }

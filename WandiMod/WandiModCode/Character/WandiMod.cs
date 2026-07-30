@@ -22,9 +22,9 @@ public class WandiMod : PlaceholderCharacterModel
     // 能量数字描边色——同步血红色（默认近透明黑 0000000D）
     public override Color EnergyLabelOutlineColor => Color;
     public override CharacterGender Gender => CharacterGender.Masculine;
-    public override int StartingHp => 75;
+    public override int StartingHp => 80;
 
-        // 起手牌组（设计定稿）：4×打击 + 4×御敌 + 1×血祭之枪 + 1×残影。
+        // 起手牌组（设计定稿）：5×打击 + 3×御敌 + 1×血祭之枪 + 1×残影。
         // 打击显式限定命名空间——嵌套命名空间解析规则下 Cards.Strike 本就指向万敌专属 Strike，
         // 写全消除与原版 MegaCrit...Cards.Strike 的歧义疑虑。
         public override IEnumerable<CardModel> StartingDeck => [
@@ -32,7 +32,7 @@ public class WandiMod : PlaceholderCharacterModel
             ModelDb.Card<WandiModCode.Cards.Strike>(),
             ModelDb.Card<WandiModCode.Cards.Strike>(),
             ModelDb.Card<WandiModCode.Cards.Strike>(),
-            ModelDb.Card<HoldTheLine>(),
+            ModelDb.Card<WandiModCode.Cards.Strike>(),
             ModelDb.Card<HoldTheLine>(),
             ModelDb.Card<HoldTheLine>(),
             ModelDb.Card<HoldTheLine>(),

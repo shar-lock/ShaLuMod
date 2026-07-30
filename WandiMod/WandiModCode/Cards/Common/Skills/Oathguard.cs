@@ -12,8 +12,9 @@ namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
 /// 守誓 / Oathguard（普通 · 技能）
-/// 获得 5 点【纷争】；消耗 1 层【血仇】额外获得 3 纷争（无血仇则不加）。升级：8 纷争。
+/// 获得 5 点【纷争】；消耗 1 层【血仇】额外获得 4 纷争（无血仇则不加）。升级：8 纷争。
 /// —— 血仇·纷争联动：基础纷争 + 用血仇换额外纷争。没血仇时只给基础，不白送。
+/// —— 保底1层：血仇真实层数>=2 才允许消耗（Amount==1 是地板层，耗掉会把血仇 Power 移除）。
 /// </summary>
 public class Oathguard : WandiModCard
 {
@@ -28,7 +29,7 @@ public class Oathguard : WandiModCard
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         new IntVar("Strife", 5).WithUpgradeTo(8),
-        new IntVar("BloodBonus", 3),   // 消耗 1 血仇换的额外纷争（固定）
+        new IntVar("BloodBonus", 4),   // 消耗 1 血仇换的额外纷争（固定，升级不变）
     ];
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Strife, WandiModKeywords.Vengeance];
@@ -45,9 +46,9 @@ public class Oathguard : WandiModCard
         // ① 基础纷争
         await StrifePower.Grant(choiceContext, creature, DynamicVars["Strife"].IntValue, creature, this);
 
-        // ② 消耗 1 血仇 → 额外纷争（无血仇则跳过）
+        // ② 消耗 1 血仇 → 额外纷争（无血仇则跳过；保底1层：Amount>=2 才允许消耗，消耗后剩余≥1，血仇 Power 不会被移除）
         var vengeance = creature.GetPower<VengeancePower>();
-        if (vengeance != null && vengeance.Amount > 0)
+        if (vengeance != null && vengeance.Amount >= 2)
         {
             await PowerCmd.Apply<VengeancePower>(choiceContext, creature, -1, creature, null);
             await StrifePower.Grant(choiceContext, creature, DynamicVars["BloodBonus"].IntValue, creature, this);

@@ -64,6 +64,31 @@
 - 设计方案.md：力敌万邦去强化态、§五草案 3 处数值（万死无悔 40/50、灾厄之矛 70/80、御敌 4/6）
 - powers.json：删冗余 BLOOD_DRINK_COUNTER_POWER 死键
 
+## 07/30 游戏内实测 9 项修复（全部完成，构建 ✅）
+
+| # | 问题 | 修复 |
+|---|---|---|
+| 1 | 初始遗物描述 | BloodOfTheKinslayer 加 IntVar("Charges") + setter 同步 BaseValue（WingedBoots 范式）+ ExtraHoverTips（血仇词条 + 荡平万邦预览）；描述 {Charges} 实时显示剩余免死 |
+| 2 | 图鉴无万敌遗物 + 缺商店遗物 | WandiModRelicPool.SeenByDefault=true；新增商店遗物「深红契印 CrimsonSigil」（战斗开始获得 1 张荡平万邦，持有不灭王血→升级版；Shop 档只进商店、机制对标罕见；v4 经济向/v5 卖血产层方案均已迭代） |
+| 3 | cards.json 文本规范化 | eng+zhs 全量重写：HP→生命值、×/+ 数学符号→文字、硬编码数值→DynamicVar 占位 |
+| 4 | 血仇局内描述 | powers.json 重写（失血叠层/+2% 每层/7 层触发消耗 4 层 + 生成荡平万邦）；VengeancePower.ExtraHoverTips 加荡平万邦预览；新增 ConquerAllLands 关键词（WandiModKeywords + card_keywords.json） |
+| 5 | 誓约之枪与血祭之枪重复 | 重做：1费 9 伤；有血仇（Amount>=2）额外 +3 / 12+4（奖励持有血仇，不再产血仇） |
+| 6 | 守誓/连刺耗血仇降为 0 | 消耗判定统一 Amount>=2（保底 1 层地板）；守誓 BloodBonus 3→4；连刺重做（DamageVar 5→6、整牌只耗 1 层、两段都吃 +3）；弑王枪·连突同步 Amount>=2 |
+| 7 | 焚天 UI 无伤害显示 | 重做 CalculatedDamageVar（CalculationBase 12→18 + ExtraDamage 3→4 × 力量），卡面实时显示总伤 |
+| 8 | X 费牌无能量图标 | 金色壁垒/弑神枪·无尽：cost -2→0 + HasEnergyCostX override + ResolveEnergyXValue()（对齐原版 Whirlwind；DynamicVars.Energy 未声明会 KeyNotFound） |
+| 9 | 欧洛巴斯事件卡死 | BloodriteStrike.GetTranscendenceTransformedCard 返回规范模型（原版流程自行处理升级态；返回 mutable 会 AssertCanonical 崩） |
+
+附带修复：灼血击 blood==0→<=1、饮血枪 >0→>=2（地板层语义）；浴血奋战倍率语义改为 Amount=50/100 返回 1+Amount/100（总伤 ×1.5/×2，走 BloodbathPower.ModifyDamageMultiplicative，与旧版只放大已损生命分量/卡面显示歧义双 bug 一并修）；LastingFocus 30/40→20/30、BloodResonance 1/2→2/3（对齐用户设计稿改动）；文档三件同步（起手 5 打击+3 御敌、初始 80 血、商店遗物、誓约之枪/守誓新数值）。
+
+### 待游戏内回归
+- 欧洛巴斯事件：血祭之枪→血祭·诛王枪替换（升级态应保留）
+- X 费双卡：左上角能量图标 + 结算段数/纷争
+- 焚天/荡平万邦：卡面动态伤害显示与实打一致
+- 浴血奋战单体 ×1.5/×2（总伤）+ 卡面文案 50%/100%
+- 深红契印：商店出现、战斗开始手牌 +1 荡平万邦；持有不灭王血时为升级版
+- 卡牌文本能量图标：涅槃/湮灭之枪/蓄能突涌/黄金之瓮描述中的 text_energy.png 内联渲染（中英文档同步）
+- 遗物图鉴：万敌遗物全彩可见（含未拾取）
+
 ## M2 遗留
 
 | 问题 | 说明 | 状态 |
