@@ -19,7 +19,7 @@ namespace WandiMod.WandiModCode.Cards;
 public class VengefulHeart : WandiModCard
 {
     public VengefulHeart() : base(
-        cost: 1,
+        cost: 0,
         type: CardType.Skill,
         rarity: CardRarity.Common,
         target: TargetType.Self)
