@@ -36,13 +36,16 @@ public class BloodOfTheKinslayer : WandiModRelic
         {
             AssertMutable();
             _charges = value;
-            // 充能耗尽 → 遗物置灰（参考 LizardTail.WasUsed 设置 Status）
             if (IsUsedUp)
                 Status = RelicStatus.Disabled;
-            // TODO: 运行时确认数字计数器显示 API（SetCounter/ChangeCounter?），把 Charges 显示在遗物角标上
+            InvokeDisplayAmountChanged();  // 刷新角标（参考 PenNib.UpdateDisplay）
         }
     }
     private int _charges = 4;
+
+    // 遗物角标计数器：显示剩余免死次数（参考 PenNib.ShowCounter + DisplayAmount）
+    public override bool ShowCounter => !IsUsedUp;
+    public override int DisplayAmount => Charges;
 
     /// <summary>充能是否耗尽（用于置灰/计数归零判定，参考 LizardTail.IsUsedUp）。</summary>
     public override bool IsUsedUp => Charges <= 0;

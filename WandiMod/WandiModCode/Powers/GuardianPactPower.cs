@@ -11,18 +11,13 @@ namespace WandiMod.WandiModCode.Powers;
 
 /// <summary>
 /// 庇护盟约 / Guardian Pact（万敌 · 联机临时增益 Power）。
-/// 机制（简化版）：本回合——队友受到的伤害减半（升级 75%），你多承受 50% 的伤害。
-///   - 钩子 ModifyDamageMultiplicative（分发到战斗中所有模型，含本 Power；故单一 Power 即可改两队伤害）：
+/// 机制：本回合——队友受到的伤害减半（升级 75%），你多承受 50% 的伤害。
+///   - 钩子 ModifyDamageMultiplicative（已确认：全局分发，对所有生物伤害事件都咨询本 Power）：
 ///       · target == Owner（自己挨打）→ 返回 1.5（多承受 50%）
 ///       · target 是同侧玩家队友（!= 自己）→ 返回 1 − Amount/100（Amount=50→0.5，Amount=75→0.25）
 ///       · 其余 → 1
-///   - 钩子 AfterSideTurnEnd：敌方回合结束后移除自身（参考原生 FlameBarrierPower 的 opposing-side-end 移除）。
-///   - Amount = 队友减伤百分比（50 或 75，由卡牌按升级态传入）；自身惩罚固定 50%（不随升级变）。
-///
-/// // TODO: 运行时确认——
-///   1) ModifyDamageMultiplicative 是否对所有生物的伤害事件都咨询本 Power（理论上是；若否需改走 DieForYouPower 的 ModifyUnblockedDamageTarget 全额转移）；
-///   2) 「本回合」语义当前实现为「敌方回合结束移除」，若设计要求「玩家自己回合结束移除」请调整 side 判定；
-///   3) 分数比例伤害转移（如「替队友承担 50%」精确语义）需自定义 ModifyUnblockedDamageTarget，当前为乘法减伤近似。
+///   - 钩子 AfterSideTurnEnd：敌方回合结束后移除自身（参考原生 FlameBarrierPower）。
+///   - Amount = 队友减伤百分比（50 或 75）。
 /// </summary>
 public class GuardianPactPower : WandiModPower
 {

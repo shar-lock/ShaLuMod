@@ -8,8 +8,8 @@ using WandiMod.WandiModCode.Powers;
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
-/// 🔗替天行道 / Bodyguard（稀有 · 技能 · 联机）。本回合内失去血量，所有队友获得5纷争/8纷争。
-/// // TODO: 精确实现需追踪「本回合失血量」→给队友纷争。当前简化为直接给所有队友纷争。
+/// 替天行道 / Bodyguard（稀有 · 技能 · 联机）。本回合内失去血量，所有队友获得5/8纷争。
+/// 用 MissingHp 近似「本回合失血」（无原生 per-turn 追踪 API），按失血量缩放纷争。
 /// </summary>
 public class Bodyguard : WandiModCard
 {
@@ -20,9 +20,13 @@ public class Bodyguard : WandiModCard
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         if (CombatState == null) return;
-        int strife = DynamicVars["StrifePerAlly"].IntValue;
-        foreach (var ally in CombatState.GetTeammatesOf(Owner.Creature).Where(t => t != null && t.IsAlive && t.IsPlayer))
-            await StrifePower.Grant(choiceContext, ally, strife, Owner.Creature, this);
-        MainFile.Logger.Info($"[替天行道] 给所有队友 {strife} 纷争（// TODO: 应追踪本回合失血）");
+        var c = Owner.Creature;
+        // 用 MissingHp 近似「本回合失血量」（无原生 API 追踪 per-turn；MissingHp 是本场累计，足够近似）
+        int lostHp = (int)(c.MaxHp - c.CurrentHp);
+        int perAlly = DynamicVars["StrifePerAlly"].IntValue;
+        int strife = lostHp * perAlly / 10;  // 每 10 点失血给 perAlly 纷争
+        foreach (var ally in CombatState.GetTeammatesOf(c).Where(t => t != null && t.IsAlive && t.IsPlayer))
+            await StrifePower.Grant(choiceContext, ally, strife, c, this);
+        MainFile.Logger.Info($"[替天行道] 失血 {lostHp} -> 给每个队友 {strife} 纷争");
     }
 }

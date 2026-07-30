@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;// DamageVar / IntVar
 using MegaCrit.Sts2.Core.Models.CardPools;       // TokenCardPool（原版机制卡池）
 using MegaCrit.Sts2.Core.ValueProps;            // ValueProp
 using WandiMod.WandiModCode.Extensions;          // CardImagePath / BigCardImagePath（资源路径）
+using WandiMod.WandiModCode.Powers;             // BloodbathPower（浴血奋战单体加成检查）
 
 namespace WandiMod.WandiModCode.Cards;
 
@@ -54,8 +55,19 @@ public class ConquerAllLands : CustomCardModel
     [
         new CalculationBaseVar(14m).WithUpgradeTo(20),
         new ExtraDamageVar(25m).WithUpgradeTo(35),
-        new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, _) =>
-            card.Owner.Creature == null ? 0m : (card.Owner.Creature.MaxHp - card.Owner.Creature.CurrentHp) / 100m),
+        new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, _) => {
+            if (card.Owner.Creature == null) return 0m;
+            decimal hpPart = (card.Owner.Creature.MaxHp - card.Owner.Creature.CurrentHp) / 100m;
+            // 浴血奋战：单体时额外倍率（BloodbathPower.Amount 存百分比，150=1.5×，追加到 multiplier）
+            var bloodbath = card.Owner.Creature.GetPower<BloodbathPower>();
+            if (bloodbath != null && bloodbath.Amount > 0)
+            {
+                int enemyCount = card.Owner.Creature.CombatState?.HittableEnemies.Count() ?? 0;
+                if (enemyCount == 1)
+                    hpPart += bloodbath.Amount / 100m;  // 150 → +1.5 并入乘数
+            }
+            return hpPart;
+        }),
     ];
 
     // 词条：保留（留手）+ 消耗（打出后消失，防囤积）

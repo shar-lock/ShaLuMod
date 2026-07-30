@@ -1,5 +1,6 @@
 using BaseLib.Extensions;                           // WithUpgrade 扩展方法
-using MegaCrit.Sts2.Core.Commands;                 // CreatureCmd（回血）
+using MegaCrit.Sts2.Core.Commands;                 // CreatureCmd / PowerCmd
+using MegaCrit.Sts2.Core.Entities.Powers;           // PowerType
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;   // PlayerChoiceContext
 using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / CardRarity / TargetType / CardKeyword
 using MegaCrit.Sts2.Core.Localization.DynamicVars;  // IntVar
@@ -41,9 +42,13 @@ public class BloodCleanse : WandiModCard
             return;
         }
 
-        // 移除自身 1 个减益（易伤/虚弱/缠绕等负面 power）
-        // TODO: 确认移除 debuff 的 API（CreaturePowers 的负面枚举判定 + 移除调用）
-        MainFile.Logger.Warn("[净血] 移除减益 API 未实现，跳过减益移除（仅给纷争/回血）");
+        // 移除自身 1 个减益——遍历 Powers，取第一个 Debuff → Remove（参考 Misery）
+        var debuff = creature.Powers.FirstOrDefault(p => p.Type == PowerType.Debuff);
+        if (debuff != null)
+        {
+            await PowerCmd.Remove(debuff);
+            MainFile.Logger.Info($"[净血] 移除减益：{debuff.GetType().Name}");
+        }
 
         // 纷争
         await StrifePower.Grant(choiceContext, creature, DynamicVars["Strife"].IntValue, creature, this);

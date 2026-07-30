@@ -5,7 +5,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
 using WandiMod.WandiModCode.Character;
 using WandiMod.WandiModCode.Extensions;
-using WandiMod.WandiModCode.Powers;
+using WandiMod.WandiModCode.Powers;                 // GoldenBastionNextTurnPower / StrifePower
 
 namespace WandiMod.WandiModCode.Cards;
 
@@ -21,9 +21,8 @@ public class GoldenBastion : WandiModCard
         int energy = DynamicVars.Energy.IntValue;
         int perEnergy = DynamicVars["StrifePerEnergy"].IntValue;
         await StrifePower.Grant(choiceContext, c, energy * perEnergy, c, this);
-        // TODO: 设计稿写「下回合 +X 力量」——原生下回合力量走 NextTurnPower 或类似机制；
-        // 先给本回合力量 + TODO 标注
-        await PowerCmd.Apply<StrengthPower>(choiceContext, c, energy, c, null);
-        MainFile.Logger.Info($"[金色壁垒] X={energy}，纷争 {energy * perEnergy}，力量 +{energy}（// TODO: 应为下回合）");
+        // 下回合 +X 力量——GoldenBastionNextTurnPower（AfterSideTurnStart 触发后自毁，参考 DrawCardsNextTurnPower）
+        await PowerCmd.Apply<GoldenBastionNextTurnPower>(choiceContext, c, energy, c, this);
+        MainFile.Logger.Info($"[金色壁垒] X={energy}，纷争 {energy * perEnergy}，下回合 +{energy} 力量");
     }
 }

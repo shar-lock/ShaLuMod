@@ -1,5 +1,6 @@
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
@@ -11,7 +12,7 @@ namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
 /// 圣血洗礼 / Holy Blood Baptism（稀有 · 技能）。失6血，移除自身全部减益 + 12纷争 / 失6+回5。
-/// // TODO: 移除自身全部减益的 API 待运行时确认（PowerModel.Debuff 判定 + Remove）。
+/// 移除减益：遍历 Creature.Powers，Type==Debuff → PowerCmd.Remove（参考 Misery 的 debuff 筛选）。
 /// </summary>
 public class HolyBloodBaptism : WandiModCard
 {
@@ -27,10 +28,13 @@ public class HolyBloodBaptism : WandiModCard
     {
         var c = Owner.Creature;
         await CreatureCmd.Damage(choiceContext, c, DynamicVars.HpLoss.BaseValue, ValueProp.Unblockable | ValueProp.Unpowered | ValueProp.Move, this, cardPlay);
-        // TODO: 移除自身全部减益——需确认 API（遍历 Owner Powers，Type==Debuff → PowerCmd.Remove）
+        // 移除自身全部减益——遍历 Powers，Type==Debuff → Remove（参考 Misery 的 debuff 筛选）
+        var debuffs = c.Powers.Where(p => p.Type == PowerType.Debuff).ToList();  // ToList 快照避免遍历中修改
+        foreach (var debuff in debuffs)
+            await PowerCmd.Remove(debuff);
         await StrifePower.Grant(choiceContext, c, DynamicVars["Strife"].IntValue, c, this);
         int heal = DynamicVars["Heal"].IntValue;
         if (heal > 0) await CreatureCmd.Heal(c, heal);
-        MainFile.Logger.Info($"[圣血洗礼] 失血+{DynamicVars["Strife"].IntValue} 纷争（// TODO: 减益移除未实现）");
+        MainFile.Logger.Info($"[圣血洗礼] 失血 + 移除 {debuffs.Count} 个减益 + {DynamicVars["Strife"].IntValue} 纷争");
     }
 }

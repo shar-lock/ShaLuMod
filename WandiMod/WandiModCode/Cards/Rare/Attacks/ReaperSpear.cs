@@ -11,7 +11,8 @@ namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
 /// 绝命枪 / Reaper Spear（稀有 · 攻击）。8伤；HP≤50% 额外+7 / 12+8。
-/// // TODO: 设计稿写「HP≤50%费用变0」——费用是静态的无法动态降，简化为固定 1 费+残血加伤。
+/// 设计稿���「HP≤50%费用变0」——StS2 无单卡动态降费 API（TryModifyEnergyCostInCombatLate 需持久 Power，
+/// 且作用于所有攻击牌而非指定卡）。接受简化：固定 1 费 + 残血加伤。
 /// </summary>
 public class ReaperSpear : WandiModCard
 {

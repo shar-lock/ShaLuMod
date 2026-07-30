@@ -3,6 +3,7 @@ using BaseLib.Utils;                                // CommonActions
 using MegaCrit.Sts2.Core.Commands;                  // CreatureCmd（回血）
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;   // PlayerChoiceContext
 using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / CardRarity / TargetType
+using WandiMod.WandiModCode.Powers;                 // BloodDrinkCounterPower
 using MegaCrit.Sts2.Core.Localization.DynamicVars;  // DamageVar / IntVar
 using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
 using WandiMod.WandiModCode.Character;              // WandiModCard
@@ -43,16 +44,12 @@ public class BloodDrinkCounter : WandiModCard
             return;
         }
 
-        // ① 造成伤害
+        // ① 施加精确吸血 Power（AfterAttack 汇总 UnblockedDamage → 按比例回血）
+        await PowerCmd.Apply<BloodDrinkCounterPower>(choiceContext, creature, DynamicVars["LifestealPct"].IntValue, creature, this);
+
+        // ② 造成伤害（Power 会在攻击结算后自动回血）
         await CommonActions.CardAttack(this, cardPlay).Execute(choiceContext);
 
-        // ② 吸血：按基础伤害 × 比例回血（简化口径，精确口径见类注释 TODO）
-        int pct = DynamicVars["LifestealPct"].IntValue;
-        decimal heal = DynamicVars.Damage.BaseValue * pct / 100m;
-        if (heal > 0m)
-        {
-            await CreatureCmd.Heal(creature, heal);
-            MainFile.Logger.Info($"[饮血反击] 吸血回复 {heal} 生命（基础伤 {DynamicVars.Damage.BaseValue} × {pct}%）");
-        }
+        MainFile.Logger.Info($"[饮血反击] 打出 {DynamicVars.Damage.BaseValue} 伤（吸血 {DynamicVars["LifestealPct"].IntValue}% 由 Power 精确结算）");
     }
 }
