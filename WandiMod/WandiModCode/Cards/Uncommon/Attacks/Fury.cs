@@ -45,14 +45,14 @@ public class Fury : WandiModCard
         }
 
         int blood = creature.GetPower<VengeancePower>()?.Amount ?? 0;
-        int multiplier = DynamicVars["Multiplier"].IntValue;
-        decimal dmg = blood * multiplier;
-
-        if (dmg <= 0)
+        // 真实层数含保底 1；无 Power 时伤害落空（不凭空造 1 层）
+        if (blood <= 0)
         {
-            MainFile.Logger.Warn($"[狂怒] 血仇为 0（blood={blood}），伤害落空");
+            MainFile.Logger.Warn($"[狂怒] 无血仇 Power（blood={blood}），伤害落空");
             return;
         }
+        int multiplier = DynamicVars["Multiplier"].IntValue;
+        decimal dmg = blood * multiplier;
 
         await DamageCmd.Attack(dmg)
             .FromCard(this, cardPlay)

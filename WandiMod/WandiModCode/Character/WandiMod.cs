@@ -40,7 +40,7 @@ public class WandiMod : PlaceholderCharacterModel
             ModelDb.Card<Cards.Afterimage>()
         ];
 
-    // 起手遗物：弑亲血脉（免死 ×4 + 战斗开始赋予血仇 Power）——角色灵魂，M2 已实装
+    // 起手遗物：弑亲血脉（免死 ×2 + 战斗开始赋予血仇 Power）——角色灵魂，M2 已实装
     public override IReadOnlyList<RelicModel> StartingRelics =>
     [
         ModelDb.Relic<BloodOfTheKinslayer>()

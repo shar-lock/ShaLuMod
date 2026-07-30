@@ -14,7 +14,9 @@ namespace WandiMod.WandiModCode.Cards;
 /// 坚韧 / Tenacity（罕见 · 技能）
 /// 消耗手牌中的 1 张牌，获得 2 层【血仇】。升级：3 层。
 /// —— 手牌管理 + 血仇启动：用多余手牌换血仇层数。
-/// 卡牌选择消耗走 CardSelectCmd.FromHand（参考原生 Purity/净化）。
+/// 卡牌选择消耗参考原生坚毅(TrueGrit)升级版：CardSelectCmd.FromHand + 内置 ExhaustSelectionPrompt
+/// （Purity 式的 this.SelectionScreenPrompt 需要每张卡自带 .selectionScreenPrompt 本地化，
+/// 缺失会在出牌时直接抛 InvalidOperationException）。
 /// </summary>
 public class Tenacity : WandiModCard
 {
@@ -35,14 +37,14 @@ public class Tenacity : WandiModCard
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        // 让玩家从手牌中选 1 张牌消耗——CardSelectCmd.FromHand（参考原生 Purity）
-        var prefs = new CardSelectorPrefs(this.SelectionScreenPrompt, 1, 1);
-        var selected = await CardSelectCmd.FromHand(choiceContext, Owner, prefs, null, this);
-        foreach (var card in selected)
-            await CardCmd.Exhaust(choiceContext, card);
+        // 让玩家从手牌中选 1 张牌消耗——坚毅(TrueGrit)升级版同款内置 ExhaustSelectionPrompt
+        var prefs = new CardSelectorPrefs(CardSelectorPrefs.ExhaustSelectionPrompt, 1);
+        var selected = (await CardSelectCmd.FromHand(choiceContext, Owner, prefs, null, this)).FirstOrDefault();
+        if (selected != null)
+            await CardCmd.Exhaust(choiceContext, selected);
 
         await VengeancePower.Grant(choiceContext, Owner.Creature, DynamicVars["Vengeance"].IntValue, this);
 
-        MainFile.Logger.Info($"[坚韧] 消耗 {selected.Count()} 张手牌，获得 {DynamicVars["Vengeance"].IntValue} 血仇");
+        MainFile.Logger.Info($"[坚韧] 消耗手牌={selected?.Title ?? "无（空手牌）"}，获得 {DynamicVars["Vengeance"].IntValue} 血仇");
     }
 }

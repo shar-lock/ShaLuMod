@@ -1,13 +1,12 @@
-using BaseLib.Extensions;                           // WithUpgrade / WithValueProp
-using MegaCrit.Sts2.Core.Commands;                  // DamageCmd / PowerCmd
+using MegaCrit.Sts2.Core.Commands;                  // DamageCmd / PowerCmd / CreatureCmd
+using MegaCrit.Sts2.Core.Commands.Builders;         // AttackCommand / AttackContext（多段可变伤 + 活力）
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;   // PlayerChoiceContext
 using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / CardRarity / TargetType / CardKeyword
 using MegaCrit.Sts2.Core.Localization.DynamicVars;  // DamageVar / RepeatVar / IntVar
 using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
 using WandiMod.WandiModCode.Character;              // WandiModCard
 using WandiMod.WandiModCode.Powers;                 // VengeancePower
-
-using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+using WandiMod.WandiModCode.Extensions;             // WithUpgradeTo（升级目标值语义）
 
 namespace WandiMod.WandiModCode.Cards;
 
@@ -15,7 +14,9 @@ namespace WandiMod.WandiModCode.Cards;
 /// 弑王枪·连突 / Kingslayer Chain（罕见 · 攻击）
 /// 造成 5 伤害 ×2；每段消耗 1 层【血仇】额外 +5 伤害（无血仇则不加）。升级：6 伤害 ×2，每段 +6。
 /// —— 连刺（RepeatedThrust）的罕见加强版：更高单段基数 + 更高血仇增伤，2 费标杆多段。
-/// 手动逐段结算（每段按当时血仇余量决定是否消耗 +5），ValueProp.Move 吃力量加成。
+/// 每段伤害可变（是否耗血仇决定），不能用扁平 WithHitCount——改走 AttackContext（回响斩/全切同款）：
+/// CreateContextAsync 触发一次 BeforeAttack（活力绑定整次攻击），逐段 CreatureCmd.Damage + AddHit，
+/// DisposeAsync 触发一次 AfterAttack（活力此时才消耗）→ 活力覆盖每一段。
 /// </summary>
 public class KingslayerChain : WandiModCard
 {
@@ -39,9 +40,9 @@ public class KingslayerChain : WandiModCard
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         var creature = Owner.Creature;
-        if (creature == null || cardPlay.Target == null)
+        if (creature == null || cardPlay.Target == null || CombatState == null)
         {
-            MainFile.Logger.Error("[弑王枪·连突] OnPlay 时 Owner.Creature 或目标为空，效果未触发");
+            MainFile.Logger.Error("[弑王枪·连突] OnPlay 时 Owner.Creature / 目标 / CombatState 为空，效果未触发");
             return;
         }
 
@@ -50,7 +51,8 @@ public class KingslayerChain : WandiModCard
         int bonus = DynamicVars["BloodBonus"].IntValue;
         int consumed = 0;
 
-        // 逐段结算：每段若还有血仇，消耗 1 层并 +bonus（多段消耗型，参考 RepeatedThrust）
+        // AttackContext：一次 BeforeAttack / AfterAttack，中间可变伤多段仍吃满活力
+        await using var ctx = await AttackCommand.CreateContextAsync(CombatState, choiceContext, cardPlay);
         for (int i = 0; i < hits; i++)
         {
             decimal dmg = baseDmg;
@@ -62,11 +64,9 @@ public class KingslayerChain : WandiModCard
                 dmg += bonus;
                 consumed++;
             }
-            await DamageCmd.Attack(dmg)
-                .FromCard(this, cardPlay)
-                .Targeting(cardPlay.Target)
-                .WithValueProp(ValueProp.Move)
-                .Execute(choiceContext);
+            var results = await CreatureCmd.Damage(
+                choiceContext, cardPlay.Target, dmg, ValueProp.Move, this, cardPlay);
+            ctx.AddHit(results);
         }
 
         if (consumed > 0)

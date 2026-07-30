@@ -1,22 +1,22 @@
-using BaseLib.Extensions;                           // WithUpgrade / WithValueProp
 using MegaCrit.Sts2.Core.Commands;                  // DamageCmd
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;   // PlayerChoiceContext
 using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / CardRarity / TargetType / CardKeyword
-using MegaCrit.Sts2.Core.Localization.DynamicVars;  // DamageVar / IntVar
+using MegaCrit.Sts2.Core.Localization.DynamicVars;  // DamageVar
 using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
 using WandiMod.WandiModCode.Character;              // WandiModCard
 using WandiMod.WandiModCode.Powers;                 // VengeancePower
-
-using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
+using WandiMod.WandiModCode.Extensions;             // WithUpgradeTo（升级目标值语义）
 
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
 /// 暴风连击 / Storm Combo（罕见 · 攻击）
-/// 造成 4 伤害 ×（当前【血仇】层数）。升级：段数 +1（即 ×（血仇 + 1））。
+/// 造成 4 点伤害，段数 = 当前【血仇】真实层数（保底至少 1 段）。升级：伤害 4→5。
 /// —— 动态段数血仇转化：把积攒的血仇一次性倾泻成多段小伤（不消耗血仇，仅读取层数）。
-/// 命中数取决于打出时的血仇层数；无血仇且未升级时为 0 段（仅消耗费用，伤害落空）。
-/// 注意：多段每段都会吃一次力量加成（ValueProp.Move），高力量下放大明显。
+/// 血仇 Power 保底 1 层（显示 0）：真实 Amount 始终 ≥1 → 至少打 1 段，与「看到 0 层仍有 1 层效果」的数值设计一致。
+/// 多段必须走单次 AttackCommand.WithHitCount（剑回旋镖 / 烈火同款）——
+/// 活力(Vigor) 在 BeforeAttack 绑定整次 AttackCommand，AfterAttack 才消耗；
+/// 若 for 循环多次 Execute，活力只会加到第一段并被立刻清掉。
 /// </summary>
 public class StormCombo : WandiModCard
 {
@@ -30,8 +30,7 @@ public class StormCombo : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(4, ValueProp.Move),               // 每段基础伤害 4（升级不变）
-        new IntVar("BloodHitBonus", 0).WithUpgradeTo(1),  // 段数 = 血仇 + 此值（0→1）
+        new DamageVar(4, ValueProp.Move).WithUpgradeTo(5),  // 每段基础伤害 4→5（升级加伤不加段）
     ];
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Vengeance];
@@ -45,26 +44,18 @@ public class StormCombo : WandiModCard
             return;
         }
 
+        // 真实层数（含保底 1）；无 Power 时也至少打 1 段
         int blood = creature.GetPower<VengeancePower>()?.Amount ?? 0;
-        int bonus = DynamicVars["BloodHitBonus"].IntValue;
-        int hits = Math.Max(0, blood + bonus);
+        int hits = Math.Max(1, blood);
         decimal dmg = DynamicVars.Damage.BaseValue;
 
-        if (hits == 0)
-        {
-            MainFile.Logger.Warn($"[暴风连击] 当前血仇 {blood} + bonus {bonus} = 0 段，伤害落空");
-            return;
-        }
+        // 单次 AttackCommand + WithHitCount：活力/力量等 BeforeAttack 绑定覆盖每一段
+        await DamageCmd.Attack(dmg)
+            .WithHitCount(hits)
+            .FromCard(this, cardPlay)
+            .Targeting(cardPlay.Target)
+            .Execute(choiceContext);
 
-        for (int i = 0; i < hits; i++)
-        {
-            await DamageCmd.Attack(dmg)
-                .FromCard(this, cardPlay)
-                .Targeting(cardPlay.Target)
-                .WithValueProp(ValueProp.Move)
-                .Execute(choiceContext);
-        }
-
-        MainFile.Logger.Info($"[暴风连击] 当前血仇 {blood}（+bonus {bonus}），打出 {hits} 段 {dmg} 伤害");
+        MainFile.Logger.Info($"[暴风连击] 血仇真实 {blood}（显示 {Math.Max(0, blood - 1)}），打出 {hits} 段 {dmg} 伤害");
     }
 }

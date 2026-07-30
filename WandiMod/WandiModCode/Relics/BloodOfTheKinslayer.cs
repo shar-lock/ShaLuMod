@@ -13,14 +13,15 @@ namespace WandiMod.WandiModCode.Relics;
 
 /// <summary>
 /// 弑亲血脉 / Blood of the Kinslayer —— 万敌起手遗物（角色灵魂）。
-/// 合并「血仇引擎」与「4 次免死」二为一：
+/// 合并「血仇引擎」与「2 次免死」二为一：
 ///   ① 战斗开始赋予万敌「血仇」Power（BeforeCombatStart）；
-///   ② 受到致命伤害时免死，回复至 30% 最大生命，消耗 1 次充能（共 4 次）。
+///   ② 受到致命伤害时免死，回复至 30% 最大生命，消耗 1 次充能（共 2 次）。
 /// 血仇的「失血叠层 / +2%/层伤害放大」逻辑在 VengeancePower 内；
 /// 免死逻辑套用原生遗物「蜥蜴尾巴 / LizardTail」（ShouldDieLate + AfterPreventingDeath）。
-/// 觉醒版「不灭王血」经先古之民欧洛巴斯的「欧洛巴斯之触」替换（GetUpgradeReplacement）。
+/// 觉醒版「不灭王血」经先古之民欧洛巴斯的「欧洛巴斯之触」替换（GetUpgradeReplacement）——继承本类充能数。
 /// 必须继承 WandiModRelic 以获得 [Pool]：0.109 起所有遗物模型都强制要求 PoolAttribute，
 /// 缺失会在游戏启动注册模型时直接致命错误。不进奖励池是靠 Rarity=Starter 保证的，不是靠不标 Pool。
+/// 平衡：4 次实测过高（≈全程几乎不死），压到 2 次保留卖血容错、避免无脑强。
 /// </summary>
 public class BloodOfTheKinslayer : WandiModRelic
 {
@@ -31,10 +32,10 @@ public class BloodOfTheKinslayer : WandiModRelic
     /// 描述变量：{Charges} 让遗物描述里的免死次数实时跟随剩余充能（参考原版 WingedBoots 的
     /// DynamicVars["Rooms"].BaseValue 同步写法——遗物描述经 DynamicVars.AddTo 智能格式化）。
     /// </summary>
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Charges", 4)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Charges", 2)];
 
     /// <summary>
-    /// 免死充能次数（剩 0 则免死失效）。初始 4 次，致敬星铁天赋「4 次免死」。
+    /// 免死充能次数（剩 0 则免死失效）。初始 2 次（觉醒版不灭王血继承同值）。
     /// [SavedProperty] 保证充能跨存档持久化。参考 LizardTail 的 [SavedProperty] bool WasUsed（这里用 int）。
     /// </summary>
     [SavedProperty]
@@ -51,7 +52,7 @@ public class BloodOfTheKinslayer : WandiModRelic
             InvokeDisplayAmountChanged();  // 刷新角标（参考 PenNib.UpdateDisplay）
         }
     }
-    private int _charges = 4;
+    private int _charges = 2;
 
     /// <summary>
     /// 悬停提示：血仇关键词词条（玩家可在遗物描述里点「血仇」看机制）+ 荡平万邦卡牌预览。
