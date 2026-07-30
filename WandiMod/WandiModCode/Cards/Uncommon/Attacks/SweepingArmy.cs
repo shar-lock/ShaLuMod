@@ -1,6 +1,6 @@
 using BaseLib.Extensions;                           // WithUpgrade 扩展方法
 using BaseLib.Utils;                                // CommonActions
-using MegaCrit.Sts2.Core.Commands;                  // PowerCmd���虚弱）
+using MegaCrit.Sts2.Core.Commands;                  // PowerCmd（施加虚弱）
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;   // PlayerChoiceContext
 using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / CardRarity / TargetType
 using MegaCrit.Sts2.Core.Localization.DynamicVars;  // DamageVar / IntVar

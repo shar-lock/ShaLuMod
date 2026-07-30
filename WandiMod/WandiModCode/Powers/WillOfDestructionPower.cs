@@ -3,6 +3,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 
@@ -15,7 +16,7 @@ public class WillOfDestructionPower : WandiModPower
     public override PowerStackType StackType => PowerStackType.Single;
 
     public override async Task AfterDamageReceived(PlayerChoiceContext ctx, Creature target,
-        MegaCrit.Sts2.Core.GameActions.Multiplayer.DamageResult result, ValueProp props, Creature? dealer, CardModel? cardSource)
+        DamageResult result, ValueProp props, Creature? dealer, CardModel? cardSource)
     {
         if (target != Owner || result.UnblockedDamage <= 0) return;
         await PowerCmd.Apply<StrengthPower>(ctx, Owner, 1, Owner, null);

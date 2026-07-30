@@ -2,6 +2,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 
 namespace WandiMod.WandiModCode.Powers;
@@ -13,7 +14,7 @@ public class BloodResonancePower : WandiModPower
     public override PowerStackType StackType => PowerStackType.Counter;
 
     public override async Task AfterDamageReceived(PlayerChoiceContext ctx, Creature target,
-        MegaCrit.Sts2.Core.GameActions.Multiplayer.DamageResult result, ValueProp props, Creature? dealer, CardModel? cardSource)
+        DamageResult result, ValueProp props, Creature? dealer, CardModel? cardSource)
     {
         if (target != Owner || result.UnblockedDamage <= 0) return;
         await StrifePower.Grant(ctx, Owner, Amount, Owner, null);

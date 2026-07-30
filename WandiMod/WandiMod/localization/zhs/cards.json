@@ -156,7 +156,7 @@
   "WANDIMOD-BODYGUARD.title": "替天行道",
   "WANDIMOD-BODYGUARD.description": "所有队友获得 5 [gold]纷争[/gold]。",
   "WANDIMOD-RIVAL_ALL_LANDS.title": "力敌万邦",
-  "WANDIMOD-RIVAL_ALL_LANDS.description": "回合开始+2 [gold]血仇[/gold]；获得[gold]血仇[/gold]时抽 1 牌（每回��≤2）。",
+  "WANDIMOD-RIVAL_ALL_LANDS.description": "回合开始+2 [gold]血仇[/gold]；获得[gold]血仇[/gold]时抽 1 牌（每回合≤2）。",
   "WANDIMOD-UNDYING_SOVEREIGNTY.title": "不死王权",
   "WANDIMOD-UNDYING_SOVEREIGNTY.description": "每次受到攻击时回复最大生命 1% 的血量。",
   "WANDIMOD-VENGEANCE_DOMINION.title": "血仇主宰",

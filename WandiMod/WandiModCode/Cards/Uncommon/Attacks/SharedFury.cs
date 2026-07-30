@@ -17,7 +17,7 @@ namespace WandiMod.WandiModCode.Cards;
 /// 所有队友 +2 力量（本场）。升级：+3 力量。
 /// —— 联机专属团队增益：给所有队友（含自己）叠力量，提升全队输出。
 ///
-/// 实现说明���
+/// 实现说明：
 ///   - 队友枚举走 CombatState.GetTeammatesOf（Agent 确认的多人 API；Player 上无 Allies 属性）。
 ///   - 含自己：GetTeammatesOf 返回同侧所有生物，过滤 IsAlive &amp;&amp; IsPlayer 后含自己（与原生 Rally 一致）。
 ///   - 设计稿列在攻击表但未写伤害，按设计实现为纯增益（不造成伤害）。

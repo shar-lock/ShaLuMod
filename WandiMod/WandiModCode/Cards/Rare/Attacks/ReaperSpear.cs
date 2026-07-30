@@ -11,7 +11,7 @@ namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
 /// 绝命枪 / Reaper Spear（稀有 · 攻击）。8伤；HP≤50% 额外+7 / 12+8。
-/// 设计稿���「HP≤50%费用变0」——StS2 无单卡动态降费 API（TryModifyEnergyCostInCombatLate 需持久 Power，
+/// 设计稿是「HP≤50%费用变0」——StS2 无单卡动态降费 API（TryModifyEnergyCostInCombatLate 需持久 Power，
 /// 且作用于所有攻击牌而非指定卡）。接受简化：固定 1 费 + 残血加伤。
 /// </summary>
 public class ReaperSpear : WandiModCard
@@ -29,7 +29,8 @@ public class ReaperSpear : WandiModCard
         decimal dmg = DynamicVars.Damage.BaseValue;
         bool lowHp = c.CurrentHp <= c.MaxHp * 0.5m;
         if (lowHp) dmg += DynamicVars["Bonus"].IntValue;
-        await DamageCmd.Attack(dmg).FromCard(this, cardPlay).Targeting(cardPlay.Target).WithValueProp(ValueProp.Move).Execute(choiceContext);
+        // AttackCommand.DamageProps 默认即 ValueProp.Move，无需（也无 API）再设置
+        await DamageCmd.Attack(dmg).FromCard(this, cardPlay).Targeting(cardPlay.Target).Execute(choiceContext);
         if (lowHp) MainFile.Logger.Info($"[绝命枪] HP≤50%，总伤 {dmg}");
     }
 }

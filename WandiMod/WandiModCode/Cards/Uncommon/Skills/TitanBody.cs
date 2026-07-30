@@ -11,7 +11,7 @@ namespace WandiMod.WandiModCode.Cards;
 /// <summary>
 /// 巨灵之躯 / Titan Body（罕见 · 技能 · 消耗）
 /// 获得 5 点【纷争】。升级：8 纷争。
-/// —— 2 费大额纷争件（临时上限大幅扩张）。消耗防与「涅槃/血祭」类卡牌循���刷临时上限。
+/// —— 2 费大额纷争件（临时上限大幅扩张）。消耗防与「涅槃/血祭」类卡牌循环刷临时上限。
 /// </summary>
 public class TitanBody : WandiModCard
 {

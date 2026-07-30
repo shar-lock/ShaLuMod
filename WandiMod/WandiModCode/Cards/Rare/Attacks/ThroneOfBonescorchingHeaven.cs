@@ -44,7 +44,8 @@ public class ThroneOfBonescorchingHeaven : WandiModCard
         bool lowHp = creature.CurrentHp <= creature.MaxHp * 0.5m;
         if (lowHp) dmg += blood * bonus;
 
-        await DamageCmd.Attack(dmg).FromCard(this, cardPlay).TargetingAllOpponents(CombatState).WithValueProp(ValueProp.Move).Execute(choiceContext);
+        // AttackCommand.DamageProps 默认即 ValueProp.Move，无需（也无 API）再设置
+        await DamageCmd.Attack(dmg).FromCard(this, cardPlay).TargetingAllOpponents(CombatState).Execute(choiceContext);
         MainFile.Logger.Info($"[诛天焚骨的王座] 吞噬 {blood} 血仇，全体 {dmg} 伤（残血加成={lowHp}）");
     }
 }

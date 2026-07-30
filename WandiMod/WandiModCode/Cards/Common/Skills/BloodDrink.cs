@@ -9,9 +9,9 @@ using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语�
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
-/// ���血 / Blood Drink（普通 · 技能）
+/// 饮血 / Blood Drink（普通 · 技能）
 /// 回复 6 点生命值。升级：9 点。
-/// —— 直接回血件（回血在 StS2 极度稀缺，1 费回 6 ��合理强度）。
+/// —— 直接回血件（回血在 StS2 极度稀缺，1 费回 6 是合理强度）。
 /// </summary>
 public class BloodDrink : WandiModCard
 {

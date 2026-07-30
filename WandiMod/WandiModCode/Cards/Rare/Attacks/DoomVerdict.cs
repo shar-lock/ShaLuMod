@@ -23,10 +23,9 @@ public class DoomVerdict : WandiModCard
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         if (cardPlay.Target == null) return;
-        var cmd = CommonActions.CardAttack(this, cardPlay);
-        var results = await cmd.Execute(choiceContext);
-        // 击杀判定：WasTargetKilled（参考原生 Feed/HandOfGreed）
-        bool killed = results?.SelectMany(r => r).Any(r => r.WasTargetKilled) == true;
+        // Execute 返回 AttackCommand 本体；击杀判定走 .Results（IEnumerable<List<DamageResult>>）
+        var executed = await CommonActions.CardAttack(this, cardPlay).Execute(choiceContext);
+        bool killed = executed.Results.SelectMany(r => r).Any(r => r.WasTargetKilled);
         if (killed)
         {
             int blood = DynamicVars["BloodOnKill"].IntValue;

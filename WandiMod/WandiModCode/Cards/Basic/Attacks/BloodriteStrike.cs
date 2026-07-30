@@ -1,6 +1,7 @@
 using BaseLib.Abstracts;                        // ITranscendenceCard
 using BaseLib.Extensions;                       // WithUpgrade
 using BaseLib.Utils;                            // CommonActions
+using MegaCrit.Sts2.Core.Commands;              // CardCmd
 using MegaCrit.Sts2.Core.Entities.Cards;        // CardPlay / CardType / CardRarity / TargetType / CardKeyword
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;// PlayerChoiceContext
 using MegaCrit.Sts2.Core.Localization.DynamicVars;// DamageVar / IntVar
