@@ -133,3 +133,128 @@ return "res://WandiMod/images/card_portraits/big/card.png";  // 回退到占位�
 - **游戏内显示空白** → 占位图（card.png）也不存在，需要创建占位图或正确图片
 - **Publish 后仍然看不到** → 确认图片在 `WandiMod/WandiMod/images/` 下（不是 `WandiMod/images/`）
 - **新机器 clone 后没有 images 目录** → 正常（png 被 gitignore），需要手动创建目录结构 + 占位图
+
+---
+
+# 角色主题配置（卡牌边框 / 能量 / 角色模型）
+
+> 调研对象：万敌在游戏里「卡牌背景色、能量颜色、能量背景色、战斗角色模型」都显示成战士（Ironclad）的根因与配置方法。
+
+## 根因：PlaceholderCharacterModel 回退到战士
+
+`WandiMod : PlaceholderCharacterModel`（BaseLib）。`PlaceholderCharacterModel` 把**所有未 override 的 `Custom*Path` 属性**指向 `PlaceholderID = "ironclad"`（见 [PlaceholderCharacterModel.cs](../BaseLib-StS2/Abstracts/PlaceholderCharacterModel.cs)）。
+
+→ **任何不覆写的主题属性 = 战士的资产**。万敌目前只覆写了图标/选角图等少量项，能量计数器、战斗角色模型等仍是战士。
+
+## 总览：主题属性归属与当前状态
+
+| 主题元素 | 配置位置（文件 / 属性） | 当前万敌 |
+|---|---|---|
+| **卡牌边框/背景色** | `WandiModCardPool` 的 `H`/`S`/`V`（HSV 着色） | ✅ 血红（H=0/S=1/V=0.6） |
+| **卡牌能量图标**（牌面右下 + 文本 `{E}`） | `WandiModCardPool` 的 `BigEnergyIconPath`/`TextEnergyIconPath` | ⚠️ 路径已设，PNG 待补 |
+| **战斗能量球 + 背景面板**（右上角） | `WandiMod.CustomEnergyCounterPath`（场景）或 `CustomEnergyCounter`（legacy） | ❌ 未覆写 → 战士（需场景/PNG） |
+| **战斗角色模型**（战斗内人物） | `WandiMod.CustomVisualPath`（`creature_visuals` 场景） | ❌ 未覆写 → 战士 |
+| 能量数字描边色 | `WandiMod.EnergyLabelOutlineColor` | ✅ 血红 B71C1C |
+| 角色名颜色 | `WandiMod.NameColor` | ✅ 血红 B71C1C |
+| 卡牌出牌轨迹 / 地图标 / 选角背景 / 音效 / 篝火 / 商人 / 猜拳手势 | `PlaceholderCharacterModel` 各 `Custom*Path` | 多为战士 |
+
+## 1. 卡牌边框 / 背景色 — `WandiModCardPool : CustomCardPoolModel`
+
+卡牌的彩色边框由**卡池**的着色器材质决定（不是单张卡）。三选一：
+
+| 方式 | 属性 | 说明 |
+|---|---|---|
+| **HSV 着色**（最简，推荐） | `H` / `S` / `V`（0–1，或 `ShaderColor` 派生） | 对基础边框图（`card_frame_red`）做 HSV 位移。万敌想要虚数金 → 调 `H` 到金黄区（约 0.12），`S`/`V` 适度。**作用在已着色图上，需实验调参**（见现有注释） |
+| 自定义边框图 | `CustomFrame(CustomCardModel)` → `Texture2D` | 返回自定义 PNG（如 `images/cards/frame.png`），完全替换边框美术 |
+| 自定义着色器 | `CardFrameMaterialPath` | 指向自己的 `.tres` ShaderMaterial（高级，一般不用） |
+
+附带：`DeckEntryCardColor`（牌组列表里小卡牌图标的着色）。
+
+> 实现：`CustomCardPoolMaterialPatch`（[CustomCardPoolModel.cs:90](../BaseLib-StS2/Abstracts/CustomCardPoolModel.cs#L90)）用 `ShaderUtils.GenerateHsv(H,S,V)` 自动生成材质。
+
+**万敌现状**：[WandiModCardPool.cs:19-21](../WandiMod/WandiModCode/Character/WandiModCardPool.cs#L19) `H=S=V=1f` → 等于不着色。改成金色 hue 即可（纯代码，无需图片）。
+
+## 2. 卡牌能量图标（牌面右下角 + 卡牌文本里的能量符号）
+
+| 属性 | 目录 | 文件名 |
+|---|---|---|
+| `BigEnergyIconPath`（牌面大图标） | `images/charui/` | `big_energy.png` |
+| `TextEnergyIconPath`（文本 `{E}` 小图标） | `images/charui/` | `text_energy.png` |
+
+- 或用 `EnergyColorName` 指向 `images/atlases/ui_atlas.sprites/card/energy_{name}.tres`（高级）。
+- 走 [CustomEnergyIconPatches.cs](../BaseLib-StS2/Patches/UI/CustomEnergyIconPatches.cs) 的 Harmony 补丁分发。
+
+**万敌现状**：路径已在 WandiModCardPool 设好，但 `charui/big_energy.png` / `text_energy.png` 缺失 → 回退默认。补两张 PNG + Publish 即可。
+
+## 3. 战斗能量球 + 背景面板（右上角能量区） — `WandiMod`
+
+这是「能量的颜色 + 能量的背景色」的真正出处。两种 API：
+
+### 方式 A：`CustomEnergyCounterPath`（完整自定义场景，推荐，能改背景）
+
+override 返回一个 Godot 场景路径（`.tscn`）：
+```csharp
+public override string CustomEnergyCounterPath =>
+    SceneHelper.GetScenePath("combat/energy_counters/wandi_energy_counter");
+```
+- BaseLib 把**标准 Godot 节点**（Control / Label / TextureRect / Node2D / GpuParticles2D）运行时自动转成 `NEnergyCounter`——无需手写 C# 脚本（见 [CustomCharacterModel.cs:74-77,209](../BaseLib-StS2/Abstracts/CustomCharacterModel.cs#L74)）。
+- 场景内含**能量球 + 背景面板**，完全自定义（颜色/图片/形状全控）。
+- 制作：在 MegaDot/Godot 编辑器里搭一个 `.tscn`，Publish 打包。
+
+### 方式 B：`CustomEnergyCounter`（legacy，纯代码，但不能改背景）
+
+```csharp
+public override CustomEnergyCounter? CustomEnergyCounter =>
+    new(pathFunc: energy => "charui/energy.png".ImagePath(),
+        outlineColor: new Color("D4AF37"),
+        burstColor: new Color("D4AF37"));
+```
+- `CustomEnergyCounter(Func<int,string> pathFunc, Color outlineColor, Color burstColor)`（[CustomCharacterModel.cs:213](../BaseLib-StS2/Abstracts/CustomCharacterModel.cs#L213)）。
+- **底层仍用 `ironclad_energy_counter` 场景做底**（[CustomCharacterModel.cs:511](../BaseLib-StS2/Abstracts/CustomCharacterModel.cs#L511)）→ 只换图标/描边色/爆发色，**背景面板仍是战士的**。
+
+> 结论：**只改能量球颜色/图标** → 方式 B（快）；**要改背景面板** → 必须方式 A（自定义场景）。
+
+附带：`EnergyLabelOutlineColor`（能量数字的描边色，CharacterModel 上，可单独 override）。
+
+## 4. 战斗角色模型（"游戏操作的角色也是战士"） — `CustomVisualPath`
+
+战斗里的角色立绘/模型来自 `creature_visuals/{id}` 场景（[CharacterModel.cs:115-122](../_src/sts2_src/MegaCrit/sts2/Core/Models/CharacterModel.cs#L115)）：
+```csharp
+public override string CustomVisualPath => SceneHelper.GetScenePath("creature_visuals/wandi");
+```
+- `PlaceholderCharacterModel` 默认指向 `creature_visuals/ironclad` → 战士模型。
+- 替换需要一整套角色视觉资源（立绘 + 动画 + 受击框等），**工作量大**，通常需美术 + Godot 场景。
+- 临时方案：保持战士模型，先用主题色（边框/能量/名字色）区分角色身份。
+
+## 5. 其他仍在用战士的主题项（按需覆写）
+
+`PlaceholderCharacterModel` 默认指向 ironclad 的属性（[源码](../BaseLib-StS2/Abstracts/PlaceholderCharacterModel.cs)）：
+
+| 属性 | 用途 | ironclad 路径 |
+|---|---|---|
+| `CustomTrailPath` | 出牌轨迹特效 | `vfx/card_trail_ironclad` |
+| `CustomMapMarkerPath` | 地图角色标记 | `packed/map/icons/map_marker_ironclad.png` |
+| `CustomCharacterSelectBg` | 选角界面背景 | `screens/char_select/char_select_bg_ironclad` |
+| `CustomCharacterSelectTransitionPath` | 选角转场材质 | `materials/transitions/ironclad_transition_mat.tres` |
+| `CharacterSelectSfx` / `CharacterTransitionSfx` / `CustomAttackSfx` 等 | 音效 | `event:/sfx/characters/ironclad/...` |
+| `CustomRestSiteAnimPath` / `CustomMerchantAnimPath` | 篝火/商人动画 | `rest_site/characters/ironclad_*` / `merchant/characters/ironclad_*` |
+| `CustomArm*TexturePath`（×4） | 联机猜拳手势 | `ui/hands/multiplayer_hand_ironclad_*.png` |
+
+覆写方式：在 `WandiMod.cs` override 对应属性，指向自己的资源路径（多数走 `SceneHelper.GetScenePath(...)` 或 `ImageHelper.GetImagePath(...)`）。
+
+## 快速「去战士化」优先级清单
+
+| 状态 | 改动 | 类型 | 工作量 |
+|---|---|---|---|
+| ✅ 已完成 | `WandiModCardPool` 的 `H`/`S`/`V` 改血红（H=0/S=1/V=0.6） | 纯代码 | Build 即生效 |
+| ✅ 已完成 | `WandiMod.NameColor` + `EnergyLabelOutlineColor` 改血红 B71C1C | 纯代码 | Build 即生效 |
+| ✅ 已完成 | `WandiModCardPool.DeckEntryCardColor`（牌组小图标）改血红 | 纯代码 | Build 即生效 |
+| 🔴 高 | 补 `charui/big_energy.png` + `text_energy.png`（卡牌能量图标） | 2 张 PNG + Publish | 小 |
+| 🟡 中 | `CustomEnergyCounter` legacy 换能量球颜色 | ⚠️ **需配 PNG**（pathFunc 按图层重建能量球，缺图→球空白；非纯代码） | 中 |
+| 🟠 大 | `CustomEnergyCounterPath` 自定义场景（换能量背景面板） | Godot 场景 + Publish | 中 |
+| 🟠 大 | `CustomVisualPath` 战斗角色模型 | 整套美术 + 场景 | 大 |
+
+> 当前主题色统一为**血红色**（`B71C1C`，HSV: H=0/S=1/V=0.6）。HSV 是近似值，**需游戏内微调**（V 调深浅）。
+>
+> ⚠️ 代码色（NameColor/EnergyLabelOutlineColor/HSV/DeckEntryCardColor）**Build 即生效**；图片/场景改动必须 **Publish**。见上文「Build vs Publish」。
+

@@ -15,10 +15,12 @@ public class WandiMod : PlaceholderCharacterModel
 {
     public const string CharacterId = "WandiMod";
 
-    // 万敌主色调：虚数金（Imaginary / 虚数属性）
-    public static readonly Color Color = new("D4AF37");
+    // 万敌主色调：血红色（卖血 / 血仇主题）。NameColor / 能量描边 / 牌组图标统一用此色。
+    public static readonly Color Color = new("B71C1C");
 
     public override Color NameColor => Color;
+    // 能量数字描边色——同步血红色（默认近透明黑 0000000D）
+    public override Color EnergyLabelOutlineColor => Color;
     public override CharacterGender Gender => CharacterGender.Masculine;
     public override int StartingHp => 75;
 
