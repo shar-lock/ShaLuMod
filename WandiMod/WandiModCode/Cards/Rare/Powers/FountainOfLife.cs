@@ -12,7 +12,7 @@ namespace WandiMod.WandiModCode.Cards;
 public class FountainOfLife : WandiModCard
 {
     public FountainOfLife() : base(2, CardType.Power, CardRarity.Rare, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("MaxHpPct", 8).WithUpgradeTo(12)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("MaxHpPct", 5).WithUpgradeTo(8)];
     public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Strife];
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
         => await PowerCmd.Apply<FountainOfLifePower>(choiceContext, Owner.Creature, DynamicVars["MaxHpPct"].IntValue, Owner.Creature, this);

@@ -19,7 +19,7 @@ public class ReaperSpear : WandiModCard
     public ReaperSpear() : base(1, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy) { }
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(8, ValueProp.Move).WithUpgradeTo(12),
+        new DamageVar(10, ValueProp.Move).WithUpgradeTo(12),
         new IntVar("Bonus", 7).WithUpgradeTo(8),
     ];
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

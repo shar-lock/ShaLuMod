@@ -14,7 +14,7 @@ public class GoldenBastion : WandiModCard
 {
     public GoldenBastion() : base(-2, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
     protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("StrifePerEnergy", 6).WithUpgradeTo(8)];
-    public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Strife];
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Strife, CardKeyword.Exhaust];
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         var c = Owner.Creature;

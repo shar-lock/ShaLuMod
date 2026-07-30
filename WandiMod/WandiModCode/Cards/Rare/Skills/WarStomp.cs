@@ -14,8 +14,8 @@ public class WarStomp : WandiModCard
     public WarStomp() : base(1, CardType.Skill, CardRarity.Rare, TargetType.AllEnemies) { }
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new IntVar("Vulnerable", 2).WithUpgradeTo(3),
-        new IntVar("Weak", 2).WithUpgradeTo(3),
+        new IntVar("Vulnerable", 2).WithUpgradeTo(4),
+        new IntVar("Weak", 2).WithUpgradeTo(4),
     ];
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

@@ -15,8 +15,8 @@ public class BloodTide : WandiModCard
     public BloodTide() : base(1, CardType.Attack, CardRarity.Rare, TargetType.RandomEnemy) { }
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(4, ValueProp.Move).WithUpgradeTo(6),
-        new RepeatVar(4),
+        new DamageVar(4, ValueProp.Move).WithUpgradeTo(5),
+        new RepeatVar(4).WithUpgradeTo(5),
     ];
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
         => await CommonActions.CardAttack(this, cardPlay).Execute(choiceContext);
