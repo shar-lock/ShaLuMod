@@ -1,22 +1,20 @@
-using MegaCrit.Sts2.Core.Commands;                  // DamageCmd / PowerCmd / CreatureCmd
-using MegaCrit.Sts2.Core.Commands.Builders;         // AttackCommand / AttackContext（多段可变伤 + 活力）
+using MegaCrit.Sts2.Core.Commands;                  // CreatureCmd / PowerCmd
+using MegaCrit.Sts2.Core.Commands.Builders;         // AttackCommand / AttackContext（多段 + 活力）
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;   // PlayerChoiceContext
 using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / CardRarity / TargetType / CardKeyword
 using MegaCrit.Sts2.Core.Localization.DynamicVars;  // DamageVar / RepeatVar / IntVar
 using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
 using WandiMod.WandiModCode.Character;              // WandiModCard
+using WandiMod.WandiModCode.Extensions;             // WithUpgradeTo
 using WandiMod.WandiModCode.Powers;                 // VengeancePower
-using WandiMod.WandiModCode.Extensions;             // WithUpgradeTo（升级目标值语义）
 
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
 /// 弑王枪·连突 / Kingslayer Chain（罕见 · 攻击）
-/// 造成 5 伤害 ×2；每段消耗 1 层【血仇】额外 +5 伤害（无血仇则不加）。升级：6 伤害 ×2，每段 +6。
-/// —— 连刺（RepeatedThrust）的罕见加强版：更高单段基数 + 更高血仇增伤，2 费标杆多段。
-/// 每段伤害可变（是否耗血仇决定），不能用扁平 WithHitCount——改走 AttackContext（回响斩/全切同款）：
-/// CreateContextAsync 触发一次 BeforeAttack（活力绑定整次攻击），逐段 CreatureCmd.Damage + AddHit，
-/// DisposeAsync 触发一次 AfterAttack（活力此时才消耗）→ 活力覆盖每一段。
+/// 造成 11 伤害 ×2；消耗 1 层【血仇】。升级：15 ×2。
+/// —— 纯血仇消耗件（无增伤加成）：打出需消耗 1 层血仇，由 WandiModCard 基类的 BloodCost 门控
+///   （血仇≤1 不可打出、充足时金边高亮）。多段走 AttackContext 保证活力覆盖每一段。
 /// </summary>
 public class KingslayerChain : WandiModCard
 {
@@ -30,9 +28,9 @@ public class KingslayerChain : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(5, ValueProp.Move).WithUpgradeTo(6),  // 每段基础伤害 5→6
-        new RepeatVar(2),                                  // 固定 2 段（升级不变）
-        new IntVar("BloodBonus", 5).WithUpgradeTo(6),        // 每段消耗 1 血仇的额外伤害 5→6
+        new DamageVar(11, ValueProp.Move).WithUpgradeTo(15),  // 每段基础伤害 11→15
+        new RepeatVar(2),                                     // 固定 2 段（升级不变）
+        new IntVar("BloodCost", 1),                           // 消耗 1 血仇（BloodCost：基类门控 IsPlayable/金边）
     ];
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Vengeance];
@@ -46,30 +44,21 @@ public class KingslayerChain : WandiModCard
             return;
         }
 
+        // ① 消耗 BloodCost 层血仇（纯费用，无增伤；门控保证打出时血仇充足，消耗后保底≥1）
+        int bloodCost = DynamicVars["BloodCost"].IntValue;
+        await PowerCmd.Apply<VengeancePower>(choiceContext, creature, -bloodCost, creature, null);
+
+        // ② 11/15 ×2 多段（AttackContext：一次 BeforeAttack/AfterAttack，中间多段吃满活力）
         int hits = DynamicVars.Repeat.IntValue;
         decimal baseDmg = DynamicVars.Damage.BaseValue;
-        int bonus = DynamicVars["BloodBonus"].IntValue;
-        int consumed = 0;
-
-        // AttackContext：一次 BeforeAttack / AfterAttack，中间可变伤多段仍吃满活力
         await using var ctx = await AttackCommand.CreateContextAsync(CombatState, choiceContext, cardPlay);
         for (int i = 0; i < hits; i++)
         {
-            decimal dmg = baseDmg;
-            var vengeance = creature.GetPower<VengeancePower>();
-            // 保底1层：Amount>=2 才允许消耗（Amount==1 是地板层，耗掉会把血仇 Power 移除）
-            if (vengeance != null && vengeance.Amount >= 2)
-            {
-                await PowerCmd.Apply<VengeancePower>(choiceContext, creature, -1, creature, null);
-                dmg += bonus;
-                consumed++;
-            }
             var results = await CreatureCmd.Damage(
-                choiceContext, cardPlay.Target, dmg, ValueProp.Move, this, cardPlay);
+                choiceContext, cardPlay.Target, baseDmg, ValueProp.Move, this, cardPlay);
             ctx.AddHit(results);
         }
 
-        if (consumed > 0)
-            MainFile.Logger.Info($"[弑王枪·连突] 打出 {hits} 段，消耗 {consumed} 血仇增伤");
+        MainFile.Logger.Info($"[弑王枪·连突] 消耗 1 血仇，打出 {hits} 段 × {baseDmg} 伤");
     }
 }

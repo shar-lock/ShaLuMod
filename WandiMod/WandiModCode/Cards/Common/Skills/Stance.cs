@@ -9,9 +9,9 @@ using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语�
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
-/// 蓄势 / Stance（普通 · 技能）
+/// 蓄势 / Stance（普通 · 技能 · 消耗）
 /// 获得 4 点【纷争】和 1 层【血仇】。升级：6 纷争。
-/// —— 0 费双资源启动件：纷争扛伤、血仇备爆。
+/// —— 0 费双资源启动件：纷争扛伤、血仇备爆。消耗防反复刷。
 /// </summary>
 public class Stance : WandiModCard
 {
@@ -29,7 +29,7 @@ public class Stance : WandiModCard
         new IntVar("Vengeance", 1),
     ];
 
-    public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Strife, WandiModKeywords.Vengeance];
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Strife, WandiModKeywords.Vengeance, CardKeyword.Exhaust];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {

@@ -10,8 +10,8 @@ namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
 /// 饮血 / Blood Drink（普通 · 技能）
-/// 回复 6 点生命值。升级：9 点。
-/// —— 直接回血件（回血在 StS2 极度稀缺，1 费回 6 是合理强度）。
+/// 回复 5 点生命值。升级：6 点。
+/// —— 直接回血件（回血在 StS2 极度稀缺，1 费回 5 是合理强度）。
 /// </summary>
 public class BloodDrink : WandiModCard
 {
@@ -25,7 +25,7 @@ public class BloodDrink : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new IntVar("Heal", 6).WithUpgradeTo(9),
+        new IntVar("Heal", 5).WithUpgradeTo(6),
     ];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

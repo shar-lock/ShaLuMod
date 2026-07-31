@@ -11,8 +11,8 @@ using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语�
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
-/// 鲜血护盾 / Blood Aegis（罕见 · 技能）
-/// 失去 4 点生命，获得 10 点【纷争】和 1 层【血仇】。升级：15 纷争（失血与血仇不变）。
+/// 鲜血护盾 / Blood Aegis（罕见 · 技能 · 消耗）
+/// 失去 1 点生命，获得 9 点【纷争】和 1 层【血仇】。升级：12 纷争（失血与血仇不变）。
 /// —— 自伤双资源件：一次自伤同时喂大额纷争（临时上限）+ 血仇引擎。
 ///    自伤经 VengeancePower.AfterDamageReceived 自动 +1 血仇，卡面再授 1 层，实际共 +2。
 /// </summary>
@@ -28,12 +28,12 @@ public class BloodAegis : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new HpLossVar(4),
-        new IntVar("Strife", 10).WithUpgradeTo(15),
+        new HpLossVar(1),
+        new IntVar("Strife", 9).WithUpgradeTo(12),
         new IntVar("Vengeance", 1),
     ];
 
-    public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Strife, WandiModKeywords.Vengeance];
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Strife, WandiModKeywords.Vengeance, CardKeyword.Exhaust];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {

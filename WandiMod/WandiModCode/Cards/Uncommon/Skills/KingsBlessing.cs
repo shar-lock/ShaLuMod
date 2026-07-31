@@ -14,8 +14,8 @@ namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
 /// 王者之佑 / King's Blessing（罕见 · 技能 · 联机）
-/// 所有队友获得 14 点格挡，失去 5 点生命值。升级：20 格挡。
-/// —— 联机专属群体护盾：给全队（含自己）发格挡，代价是每人掉 5 血。
+/// 所有队友获得 16 点格挡，失去 1 点生命值。升级：22 格挡。
+/// —— 联机专属群体护盾：给全队（含自己）发格挡，代价是每人掉 1 血。
 ///   万敌自身掉血会触发 VengeancePower 失血叠层（+1 血仇），与血仇引擎联动。
 ///
 /// 实现说明：
@@ -38,8 +38,8 @@ public class KingsBlessing : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new BlockVar(14, ValueProp.Move).WithUpgradeTo(20),  // 给每个队友的格挡
-        new IntVar("HpLoss", 5),                            // 每个队友失去的生命值（固定 5）
+        new BlockVar(16, ValueProp.Move).WithUpgradeTo(22),  // 给每个队友的格挡
+        new IntVar("HpLoss", 1),                            // 每个队友失去的生命值（固定 1）
     ];
 
     // 失血会触发血仇引擎（万敌自身），挂血仇关键词便于 tooltip

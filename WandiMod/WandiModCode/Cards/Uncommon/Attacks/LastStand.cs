@@ -13,7 +13,7 @@ namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
 /// 背水一战 / Last Stand（罕见 · 攻击）
-/// 造成 8 伤害；消耗手牌中所有非攻击牌。升级：10 伤害。
+/// 造成 7 伤害；消耗手牌中所有非攻击牌。升级：10 伤害。
 /// —— 燃烧手牌换一击：把技能/诅咒/状态牌当燃料清掉，留攻击牌继续输出。
 /// 手牌遍历走 PileType.Hand.GetPile(Owner).Cards（参考原生 BulletTime / Armaments）。
 /// </summary>
@@ -29,7 +29,7 @@ public class LastStand : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(8, ValueProp.Move).WithUpgradeTo(10),
+        new DamageVar(7, ValueProp.Move).WithUpgradeTo(10),
     ];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

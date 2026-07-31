@@ -6,7 +6,6 @@ using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / Car
 using MegaCrit.Sts2.Core.Localization.DynamicVars;  // DamageVar / IntVar
 using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
 using WandiMod.WandiModCode.Character;              // WandiModCard
-using WandiMod.WandiModCode.Powers;                 // VengeancePower
 
 using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
 
@@ -14,8 +13,8 @@ namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
 /// 饮血枪 / Bloodsip Spear（普通 · 攻击）
-/// 造成 7 伤害；若本战斗失去过生命（血仇 > 0）则回复 2 生命。升级：10 伤害，回 3。
-/// —— 血仇·续航：用「血仇>0」作为「失过血」的判定口径（血仇是失血计数器，简洁且贴主题）。
+/// 造成 7 点伤害，回复 2 生命。升级：10 伤害，回复 4。
+/// —— 攻击+续航：打人同时直接回血（无条件）。
 /// </summary>
 public class BloodsipSpear : WandiModCard
 {
@@ -30,28 +29,22 @@ public class BloodsipSpear : WandiModCard
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         new DamageVar(7, ValueProp.Move).WithUpgradeTo(10),
-        new IntVar("Heal", 2).WithUpgradeTo(3),
+        new IntVar("Heal", 2).WithUpgradeTo(4),
     ];
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Vengeance];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        // ① 造成伤害（读 DamageVar）
-        await CommonActions.CardAttack(this, cardPlay).Execute(choiceContext);
-
-        // ② 有效血仇（真实层数>=2，即显示层数>0）= 本战斗失过血 → 回血
         var creature = Owner.Creature;
-        if (creature == null)
-        {
-            MainFile.Logger.Error("[饮血枪] OnPlay 时 Owner.Creature 为空，回血未触发");
-            return;
-        }
-        if (creature.GetPower<VengeancePower>() is { Amount: >= 2 })
+        // ① 造成伤害
+        await CommonActions.CardAttack(this, cardPlay).Execute(choiceContext);
+        // ② 直接回血（无条件）
+        if (creature != null)
         {
             int heal = DynamicVars["Heal"].IntValue;
             await CreatureCmd.Heal(creature, heal);
-            MainFile.Logger.Info($"[饮血枪] 血仇>0，回复 {heal} 生命");
+            MainFile.Logger.Info($"[饮血枪] 造成伤害，回复 {heal} 生命");
         }
     }
 }

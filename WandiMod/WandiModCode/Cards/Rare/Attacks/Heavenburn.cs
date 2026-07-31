@@ -11,7 +11,7 @@ using WandiMod.WandiModCode.Extensions;
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
-/// 焚天 / Heavenburn（稀有 · 攻击 · 全体）。失8血，造成「力量×3+12」全体伤 / ×4+18。
+/// 焚天 / Heavenburn（稀有 · 攻击 · 全体）。失5血，造成「力量×3+12」全体伤 / ×4+18。
 /// 伤害用 CalculatedDamageVar（荡平万邦同款写法）：
 ///   公式 = CalculationBase(12→18) + ExtraDamage(3→4) × multiplier（当前力量），
 ///   卡面伤害数字/描述 {CalculatedDamage:diff()} 实时显示含力量的总伤，且与 OnPlay 结算同源——
@@ -24,7 +24,7 @@ public class Heavenburn : WandiModCard
     public Heavenburn() : base(2, CardType.Attack, CardRarity.Rare, TargetType.AllEnemies) { }
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new HpLossVar(8),
+        new HpLossVar(5),
         new CalculationBaseVar(12m).WithUpgradeTo(18),
         new ExtraDamageVar(3m).WithUpgradeTo(4),
         new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, _) =>

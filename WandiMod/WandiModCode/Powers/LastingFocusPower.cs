@@ -8,9 +8,9 @@ namespace WandiMod.WandiModCode.Powers;
 
 /// <summary>
 /// 战意持久 / Lasting Focus（万敌 · 能力 Power）。
-/// 机制：生命值减少至生命上限的 50%，受到的伤害降低 30%（升级 40%）。
+/// 机制：生命值减少至生命上限的 50%，受到的伤害降低 20%（升级 30%）。
 ///   - 生命值设定：由卡牌 OnPlay 在授予本 Power 前用 CreatureCmd.SetCurrentHp 完成（卡牌持有 choiceContext）。
-///   - 钩子 ModifyDamageMultiplicative：当万敌是伤害目标时返回 1 - Amount/100（Amount=30 → 0.70，即减伤 30%）。
+///   - 钩子 ModifyDamageMultiplicative：当万敌是伤害目标时返回 1 - Amount/100（Amount=20 → 0.80，即减伤 20%）。
 /// 参考 VengeancePower.ModifyDamageMultiplicative（返回倍率语义）、原生 TankPower / PaperKrane（target==Owner 收伤过滤）。
 /// 注意：ModifyDamageMultiplicative 默认返回 1（不变）；返回 0.7 = 伤害变 70%。
 ///   减伤对所有「以万敌为目标」的伤害生效（含自伤——自伤时 target 也是 Owner，会被一并打折；
@@ -36,7 +36,7 @@ public class LastingFocusPower : WandiModPower
         if (target != Owner)
             return 1m;
 
-        // Amount=30 → 0.70；Amount=40 → 0.60
+        // Amount=20 → 0.80；Amount=30 → 0.70
         return 1m - Amount / 100m;
     }
 }

@@ -13,7 +13,7 @@ namespace WandiMod.WandiModCode.Cards;
 /// <summary>
 /// 血祭·诛王枪 / Bloodrite Regicide（先古 · 攻击 · 1费 · 保留）。
 /// 经先古之民「欧洛巴斯」的古老牙齿将血祭之枪替换为本卡。
-/// 造成 10 伤；获得 2 血仇，并额外造成「已损失生命」20% 的伤害 / 14伤、3血仇、30%。
+/// 造成 10 伤；获得 2 血仇，并额外造成「已损失生命」10% 的伤害 / 14伤、3血仇、15%。
 /// 使用 CalculatedDamageVar（参考荡平万邦）实现卡面实时显示含动态加成的总伤。
 /// </summary>
 public class BloodriteRegicide : WandiModCard
@@ -23,7 +23,7 @@ public class BloodriteRegicide : WandiModCard
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         new CalculationBaseVar(10m).WithUpgradeTo(14),
-        new ExtraDamageVar(20m).WithUpgradeTo(30),
+        new ExtraDamageVar(10m).WithUpgradeTo(15),
         new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, _) =>
             card.Owner.Creature == null ? 0m : (card.Owner.Creature.MaxHp - card.Owner.Creature.CurrentHp) / 100m),
         new IntVar("Vengeance", 2).WithUpgradeTo(3),

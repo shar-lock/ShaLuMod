@@ -13,8 +13,8 @@ namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
 /// 荡平万邦 / Conquer all lands!（机制卡 · 攻击 · 0 费）
-/// 由起手遗物「弑亲血脉」在血仇 ≥ 8 时生成到手牌（保留 + 消耗）。
-/// 效果：对全体敌方造成 14 伤 + 「已损失生命」25%（升级：20 伤 + 35%）。
+/// 由起手遗物「弑亲血脉」在血仇 ≥ 8 时生成到手牌（虚无 + 消耗）。
+/// 效果：对全体敌方造成 14 伤 + 「已损失生命」15%（升级：20 伤 + 20%）。
 ///
 /// 实现说明：
 ///   - 机制卡归属**原版 TokenCardPool**（[Pool(typeof(TokenCardPool))]，与原版 Soul/Shiv 同池）：
@@ -53,7 +53,7 @@ public class ConquerAllLands : CustomCardModel
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         new CalculationBaseVar(14m).WithUpgradeTo(20),
-        new ExtraDamageVar(25m).WithUpgradeTo(35),
+        new ExtraDamageVar(15m).WithUpgradeTo(20),
         new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, _) => {
             if (card.Owner.Creature == null) return 0m;
             // 浴血奋战（单体 ×1.5/×2）走 BloodbathPower.ModifyDamageMultiplicative 放大结算总伤，
@@ -62,8 +62,8 @@ public class ConquerAllLands : CustomCardModel
         }),
     ];
 
-    // 词条：保留（留手）+ 消耗（打出后消失，防囤积）
-    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Retain, CardKeyword.Exhaust];
+    // 词条：虚无（回合末未打出则消失）+ 消耗（打出后消失，防囤积）
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Ethereal, CardKeyword.Exhaust];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {

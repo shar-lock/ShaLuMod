@@ -27,7 +27,7 @@ public class LastingFocus : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new IntVar("ReducePct", 20).WithUpgradeTo(30),  // 受到伤害降低百分比（设计文档 30/40 → 20/30）
+        new IntVar("ReducePct", 20).WithUpgradeTo(30),  // 受到伤害降低百分比 20→30
     ];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -45,7 +45,7 @@ public class LastingFocus : WandiModCard
         if (creature.CurrentHp > target)
             await CreatureCmd.SetCurrentHp(creature, target);
 
-        // ② 授予减伤 Power（Amount=30/40，LastingFocusPower 返回 1 - Amount/100）
+        // ② 授予减伤 Power（Amount=20/30，LastingFocusPower 返回 1 - Amount/100）
         int pct = DynamicVars["ReducePct"].IntValue;
         await PowerCmd.Apply<LastingFocusPower>(choiceContext, creature, pct, creature, this);
 

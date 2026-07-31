@@ -7,11 +7,11 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 
 namespace WandiMod.WandiModCode.Cards;
 
-/// <summary>绝对防御 / Absolute Guard（稀有 · 技能）。获得「当前最大生命」15%/20% 的纷争。</summary>
+/// <summary>绝对防御 / Absolute Guard（稀有 · 技能）。获得「当前最大生命」8%/10% 的纷争。</summary>
 public class AbsoluteGuard : WandiModCard
 {
     public AbsoluteGuard() : base(2, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("MaxHpPct", 15).WithUpgradeTo(20)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("MaxHpPct", 8).WithUpgradeTo(10)];
     public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Strife];
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {

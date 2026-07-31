@@ -14,7 +14,7 @@ namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
 /// 致命突刺 / Fatal Thrust（罕见 · 攻击 · 消耗 · 保留）
-/// 造成 14 伤害；降低目标 6 点力量（1 回合）。升级：降 8 点力量。
+/// 造成 9 伤害；降低目标 6 点力量（1 回合）。升级：降 8 点力量。
 /// —— 保留（Retain）让本牌可攒在手，等敌方爆发回合再打出破甲；消耗保证一次性（不可反复刷新）。
 /// 临时降力量走 FatalThrustPower : TemporaryStrengthPower（参考原生 PiercingWail/尖啸）。
 /// </summary>
@@ -30,7 +30,7 @@ public class FatalThrust : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(14, ValueProp.Move),                // 基础伤害 14（升级不变）
+        new DamageVar(9, ValueProp.Move),                 // 基础伤害 9（升级不变）
         new IntVar("StrengthLoss", 6).WithUpgradeTo(8),     // 降低力量 6→8
     ];
 

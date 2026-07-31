@@ -11,7 +11,7 @@ using WandiMod.WandiModCode.Powers;
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
-/// 圣血洗礼 / Holy Blood Baptism（稀有 · 技能）。失6血，移除自身全部减益 + 12纷争 / 失6+回5。
+/// 圣血洗礼 / Holy Blood Baptism（稀有 · 技能 · 消耗）。失6血，移除自身全部减益 + 12纷争 / 失6+回5。
 /// 移除减益：遍历 Creature.Powers，Type==Debuff → PowerCmd.Remove（参考 Misery 的 debuff 筛选）。
 /// </summary>
 public class HolyBloodBaptism : WandiModCard
@@ -23,7 +23,7 @@ public class HolyBloodBaptism : WandiModCard
         new IntVar("Strife", 12),
         new IntVar("Heal", 0).WithUpgradeTo(5),
     ];
-    public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Strife];
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Strife, CardKeyword.Exhaust];
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         var c = Owner.Creature;

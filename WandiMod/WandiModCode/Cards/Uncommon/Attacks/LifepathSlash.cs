@@ -12,7 +12,7 @@ namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
 /// 命途斩 / Lifepath Slash（罕见 · 攻击）
-/// 造成「当前最大生命」20% 的伤害。升级：30%。
+/// 造成「当前最大生命」20% 的伤害。升级：25%。
 /// —— MaxHp 缩放型：万敌走 MaxHp 上限流派（堆 MaxHp 遗物、不灭王血觉醒等）的爆发件。
 /// 走 OnPlay 手动 DamageCmd（缩放值在打出时按当前 MaxHp 动态计算，不走 DamageVar 以免卡面显示异常）。
 /// 与血仇/纷争无直接关联，故不挂 WandiModKeywords。
@@ -29,7 +29,7 @@ public class LifepathSlash : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new IntVar("MaxHpPct", 20).WithUpgradeTo(30),  // 最大生命百分比 20→30（运算时 /100）
+        new IntVar("MaxHpPct", 20).WithUpgradeTo(25),  // 最大生命百分比 20→25（运算时 /100）
     ];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

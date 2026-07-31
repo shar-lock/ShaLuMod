@@ -1,20 +1,17 @@
-using BaseLib.Extensions;                           // WithUpgrade 扩展方法
-using MegaCrit.Sts2.Core.Commands;                 // CardPileCmd（抽牌）/ CreatureCmd（自伤）
-using System.Linq;                                  // Hand.Cards.Count()
+using MegaCrit.Sts2.Core.Commands;                  // CardPileCmd（抽牌）/ CreatureCmd（自伤）
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;   // PlayerChoiceContext
 using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / CardRarity / TargetType / CardKeyword
-using MegaCrit.Sts2.Core.Localization.DynamicVars;  // IntVar
+using MegaCrit.Sts2.Core.Localization.DynamicVars;  // HpLossVar / IntVar
 using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
+using WandiMod.WandiModCode.Extensions;             // WithUpgradeTo
 using WandiMod.WandiModCode.Powers;                 // VengeancePower
-
-using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语义）
 
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
 /// 血契 / Blood Pact（罕见 · 技能 · 消耗）
-/// 失去「手牌数」点生命，抽 3 张牌，获得 1 层【血仇】。升级：抽 4 张。
-/// —— 0 费过牌 + 喂养血仇：自伤量随手牌数动态结算（手牌越多越痛），但血仇引擎也会因自伤自动 +1。
+/// 失去 3 点生命，抽 3 张牌，获得 1 层【血仇】。升级：抽 4 张。
+/// —— 0 费过牌 + 喂养血仇：自伤触发血仇引擎自动 +1，卡面再授 1 层。
 /// </summary>
 public class BloodPact : WandiModCard
 {
@@ -28,6 +25,7 @@ public class BloodPact : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
+        new HpLossVar(3),
         new IntVar("Draw", 3).WithUpgradeTo(4),
         new IntVar("Vengeance", 1),
     ];
@@ -44,19 +42,13 @@ public class BloodPact : WandiModCard
             return;
         }
 
-        // 失去「手牌数」点生命（动态结算：手牌越多越痛）
-        // PileType.Hand.GetPile(Owner).Cards.Count——参考原生 Anointed
-        int handCount = PileType.Hand.GetPile(Owner).Cards.Count;
-        if (handCount > 0)
-        {
-            // Unblockable|Unpowered|Move：全额计入失血，不走格挡/不吃力量，触发血仇自动 +1
-            await CreatureCmd.Damage(choiceContext, creature, handCount,
-                ValueProp.Unblockable | ValueProp.Unpowered | ValueProp.Move, this, cardPlay);
-        }
+        // 失去 3 点生命（Unblockable|Unpowered|Move：全额计入失血，触发血仇自动 +1）
+        await CreatureCmd.Damage(choiceContext, creature, DynamicVars.HpLoss.BaseValue,
+            ValueProp.Unblockable | ValueProp.Unpowered | ValueProp.Move, this, cardPlay);
 
         await CardPileCmd.Draw(choiceContext, DynamicVars["Draw"].IntValue, Owner);
         await VengeancePower.Grant(choiceContext, creature, DynamicVars["Vengeance"].IntValue, this);
 
-        MainFile.Logger.Info($"[血契] 失 {handCount} 血（手牌数），抽 {DynamicVars["Draw"].IntValue} 牌，获得 {DynamicVars["Vengeance"].IntValue} 血仇");
+        MainFile.Logger.Info($"[血契] 失 {DynamicVars.HpLoss.BaseValue} 血，抽 {DynamicVars["Draw"].IntValue} 牌，获得 {DynamicVars["Vengeance"].IntValue} 血仇");
     }
 }

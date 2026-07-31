@@ -10,9 +10,9 @@ using WandiMod.WandiModCode.Extensions;  // WithUpgradeTo（升级目标值语�
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
-/// 王之意志 / Spirit of King（罕见 · 能力 · 固有）
-/// [荡平万邦]的伤害额外提高 20%。升级：25%。
-/// —— 放大终结技（荡平万邦由血仇≥8 生成），固有保证起手可铺。
+/// 王之意志 / Spirit of King（罕见 · 能力）
+/// [荡平万邦]的伤害额外提高 20%。升级：25%，且获得固有（起手必摸到）。
+/// —— 放大终结技（荡平万邦由血仇≥8 生成）。
 /// 百分比随升级态传入 Power 的 Amount（20→25），由 SpiritOfKingPower.ModifyDamageMultiplicative 读取。
 /// </summary>
 public class SpiritOfKing : WandiModCard
@@ -30,8 +30,10 @@ public class SpiritOfKing : WandiModCard
         new IntVar("BonusPct", 20).WithUpgradeTo(25),  // 荡平万邦伤害额外提升百分比
     ];
 
-    // 固有：起手必摸到；荡平万邦词条（悬停卡牌可见荡平万邦词条说明）
-    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Innate, WandiModKeywords.ConquerAllLands];
+    // 设计「无/固有」：基础无固有，升级后获得固有（起手必摸到）；荡平万邦词条始终保留（悬停可见其说明）
+    public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded
+        ? [CardKeyword.Innate, WandiModKeywords.ConquerAllLands]
+        : [WandiModKeywords.ConquerAllLands];
 
     /// <summary>悬停提示：荡平万邦卡牌预览（描述提到荡平万邦，玩家可实时查看其效果）。</summary>
     protected override IEnumerable<MegaCrit.Sts2.Core.HoverTips.IHoverTip> ExtraHoverTips =>
