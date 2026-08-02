@@ -1,18 +1,19 @@
 using BaseLib.Utils;                                // CommonActions
+using MegaCrit.Sts2.Core.CardSelection;             // CardSelectorPrefs
+using MegaCrit.Sts2.Core.Commands;                  // CardSelectCmd / CardPileCmd
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;   // PlayerChoiceContext
-using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / CardRarity / TargetType
-using MegaCrit.Sts2.Core.Localization.DynamicVars;  // DamageVar / IntVar
+using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / CardRarity / TargetType / PileType
+using MegaCrit.Sts2.Core.Localization.DynamicVars;  // DamageVar
 using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
-using WandiMod.WandiModCode.Character;              // WandiModCard
 using WandiMod.WandiModCode.Extensions;             // WithUpgradeTo
-using WandiMod.WandiModCode.Powers;                 // StrifePower
 
 namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
 /// 裂伤 / Lacerate（普通 · 攻击）
-/// 造成 5 点伤害，获得 2 点【纷争】。升级：8 伤，3 纷争。
-/// —— 攻防一体：低价攻击顺手产纷争，攻守兼顾。
+/// 造成 6 点伤害，选择弃牌堆 1 张牌放回手牌。升级：9 伤。
+/// —— 运转件：参考 Necrobinder 的 Graveblast（FromCombatPile 弃牌堆 → CardPileCmd.Add 入手牌）。
+/// 选择提示走本卡 .selectionScreenPrompt 本地化（缺失会在出牌时抛 InvalidOperationException）。
 /// </summary>
 public class Lacerate : WandiModCard
 {
@@ -20,15 +21,24 @@ public class Lacerate : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(5, ValueProp.Move).WithUpgradeTo(8),
-        new IntVar("Strife", 2).WithUpgradeTo(3),
+        new DamageVar(6, ValueProp.Move).WithUpgradeTo(9),
     ];
-
-    public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Strife];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         await CommonActions.CardAttack(this, cardPlay).Execute(choiceContext);
-        await StrifePower.Grant(choiceContext, Owner.Creature, DynamicVars["Strife"].IntValue, Owner.Creature, this);
+
+        // 弃牌堆为空时 FromCombatPile 直接返回空序列，不弹选牌 UI
+        var prefs = new CardSelectorPrefs(SelectionScreenPrompt, 1);
+        var card = (await CardSelectCmd.FromCombatPile(
+            choiceContext, PileType.Discard.GetPile(Owner), Owner, prefs)).FirstOrDefault();
+        if (card == null)
+        {
+            MainFile.Logger.Info("[裂伤] 弃牌堆为空或未选择，跳过回手");
+            return;
+        }
+
+        await CardPileCmd.Add(card, PileType.Hand);
+        MainFile.Logger.Info($"[裂伤] 从弃牌堆回手：{card.Title}");
     }
 }

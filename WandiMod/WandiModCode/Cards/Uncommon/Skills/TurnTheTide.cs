@@ -1,6 +1,7 @@
 using MegaCrit.Sts2.Core.Commands;                  // CreatureCmd（回血）
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;   // PlayerChoiceContext
 using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / CardRarity / TargetType
+using MegaCrit.Sts2.Core.Localization.DynamicVars;  // DynamicVar / IntVar
 using WandiMod.WandiModCode.Extensions;             // WithUpgradeTo
 
 namespace WandiMod.WandiModCode.Cards;

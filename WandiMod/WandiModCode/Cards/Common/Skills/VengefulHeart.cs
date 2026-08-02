@@ -13,13 +13,13 @@ namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
 /// 复仇心 / Vengeful Heart（普通 · 技能）
-/// 失去 1 层【血仇】，对所有敌人施加 1 层易伤。升级：2 层易伤。
+/// 失去 1 层【血仇】，对所有敌人施加 1 层易伤。升级：2 层易伤。费用 1。
 /// —— 血仇·减益：把血仇转化成群体易伤（AoE 易伤）。血仇不足则不放易伤。
 /// </summary>
 public class VengefulHeart : WandiModCard
 {
     public VengefulHeart() : base(
-        cost: 0,
+        cost: 1,
         type: CardType.Skill,
         rarity: CardRarity.Common,
         target: TargetType.Self)

@@ -81,3 +81,42 @@
 - **此乃天谴** BloodForBlood（原"以血还血"）：伤害从「队友 MissingHp 总和 50/75%」改为「**所有队友生命上限总和 25/33%**」，回血一半不变。
 - 本地化 eng+zhs 同步（标题改名 + 描述重写）。BodyguardPower 1 处"攻"字 GBK 污染已修。
 - 英文名按设计稿保留（Bodyguard / Blood for Blood）；若需同步英文待用户确认。
+
+---
+
+### 本机跟进审查 + Build/Publish（commit `64ad778` 之后本地修复）
+
+同步另一台机器 `2cd9471`（设计稿纷争稀有化）+ `64ad778`（全卡对齐/机制重做）后做审查与发布。
+
+**编译修复（另一台机器可编译、本机缺 using）：**
+- `Frenzy.cs` / `TurnTheTide.cs`：补 `using MegaCrit.Sts2.Core.Localization.DynamicVars`
+- `CalamitySpear.cs` / `BloodForBlood.cs`：补 `using BaseLib.Extensions`（`WithValueProp`）
+
+**逻辑/本地化修复：**
+- `BodyguardPower`：补 eng/zhs `powers.json`；受击判定排除自伤（`dealer == null || dealer == Owner`）
+- `BloodburnStrike`：`Amount > 4` → `DisplayAmount > 4`（对齐玩家可见层数）
+- `BloodsipSpear`：去掉多余血仇关键词
+- `GoldenJudgment`：去掉多余 `WithValueProp` 链（默认已是 Move）
+
+**部署：** `dotnet build` ✅ + `dotnet publish` ✅  
+- mods：`WandiMod.dll` / `WandiMod.pck`（约 3.8MB，含 images）已更新  
+- HEAD 当时：`64ad778`；审查修复尚未提交（待用户确认后 commit）
+
+---
+
+### 金焰斩 / 裂伤 对齐设计稿（纷争 → 回血 / 弃牌回手）
+
+用户在 `doc/万敌Mod-卡牌设计.md` 改了两张普通攻击：
+
+| 卡 | 旧效果 | 新效果 |
+|---|---|---|
+| **金焰斩** GildedSlash | 14/18 伤 + 3/4 纷争 | 14/18 伤 + **回血 3**（升级仅伤） |
+| **裂伤** Lacerate | 5/8 伤 + 2/3 纷争 | **8/11 伤** + 选弃牌堆 1 张回手 |
+
+**调研：**
+- 回血：对齐 `HoldTheLine` / `BloodsipSpear` → `CreatureCmd.Heal` + `IntVar("Heal")`
+- 弃牌回手：对齐 Necrobinder **Graveblast**（`CardSelectCmd.FromCombatPile` + `PileType.Discard` → `CardPileCmd.Add(..., Hand)`）；空弃牌堆 `FromCombatPile` 直接返回空，不弹 UI
+- 选牌提示：必须补 `WANDIMOD-LACERATE.selectionScreenPrompt`（`SelectionScreenPrompt` 缺本地化会抛 InvalidOperationException；坚韧曾踩坑）
+
+**改动：** `GildedSlash.cs` / `Lacerate.cs` + eng/zhs `cards.json`；去掉两卡纷争关键词。  
+**部署：** `dotnet build` ✅ + `dotnet publish` ✅

@@ -1,6 +1,6 @@
 using MegaCrit.Sts2.Core.Commands;                  // CreatureCmd（回血）
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;   // PlayerChoiceContext
-using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / CardRarity / TargetType
+using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / CardRarity / TargetType / CardTag
 using MegaCrit.Sts2.Core.Localization.DynamicVars;  // IntVar
 using WandiMod.WandiModCode.Extensions;             // WithUpgradeTo（升级目标值语义）
 
@@ -9,7 +9,7 @@ namespace WandiMod.WandiModCode.Cards;
 /// <summary>
 /// 御敌 / Hold the Line（起手 · 技能，原「防御」位）
 /// 回复 4 点生命值。升级：5 点。
-/// —— 起手回血件（回血在 StS2 极度稀缺，1 费回 4 是合理强度）。
+/// —— CanonicalTags 含 CardTag.Defend，供潘多拉魔盒等 IsBasicStrikeOrDefend 识别替换（原版 Defend 同款）。
 /// </summary>
 public class HoldTheLine : WandiModCard
 {
@@ -20,6 +20,9 @@ public class HoldTheLine : WandiModCard
         target: TargetType.Self)
     {
     }
+
+    // 原版各角色 Defend 均挂 Defend 标签；潘多拉魔盒过滤 IsBasicStrikeOrDefend 依赖此标签
+    protected override HashSet<CardTag> CanonicalTags => [CardTag.Defend];
 
     // 回血数值（真相源）。IntVar 名称 "Heal" 对应本地化占位符 {Heal:diff()}。
     protected override IEnumerable<DynamicVar> CanonicalVars =>

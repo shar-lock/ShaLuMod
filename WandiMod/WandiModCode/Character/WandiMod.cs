@@ -15,12 +15,18 @@ public class WandiMod : PlaceholderCharacterModel
 {
     public const string CharacterId = "WandiMod";
 
-    // 万敌主色调：血红色（卖血 / 血仇主题）。NameColor / 能量描边 / 牌组图标统一用此色。
+    // 万敌主色调：血红色（卖血 / 血仇主题）。NameColor / 能量描边 / 牌组图标 / 地图画笔统一用此色。
     public static readonly Color Color = new("B71C1C");
 
     public override Color NameColor => Color;
     // 能量数字描边色——同步血红色（默认近透明黑 0000000D）
     public override Color EnergyLabelOutlineColor => Color;
+
+    /// <summary>
+    /// 地图手绘画线颜色。原版走 CharacterModel.MapDrawingColor（默认黑）；
+    /// NMapDrawings 取 player.Character.MapDrawingColor 赋给 Line2D.DefaultColor（铁甲战士 CB282B）。
+    /// </summary>
+    public override Color MapDrawingColor => Color;
     public override CharacterGender Gender => CharacterGender.Masculine;
     public override int StartingHp => 80;
 

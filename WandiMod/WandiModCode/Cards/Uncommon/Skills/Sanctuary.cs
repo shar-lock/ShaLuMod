@@ -10,7 +10,7 @@ namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
 /// 庇护 / Sanctuary（罕见 · 技能 · 消耗）
-/// 获得「已损失生命」8% 的【纷争】。升级：10%。
+/// 获得「已损失生命」10% 的【纷争】。升级：15%。
 /// —— 越伤越稳：失血越多纷争越高（临时上限等比扩张）。满血时为 0 纷争（不白送）。消耗防重复刷。
 /// </summary>
 public class Sanctuary : WandiModCard
@@ -25,7 +25,7 @@ public class Sanctuary : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new IntVar("MissingHpPct", 8).WithUpgradeTo(10),   // 已损失生命的百分比（整数，运算时 /100）
+        new IntVar("MissingHpPct", 10).WithUpgradeTo(15),   // 已损失生命的百分比（整数，运算时 /100）
     ];
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Strife, CardKeyword.Exhaust];
@@ -40,7 +40,7 @@ public class Sanctuary : WandiModCard
         }
 
         decimal missingHp = creature.MaxHp - creature.CurrentHp;             // 已损失生命
-        decimal pct = DynamicVars["MissingHpPct"].IntValue / 100m;           // 0.25 / 0.30
+        decimal pct = DynamicVars["MissingHpPct"].IntValue / 100m;           // 0.10 / 0.15
         // 纷争层数向下取整（至少 0：满血时不给）
         int strife = (int)Math.Max(0m, Math.Floor(missingHp * pct));
         if (strife > 0)

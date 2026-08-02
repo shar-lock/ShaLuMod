@@ -14,8 +14,8 @@ namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
 /// 灼血击 / Bloodburn Strike（罕见 · 攻击）
-/// 造成 6 点伤害；若【血仇】层数大于 4，抽 1 张牌。升级：抽 2 张牌（伤害不变）。
-/// —— 0 费过牌件：奖励「高血仇」状态（血仇 &gt; 4 = 已大量失血）。血仇是失血计数器，简洁且贴主题。
+/// 造成 6 点伤害；若【血仇】显示层数大于 4，抽 1 张牌。升级：抽 2 张牌（伤害不变）。
+/// —— 0 费过牌件：奖励「高血仇」状态（显示层 &gt; 4）。判定用 DisplayAmount，勿与真实 Amount 混淆。
 /// </summary>
 public class BloodburnStrike : WandiModCard
 {
@@ -47,13 +47,13 @@ public class BloodburnStrike : WandiModCard
         // ① 造成伤害
         await CommonActions.CardAttack(this, cardPlay).Execute(choiceContext);
 
-        // ② 血仇 > 4 = 已大量失血 → 抽牌（奖励高血仇状态）
-        int blood = creature?.GetPower<VengeancePower>()?.Amount ?? 0;
-        if (blood > 4)
+        // ② 玩家可见血仇层数 > 4 才抽牌（DisplayAmount = Amount-1；勿用真实 Amount 直接比 4）
+        int displayBlood = creature?.GetPower<VengeancePower>()?.DisplayAmount ?? 0;
+        if (displayBlood > 4)
         {
             int draw = DynamicVars["Draw"].IntValue;
             await CardPileCmd.Draw(choiceContext, draw, Owner);
-            MainFile.Logger.Info($"[灼血击] 血仇={blood}（>4），抽 {draw} 张牌");
+            MainFile.Logger.Info($"[灼血击] 显示血仇={displayBlood}（>4），抽 {draw} 张牌");
         }
     }
 }

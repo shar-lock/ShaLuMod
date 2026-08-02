@@ -2,7 +2,7 @@ using BaseLib.Extensions;                           // WithUpgrade
 using BaseLib.Utils;                                // CommonActions
 using MegaCrit.Sts2.Core.Commands;                  // CreatureCmd（回血）
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;   // PlayerChoiceContext
-using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / CardRarity / TargetType / CardKeyword
+using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / CardRarity / TargetType
 using MegaCrit.Sts2.Core.Localization.DynamicVars;  // DamageVar / IntVar
 using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
 using WandiMod.WandiModCode.Character;              // WandiModCard
@@ -32,8 +32,7 @@ public class BloodsipSpear : WandiModCard
         new IntVar("Heal", 2).WithUpgradeTo(4),
     ];
 
-    public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Vengeance];
-
+    // 已无血仇条件，不挂血仇关键词
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         var creature = Owner.Creature;

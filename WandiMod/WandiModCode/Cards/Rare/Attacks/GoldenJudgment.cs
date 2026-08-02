@@ -2,7 +2,6 @@ using MegaCrit.Sts2.Core.Commands;                  // DamageCmd
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / CardRarity / TargetType
 using MegaCrit.Sts2.Core.Localization.DynamicVars;  // IntVar
-using MegaCrit.Sts2.Core.ValueProps;                // ValueProp
 using WandiMod.WandiModCode.Character;              // WandiModCard
 using WandiMod.WandiModCode.Extensions;             // WithUpgradeTo
 
@@ -36,8 +35,7 @@ public class GoldenJudgment : WandiModCard
         int bonusPct = (_timesPlayed - 1) * 5;  // 每打出一次 +5%（首次 +0）
         decimal enemyMaxHp = cardPlay.Target.MaxHp;
         decimal dmg = flat + enemyMaxHp * (basePct + bonusPct) / 100m;
-        await DamageCmd.Attack(dmg).FromCard(this, cardPlay).Targeting(cardPlay.Target)
-            .WithValueProp(ValueProp.Move).Execute(choiceContext);
+        await DamageCmd.Attack(dmg).FromCard(this, cardPlay).Targeting(cardPlay.Target).Execute(choiceContext);
         MainFile.Logger.Info($"[金色裁决] 第 {_timesPlayed} 次打出：{flat} + 敌MaxHp {enemyMaxHp}×{basePct + bonusPct}% = {dmg} 伤");
     }
 }

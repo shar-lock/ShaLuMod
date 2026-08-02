@@ -1,3 +1,4 @@
+using BaseLib.Extensions;                           // WithValueProp
 using MegaCrit.Sts2.Core.Commands;                  // DamageCmd / CreatureCmd
 using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / CardRarity / TargetType / CardMultiplayerConstraint
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;   // PlayerChoiceContext

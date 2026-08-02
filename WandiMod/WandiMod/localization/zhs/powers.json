@@ -1,7 +1,10 @@
 {
   "WANDIMOD-VENGEANCE_POWER.title": "血仇",
-  "WANDIMOD-VENGEANCE_POWER.description": "每当万敌失去生命值，他获得1层血仇。\n每层血仇使他的攻击伤害提高2%。\n每累积7层血仇：消耗4层并失去5%当前生命值，将1张「荡平万邦」放入他的手牌。",
-  "WANDIMOD-VENGEANCE_POWER.smartDescription": "每当你失去生命值，获得1层血仇。每层血仇使你的攻击伤害提高2%。\n每累积7层血仇：消耗4层，失去5%当前生命值，将1张[gold]荡平万邦[/gold]放入手牌。",
+  "WANDIMOD-VENGEANCE_POWER.description": "每当万敌失去生命值，他获得1层血仇。\n每层血仇使他的攻击伤害提高2%。\n每累积7层血仇：消耗最多4层血仇（至少保留1层），将1张「荡平万邦」放入他的手牌。",
+  "WANDIMOD-VENGEANCE_POWER.smartDescription": "每当你失去生命值，获得1层血仇。每层血仇使你的攻击伤害提高2%。\n每累积7层血仇：消耗最多4层（至少保留1层），将1张[gold]荡平万邦[/gold]放入手牌。",
+  "WANDIMOD-CONQUER_PROGRESS_POWER.title": "荡平进度",
+  "WANDIMOD-CONQUER_PROGRESS_POWER.description": "距离生成「荡平万邦」的进度。右下角数字为当前进度，累积满{Threshold}点时消耗血仇（最多4层，至少保留1层）并生成1张「荡平万邦」。",
+  "WANDIMOD-CONQUER_PROGRESS_POWER.smartDescription": "距离生成[gold]荡平万邦[/gold]的进度（{Progress}/{Threshold}）。满{Threshold}点时消耗血仇并生成卡牌。",
   "WANDIMOD-STRIFE_POWER.title": "纷争",
   "WANDIMOD-STRIFE_POWER.description": "万敌的临时生命上限。每层纷争提供1点最大生命。\n战斗结束时失去全部纷争，最大生命恢复原状。",
   "WANDIMOD-STRIFE_POWER.smartDescription": "临时生命上限。每层提供1点最大生命。\n战斗结束时全部失去。",
@@ -61,5 +64,8 @@
   "WANDIMOD-VENGEANCE_DOMINION_POWER.smartDescription": "你的[gold]血仇[/gold]层数不会被消耗。",
   "WANDIMOD-WILL_OF_DESTRUCTION_POWER.title": "毁灭意志",
   "WANDIMOD-WILL_OF_DESTRUCTION_POWER.description": "每当万敌失去生命值，他获得1点力量。",
-  "WANDIMOD-WILL_OF_DESTRUCTION_POWER.smartDescription": "每当你失去生命值，获得1点力量。"
+  "WANDIMOD-WILL_OF_DESTRUCTION_POWER.smartDescription": "每当你失去生命值，获得1点力量。",
+  "WANDIMOD-BODYGUARD_POWER.title": "浴血带冠",
+  "WANDIMOD-BODYGUARD_POWER.description": "本回合内，每当万敌受到攻击并掉血，所有其他队友获得{Amount}点纷争。敌方回合结束后消失。",
+  "WANDIMOD-BODYGUARD_POWER.smartDescription": "本回合内，每当你受到攻击并掉血，所有其他队友获得{Amount}点[gold]纷争[/gold]。敌方回合结束后消失。"
 }

@@ -28,8 +28,9 @@ public class BodyguardPower : WandiModPower
         Creature? dealer,
         CardModel? cardSource)
     {
-        // 仅万敌本人实际掉血时触发（给其他队友纷争）
+        // 仅万敌本人被「他人」打掉血时触发（排除自伤卡，对齐文案「受到攻击」）
         if (target != Owner || result.UnblockedDamage <= 0) return;
+        if (dealer == null || dealer == Owner) return;
         if (CombatState == null) return;
 
         int strife = Amount;
@@ -37,7 +38,7 @@ public class BodyguardPower : WandiModPower
         foreach (var ally in CombatState.GetTeammatesOf(Owner).Where(t => t != null && t.IsAlive && t.IsPlayer && t != Owner))
             await StrifePower.Grant(choiceContext, ally, strife, Owner, cardSource);
 
-        MainFile.Logger.Info($"[浴血带冠] 万敌受击 → 给其他队友各 {strife} 纷争");
+        MainFile.Logger.Info($"[浴血带冠] 万敌受击（dealer={dealer.Name}）→ 给其他队友各 {strife} 纷争");
     }
 
     /// <summary>敌方回合结束后移除自身（保护覆盖敌方出手阶段，单回合）。</summary>

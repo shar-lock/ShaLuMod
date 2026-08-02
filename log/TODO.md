@@ -2,6 +2,31 @@
 
 > 运行时确认 / 未完成项。**完成后标 ✅**。
 
+## 07/31 跟进另一台机器大改（纷争稀有化 + 全卡对齐）审查修复
+
+| # | 问题 | 修复 |
+|---|---|---|
+| 1 | Frenzy / TurnTheTide 缺 `using DynamicVar` → 本机无法编译 | 补 Localization.DynamicVars |
+| 2 | CalamitySpear / BloodForBlood 缺 `BaseLib.Extensions`（WithValueProp） | 补 using |
+| 3 | BodyguardPower 无 powers.json 条目 | eng+zhs 补 BODYGUARD_POWER |
+| 4 | 灼血击用真实 Amount>4（显示层 off-by-one） | 改 DisplayAmount>4 |
+| 5 | 浴血带冠自伤也触发「受到攻击」 | dealer==null/Owner 排除 |
+| 6 | 饮血枪仍挂血仇关键词 | 去掉 CanonicalKeywords |
+
+### 待游戏内回归（08/01）
+- **王者之佑**：联机仅万敌失 1 血，队友只拿格挡
+- **狂化 / 王之意志**：升级后卡面出现固有；狂化升级预览不再「无效果」
+- **血仇主宰**：升级后失去虚无
+- **潘多拉魔盒**：替换全部 Basic 打击+御敌（不替换血祭之枪/残影）
+- **荡平万邦生成**：不再扣 5% 血；状态栏出现「荡平进度」0～7
+- **复仇心**：费用 1；**庇护**：10%/15% MissingHp 纷争
+- 御敌/坚壁/守誓等：纷争→回血数值与手感
+- 灼血击：显示血仇>4 才抽牌
+- 浴血带冠：联机受击给队友纷争；自伤不触发；敌方回合末消失
+- 弑王枪·连突：BloodCost 门控 + 活力覆盖两段
+- 金色裁决：每打出一次敌 MaxHp% +5%
+- **金焰斩**：14/18 伤 + 回血 3；**裂伤**：6/9 伤 + 弃牌回手
+
 ## 全卡牌开发状态
 
 | 批次 | 数量 | 状态 |

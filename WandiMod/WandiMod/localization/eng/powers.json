@@ -1,7 +1,10 @@
 {
   "WANDIMOD-VENGEANCE_POWER.title": "Vengeance",
-  "WANDIMOD-VENGEANCE_POWER.description": "Whenever Wandi loses HP, he gains 1 Vengeance.\nEach stack of Vengeance increases his attack damage by 2%.\nWhenever 7 stacks accumulate: consume 4 stacks and lose 5% of his current HP, then add a Conquer all lands! to his hand.",
-  "WANDIMOD-VENGEANCE_POWER.smartDescription": "Whenever you lose HP, gain 1 Vengeance. Each stack increases your attack damage by 2%.\nWhenever 7 stacks accumulate: consume 4 stacks, lose 5% of your current HP, and add a [gold]Conquer all lands![/gold] to your hand.",
+  "WANDIMOD-VENGEANCE_POWER.description": "Whenever Wandi loses HP, he gains 1 Vengeance.\nEach stack of Vengeance increases his attack damage by 2%.\nWhenever 7 stacks accumulate: consume up to 4 stacks (leave at least 1), then add a Conquer all lands! to his hand.",
+  "WANDIMOD-VENGEANCE_POWER.smartDescription": "Whenever you lose HP, gain 1 Vengeance. Each stack increases your attack damage by 2%.\nWhenever 7 stacks accumulate: consume up to 4 stacks (leave at least 1) and add a [gold]Conquer all lands![/gold] to your hand.",
+  "WANDIMOD-CONQUER_PROGRESS_POWER.title": "Conquer Progress",
+  "WANDIMOD-CONQUER_PROGRESS_POWER.description": "Progress toward Conquer all lands!. The corner number is current progress. At {Threshold}, consume Vengeance (up to 4, leave at least 1) and add one to your hand.",
+  "WANDIMOD-CONQUER_PROGRESS_POWER.smartDescription": "Progress toward [gold]Conquer all lands![/gold] ({Progress}/{Threshold}). At {Threshold}, consume Vengeance and generate the card.",
   "WANDIMOD-STRIFE_POWER.title": "Strife",
   "WANDIMOD-STRIFE_POWER.description": "Wandi's temporary Max HP. Each stack of Strife grants 1 Max HP.\nWhen combat ends, all Strife is lost and Max HP returns to normal.",
   "WANDIMOD-STRIFE_POWER.smartDescription": "Temporary Max HP. Each stack grants 1 Max HP.\nAll Strife is lost when combat ends.",
@@ -61,5 +64,8 @@
   "WANDIMOD-VENGEANCE_DOMINION_POWER.smartDescription": "Your [gold]Vengeance[/gold] stacks cannot be consumed.",
   "WANDIMOD-WILL_OF_DESTRUCTION_POWER.title": "Will of Destruction",
   "WANDIMOD-WILL_OF_DESTRUCTION_POWER.description": "Whenever Wandi loses HP, he gains 1 Strength.",
-  "WANDIMOD-WILL_OF_DESTRUCTION_POWER.smartDescription": "Whenever you lose HP, gain 1 Strength."
+  "WANDIMOD-WILL_OF_DESTRUCTION_POWER.smartDescription": "Whenever you lose HP, gain 1 Strength.",
+  "WANDIMOD-BODYGUARD_POWER.title": "Blood Crown",
+  "WANDIMOD-BODYGUARD_POWER.description": "This turn, whenever Wandi is attacked and loses HP, all other teammates gain {Amount} Strife. Removed at the end of the enemy turn.",
+  "WANDIMOD-BODYGUARD_POWER.smartDescription": "This turn, whenever you are attacked and lose HP, all other teammates gain {Amount} [gold]Strife[/gold]. Removed at the end of the enemy turn."
 }
