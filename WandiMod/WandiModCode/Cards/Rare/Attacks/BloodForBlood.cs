@@ -1,3 +1,4 @@
+using BaseLib.Extensions;                           // WithValueProp / WithUpgradeTo
 using MegaCrit.Sts2.Core.Commands;                  // DamageCmd / CreatureCmd
 using MegaCrit.Sts2.Core.Entities.Cards;            // CardPlay / CardType / CardRarity / TargetType / CardMultiplayerConstraint
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;   // PlayerChoiceContext
@@ -20,9 +21,10 @@ public class BloodForBlood : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
+        new IntVar("Pct", 10).WithUpgradeTo(15),
         new CalculationBaseVar(0m),
         new ExtraDamageVar(10m).WithUpgradeTo(15),
-        // multiplier = 所有队友 MaxHp 总和 / 100（联机外队友只有自己 → MaxHp/100）
+        // multiplier = 所有队友 MaxHp 总和 / 100
         new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, _) => {
             if (card.Owner?.Creature == null || card.CombatState == null) return 0m;
             decimal totalMaxHp = 0;

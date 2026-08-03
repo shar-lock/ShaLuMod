@@ -10,7 +10,7 @@ namespace WandiMod.WandiModCode.Cards;
 /// <summary>
 /// 金色裁决 / Golden Judgment（稀有 · 攻击）。
 /// 造成 10 伤害 + 敌人生命上限 10%；本场战斗每打出一次，敌人生命上限占比 +5%。升级：15%。
-/// —— 玩家 MaxHP 流的终结件：敌人血越多越痛，且越打越痛（每打出一次百分比 +5%）。
+/// —— 玩家终结件：敌人血越多越痛，且越打越痛（每打出一次百分比 +5%）。
 /// 计数用战斗实例字段（新战新实例→自动重置；存档重载会重置计数，可接受）。
 /// </summary>
 public class GoldenJudgment : WandiModCard

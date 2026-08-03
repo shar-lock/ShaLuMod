@@ -79,9 +79,8 @@ public class BloodOfTheKinslayer : WandiModRelic
     {
         var ctx = new ThrowingPlayerChoiceContext();
         await PowerCmd.Apply<VengeancePower>(ctx, Owner.Creature, 1, Owner.Creature, null);
-        // 独立「荡平进度」计数器：开局进度 0，随血仇累积同步（见 ConquerProgressPower / VengeancePower）
+        // 独立「荡平进度」：只计血仇获得量，与血仇消耗脱钩
         await PowerCmd.Apply<ConquerProgressPower>(ctx, Owner.Creature, 1, Owner.Creature, null);
-        Owner.Creature?.GetPower<ConquerProgressPower>()?.SyncProgress(1, 1);
     }
 
     /// <summary>

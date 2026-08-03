@@ -35,6 +35,11 @@ public class BloodburnStrike : WandiModCard
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Vengeance];
 
+    /// <summary>显示血仇 &gt; 4 时金边高亮（满足抽牌条件）。</summary>
+    protected override bool ShouldGlowGoldInternal =>
+        Owner?.Creature != null
+        && (Owner.Creature.GetPower<VengeancePower>()?.DisplayAmount ?? 0) > 4;
+
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         var creature = Owner.Creature;

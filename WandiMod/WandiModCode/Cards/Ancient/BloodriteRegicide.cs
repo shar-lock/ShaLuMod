@@ -34,7 +34,7 @@ public class BloodriteRegicide : WandiModCard
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         if (cardPlay.Target == null) return;
-        // ① 造成 CalculatedDamage（基础+MissingHp%，卡面实时显示同源）
+        // ① 造成 CalculatedDamage（基础+当前最大生命%，卡面实时显示同源）
         await DamageCmd.Attack(DynamicVars.CalculatedDamage)
             .FromCard(this, cardPlay)
             .Targeting(cardPlay.Target)

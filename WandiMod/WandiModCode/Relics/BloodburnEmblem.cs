@@ -10,7 +10,7 @@ using WandiMod.WandiModCode.Powers;
 namespace WandiMod.WandiModCode.Relics;
 
 /// <summary>
-/// 焚血勋章 / Bloodburn Emblem（罕见遗物）
+/// 焚血勋章 / Bloodburn Emblem（稀有遗物）
 /// 每当你回复血量，获得 1 点【血仇】。
 /// —— 回血双通道产血仇：纷争获得（抬上限=回血）/ 直接回血卡 / 吸血 都触发。
 /// 让纷争流拿到它等于白捡一座血仇引擎。
@@ -21,7 +21,7 @@ namespace WandiMod.WandiModCode.Relics;
 /// </summary>
 public class BloodburnEmblem : WandiModRelic
 {
-    public override RelicRarity Rarity => RelicRarity.Uncommon;
+    public override RelicRarity Rarity => RelicRarity.Rare;
 }
 
 /// <summary>

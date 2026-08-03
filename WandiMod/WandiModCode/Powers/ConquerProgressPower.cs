@@ -1,27 +1,31 @@
+using MegaCrit.Sts2.Core.Commands;                 // PowerCmd / CardPileCmd / CardCmd
+using MegaCrit.Sts2.Core.Entities.Cards;            // CardModel / PileType
+using MegaCrit.Sts2.Core.Entities.Creatures;        // Creature
 using MegaCrit.Sts2.Core.Entities.Powers;           // PowerType / PowerStackType
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;   // PlayerChoiceContext
+using MegaCrit.Sts2.Core.HoverTips;                 // IHoverTip / HoverTipFactory
 using MegaCrit.Sts2.Core.Localization.DynamicVars;  // IntVar
+using MegaCrit.Sts2.Core.Models;                    // PowerModel
+using WandiMod.WandiModCode.Cards;                  // ConquerAllLands
+using WandiMod.WandiModCode.Relics;                 // UndyingRoyalBlood
 
 namespace WandiMod.WandiModCode.Powers;
 
 /// <summary>
-/// 荡平进度 / Conquer Progress —— 独立计数器，状态栏右下角数字展示进度（与血仇同款 Counter 渲染）。
-/// 显示数字 = 自上次触发基准起已累积的血仇层数（0～7）；满 7 时由 VengeancePower 消耗并生成卡牌后归零。
-/// StackType 必须是 Counter：NPower.RefreshAmount 仅对 Counter 写 DisplayAmount，Single 永远空白。
-/// Amount 固定为 1（维持实例、避免进度 0 时被 ShouldRemoveDueToAmount 移除）；真实进度走 DisplayAmount。
-/// 由 BloodOfTheKinslayer 战斗开始赋予；VengeancePower 在层数变化后 SyncProgress。
+/// 荡平进度 / Conquer Progress —— 独立计数器（与血仇层数脱钩）。
+/// 仅在获得血仇时累加进度；消耗血仇（打牌 / 血仇自身成长消耗）不影响本进度。
+/// 玩家可见进度到 7 → 生成 1 张「荡平万邦」并扣减 7 点进度（可一次获得过量时连触发）。
+/// StackType=Counter：NPower 渲染右下角数字。Amount 固定 1 防进度 0 被移除。
 /// </summary>
 public class ConquerProgressPower : WandiModPower
 {
-    /// <summary>生成一张荡平万邦所需累积的血仇层数（与 VengeancePower.GainPerTrigger 一致）。</summary>
     public const int Threshold = 7;
 
     private int _progress;
 
     public override PowerType Type => PowerType.Buff;
-    // 必须 Counter：原生 NPower 仅对 Counter 渲染右下角数字（Single 标签恒为空）
     public override PowerStackType StackType => PowerStackType.Counter;
 
-    /// <summary>状态栏右下角数字 = 当前进度（0～7）。</summary>
     public override int DisplayAmount => _progress;
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
@@ -30,17 +34,50 @@ public class ConquerProgressPower : WandiModPower
         new IntVar("Progress", 0),
     ];
 
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+    [
+        HoverTipFactory.FromCard<ConquerAllLands>(),
+    ];
+
     /// <summary>
-    /// 按血仇真实层数与触发基准同步进度显示。
-    /// progress = clamp(血仇层数 − 上次触发基准, 0, Threshold)。
+    /// 监听血仇正向变化：按获得量累加进度；满 Threshold 则生成荡平万邦（不消耗血仇）。
     /// </summary>
-    public void SyncProgress(int vengeanceAmount, int lastTriggerBase)
+    public override async Task AfterPowerAmountChanged(
+        PlayerChoiceContext choiceContext,
+        PowerModel power,
+        decimal amount,
+        Creature? applier,
+        CardModel? cardSource)
     {
-        int next = Math.Clamp(vengeanceAmount - lastTriggerBase, 0, Threshold);
-        if (next == _progress)
+        if (power is not VengeancePower || amount <= 0)
             return;
-        _progress = next;
-        DynamicVars["Progress"].BaseValue = next;
+
+        _progress += (int)amount;
+        DynamicVars["Progress"].BaseValue = _progress;
         InvokeDisplayAmountChanged();
+
+        while (_progress >= Threshold)
+        {
+            _progress -= Threshold;
+            DynamicVars["Progress"].BaseValue = _progress;
+            InvokeDisplayAmountChanged();
+            await GenerateConquerCard(choiceContext);
+        }
+    }
+
+    private async Task GenerateConquerCard(PlayerChoiceContext choiceContext)
+    {
+        if (CombatState == null || Owner.Player == null)
+        {
+            MainFile.Logger.Error("[荡平进度] 生成时 CombatState/Owner.Player 为空，荡平万邦未生成");
+            return;
+        }
+
+        CardModel card = CombatState.CreateCard<ConquerAllLands>(Owner.Player);
+        bool awakened = Owner.Player.GetRelic<UndyingRoyalBlood>() != null;
+        if (awakened)
+            CardCmd.Upgrade(card);
+        await CardPileCmd.AddGeneratedCardToCombat(card, PileType.Hand, Owner.Player);
+        MainFile.Logger.Info($"[荡平进度] 满 {Threshold} → 生成荡平万邦（觉醒={awakened}），剩余进度 {_progress}");
     }
 }

@@ -1,3 +1,4 @@
+using BaseLib.Extensions;                           // WithValueProp
 using MegaCrit.Sts2.Core.Commands;                  // DamageCmd
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -10,14 +11,14 @@ namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
 /// 灾厄之矛 / Calamity Spear（稀有 · 攻击 · 消耗）。
-/// 造成「当前最大生命」40%/60% 的伤害（含纷争上限）。卡面实时显示总伤。
-/// CalculatedDamageVar = 0 + ExtraDamage(40→60) × MaxHp/100，与 OnPlay 结算同源。
+/// 造成「当前最大生命」40%/60% 的伤害。卡面文案用 MaxHpPct；实战预览/结算走 CalculatedDamageVar。
 /// </summary>
 public class CalamitySpear : WandiModCard
 {
     public CalamitySpear() : base(3, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy) { }
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
+        new IntVar("MaxHpPct", 40).WithUpgradeTo(60),
         new CalculationBaseVar(0m),
         new ExtraDamageVar(40m).WithUpgradeTo(60),
         new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, _) =>

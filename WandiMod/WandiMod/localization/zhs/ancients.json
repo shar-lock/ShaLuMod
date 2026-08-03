@@ -1,9 +1,10 @@
 {
-  "THE_ARCHITECT.talk.WANDIMOD-WANDI_MOD.0-0.char": "这座塔……是我所见过最高的墓碑。建筑师，你的造物已经倒下了。",
-  "THE_ARCHITECT.talk.WANDIMOD-WANDI_MOD.0-0.next": "回应",
-  "THE_ARCHITECT.talk.WANDIMOD-WANDI_MOD.0-1.ancient": "不死者……你带着千疮百孔的灵魂来到此处。血与仇将你引至此地，但你所求的并非胜利。",
-  "THE_ARCHITECT.talk.WANDIMOD-WANDI_MOD.0-1.next": "继续",
-  "THE_ARCHITECT.talk.WANDIMOD-WANDI_MOD.0-2.char": "我寻求的是终结。你的存在，恰好挡在了我和死亡之间。",
+  "THE_ARCHITECT.talk.WANDIMOD-WANDI_MOD.0-0r.char": "这座塔……是我所见过最高的墓碑。建筑师，你的造物已经倒下了。",
+  "THE_ARCHITECT.talk.WANDIMOD-WANDI_MOD.0-0r.next": "回应",
+  "THE_ARCHITECT.talk.WANDIMOD-WANDI_MOD.0-1r.ancient": "不死者……你带着千疮百孔的灵魂来到此处。血与仇将你引至此地，但你所求的并非胜利。",
+  "THE_ARCHITECT.talk.WANDIMOD-WANDI_MOD.0-1r.next": "继续",
+  "THE_ARCHITECT.talk.WANDIMOD-WANDI_MOD.0-2r.char": "我寻求的是终结。你的存在，恰好挡在了我和死亡之间。",
+  "THE_ARCHITECT.talk.WANDIMOD-WANDI_MOD.0-attack": "Both",
   "THE_ARCHITECT.talk.WANDIMOD-WANDI_MOD.1-0r.char": "又来了？好。我的长枪从未如此饥渴。",
   "THE_ARCHITECT.talk.WANDIMOD-WANDI_MOD.1-0r.next": "回应",
   "THE_ARCHITECT.talk.WANDIMOD-WANDI_MOD.1-1r.ancient": "你一次次归来，追逐那永远触不可及的死亡。或许你本身就是永恒的诅咒。"

@@ -38,9 +38,9 @@ public class BloodiedSpearhead : WandiModRelic
         if (enemies.Count == 0) return;
 
         Flash();
-        // 随机单体 3 伤
-        int index = Random.Shared.Next(enemies.Count);
-        var target = enemies[index];
+        // 必须用局内 CombatTargets RNG（对齐 Tingsha / ParryingShield），禁止 Random.Shared（联机不同步）
+        var target = Owner.RunState.Rng.CombatTargets.NextItem(enemies);
+        if (target == null) return;
         await CreatureCmd.Damage(choiceContext, target, 3m, ValueProp.Move, null, null);
         MainFile.Logger.Info($"[沾血枪尖] 获得血仇 → 随机敌人 {target} 受 3 伤害");
     }

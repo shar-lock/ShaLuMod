@@ -16,7 +16,7 @@ public class RivalAllLands : WandiModCard
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         // ① 打出时立即获得 4 血仇
-        await VengeancePower.Grant(choiceContext, Owner.Creature, DynamicVars["Vengeance"].IntValue, Owner.Creature, this);
+        await VengeancePower.Grant(choiceContext, Owner.Creature, DynamicVars["Vengeance"].IntValue, this);
         // ② 授予 Power（Amount=4=每回合产血仇数）：回合开始 +4 血仇
         await PowerCmd.Apply<RivalAllLandsPower>(choiceContext, Owner.Creature, DynamicVars["Vengeance"].IntValue, Owner.Creature, this);
     }

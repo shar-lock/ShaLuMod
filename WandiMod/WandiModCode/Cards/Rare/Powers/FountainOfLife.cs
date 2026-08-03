@@ -8,7 +8,7 @@ using WandiMod.WandiModCode.Powers;
 
 namespace WandiMod.WandiModCode.Cards;
 
-/// <summary>生命之泉 / Fountain of Life（稀有 · 能力）。每回合开始获得「当前最大生命」8%/12% 的纷争。</summary>
+/// <summary>生命之泉 / Fountain of Life（稀有 · 能力）。每回合开始获得「入场/基础最大生命」5%/8% 的纷争（不含纷争膨胀）。</summary>
 public class FountainOfLife : WandiModCard
 {
     public FountainOfLife() : base(2, CardType.Power, CardRarity.Rare, TargetType.Self) { }

@@ -6,7 +6,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 namespace WandiMod.WandiModCode.Relics;
 
 /// <summary>
-/// 血仇圣坛 / Altar of Vengeance（稀有遗物）
+/// 血仇圣坛 / Altar of Vengeance（罕见遗物）
 /// 敌方单位死亡后恢复 5% 最大生命值的血量。
 /// —— 卖血流的续航：击杀按最大生命比例回血（含纷争上限），让「敢卖血」可持续。
 /// 钩子 AfterDeath（AbstractModel.cs:313），每次任意生物死亡时分发到所有模型。
@@ -14,7 +14,7 @@ namespace WandiMod.WandiModCode.Relics;
 /// </summary>
 public class AltarOfVengeance : WandiModRelic
 {
-    public override RelicRarity Rarity => RelicRarity.Rare;
+    public override RelicRarity Rarity => RelicRarity.Uncommon;
 
     /// <summary>
     /// 任意生物死亡后触发。仅当死者是敌方（非自己同侧）时回血。
