@@ -76,4 +76,14 @@ public class WandiMod : PlaceholderCharacterModel
 
     // 选角界面大立绘：静态场景（Control + TextureRect），替代 PlaceholderCharacterModel 借用的铁甲战士动画背景
     public override string CustomCharacterSelectBg => "res://WandiMod/scenes/char_select_bg_wandimod.tscn";
+
+    // 建筑师终局：万敌攻击建筑师的 VFX 列表（剑斩+血溅为主，参考 PlaceholderCharacterModel 范式）
+    public override List<string> GetArchitectAttackVfx() =>
+    [
+        "vfx/vfx_attack_slash",
+        "vfx/vfx_bloody_impact",
+        "vfx/vfx_attack_slash",
+        "vfx/vfx_heavy_blunt",
+        "vfx/vfx_attack_slash",
+    ];
 }

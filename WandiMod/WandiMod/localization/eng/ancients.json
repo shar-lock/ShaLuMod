@@ -1,6 +1,10 @@
 {
-  "THE_ARCHITECT.talk.WANDIMOD-WANDI_MOD.0-0r.char": "Another trial? Good. My spear was growing restless.",
-  "THE_ARCHITECT.talk.WANDIMOD-WANDI_MOD.0-0r.next": "Continue",
-  "THE_ARCHITECT.talk.WANDIMOD-WANDI_MOD.0-1r.ancient": "Undying flesh, yet a soul that courts death. Curious.",
-  "THE_ARCHITECT.talk.WANDIMOD-WANDI_MOD.0-attack": "Kneel, or be conquered!"
+  "THE_ARCHITECT.talk.WANDIMOD-WANDI_MOD.0-0.char": "This spire... is the tallest tombstone I have ever seen. Architect, your creations have fallen.",
+  "THE_ARCHITECT.talk.WANDIMOD-WANDI_MOD.0-0.next": "Respond",
+  "THE_ARCHITECT.talk.WANDIMOD-WANDI_MOD.0-1.ancient": "Deathless one... you arrive with a soul riddled with scars. Blood and vengeance led you here, yet victory is not what you seek.",
+  "THE_ARCHITECT.talk.WANDIMOD-WANDI_MOD.0-1.next": "Continue",
+  "THE_ARCHITECT.talk.WANDIMOD-WANDI_MOD.0-2.char": "What I seek is an end. And you happen to stand between me and death.",
+  "THE_ARCHITECT.talk.WANDIMOD-WANDI_MOD.1-0r.char": "Again? Good. My spear has never been so thirsty.",
+  "THE_ARCHITECT.talk.WANDIMOD-WANDI_MOD.1-0r.next": "Respond",
+  "THE_ARCHITECT.talk.WANDIMOD-WANDI_MOD.1-1r.ancient": "You return again and again, chasing a death forever out of reach. Perhaps you yourself are the eternal curse."
 }
