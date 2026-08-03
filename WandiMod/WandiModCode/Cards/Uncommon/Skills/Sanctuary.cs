@@ -10,8 +10,8 @@ namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
 /// 庇护 / Sanctuary（罕见 · 技能 · 消耗）
-/// 获得「已损失生命」10% 的【纷争】。升级：15%。
-/// —— 越伤越稳：失血越多纷争越高（临时上限等比扩张）。满血时为 0 纷争（不白送）。消耗防重复刷。
+/// 获得「当前最大生命值」10% 的【纷争】。升级：15%。
+/// —— MaxHp 缩放纷争：生命上限越高纷争越多（吃纷争放大）。消耗防重复刷。
 /// </summary>
 public class Sanctuary : WandiModCard
 {
@@ -25,7 +25,7 @@ public class Sanctuary : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new IntVar("MissingHpPct", 10).WithUpgradeTo(15),   // 已损失生命的百分比（整数，运算时 /100）
+        new IntVar("MaxHpPct", 10).WithUpgradeTo(15),   // 当前最大生命值的百分比（整数，运算时 /100）
     ];
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Strife, CardKeyword.Exhaust];
@@ -39,14 +39,14 @@ public class Sanctuary : WandiModCard
             return;
         }
 
-        decimal missingHp = creature.MaxHp - creature.CurrentHp;             // 已损失生命
-        decimal pct = DynamicVars["MissingHpPct"].IntValue / 100m;           // 0.10 / 0.15
-        // 纷争层数向下取整（至少 0：满血时不给）
-        int strife = (int)Math.Max(0m, Math.Floor(missingHp * pct));
+        decimal maxHp = creature.MaxHp;                                      // 当前最大生命（含纷争）
+        decimal pct = DynamicVars["MaxHpPct"].IntValue / 100m;               // 0.10 / 0.15
+        // 纷争层数向下取整（至少 0）
+        int strife = (int)Math.Max(0m, Math.Floor(maxHp * pct));
         if (strife > 0)
         {
             await StrifePower.Grant(choiceContext, creature, strife, creature, this);
         }
-        MainFile.Logger.Info($"[庇护] 已损失生命 {missingHp} × {pct} = {strife} 纷争");
+        MainFile.Logger.Info($"[庇护] MaxHp {maxHp} × {pct} = {strife} 纷争");
     }
 }

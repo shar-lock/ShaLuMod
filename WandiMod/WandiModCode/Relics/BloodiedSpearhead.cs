@@ -1,3 +1,4 @@
+using MegaCrit.Sts2.Core.Commands;                 // CreatureCmd / DamageCmd
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Relics;
@@ -10,33 +11,33 @@ namespace WandiMod.WandiModCode.Relics;
 
 /// <summary>
 /// 沾血枪尖 / Bloodied Spearhead（普通遗物）
-/// 每当你因**打出的卡牌**失去生命，获得 1 点【血仇】。
-/// —— 被动收益件：自伤卡额外触发血仇，让卖血卡越打血仇涨得越快。
-/// 触发口径：限定 cardSource != null（因卡牌失血），区别于起手遗物的「任意来源失血」。
-/// 参考原生 DemonTongue.AfterDamageReceived（遗物监听失血的标准范式）。
+/// 当你获得【血仇】时，对所有敌人造成 1 点伤害。
+/// —— 血仇伤害被动：每次血仇正向增加 → 全体敌人各受 1 点伤害（与血仇引擎联动：挨打→+1血仇→全体1伤）。
+///   钩子 AfterPowerAmountChanged：监听 VengeancePower 正向变化。
 /// </summary>
 public class BloodiedSpearhead : WandiModRelic
 {
     public override RelicRarity Rarity => RelicRarity.Common;
 
-    /// <summary>
-    /// 失血回调：仅当因卡牌效果失血（cardSource != null）时，+1 血仇。
-    /// 参考原生 DemonTongue / BeatingRemnant。
-    /// </summary>
-    public override async Task AfterDamageReceived(
+    public override async Task AfterPowerAmountChanged(
         PlayerChoiceContext choiceContext,
-        Creature target,
-        DamageResult result,
-        ValueProp props,
-        Creature? dealer,
+        PowerModel power,
+        decimal amount,
+        Creature? applier,
         CardModel? cardSource)
     {
-        // 仅万敌本人 + 实际掉血 + 因卡牌效果（非受击）
-        if (target != Owner.Creature || result.UnblockedDamage <= 0 || cardSource == null)
-            return;
+        // 仅血仇正向变化（获得血仇）
+        if (power is not VengeancePower || amount <= 0) return;
+        if (Owner?.Creature == null) return;
 
         Flash();
-        await VengeancePower.Grant(choiceContext, Owner.Creature, 1, null);
-        MainFile.Logger.Info("[沾血枪尖] 因卡牌失血 → +1 血仇");
+        // 对所有可命中敌人造成 1 点伤害
+        var combatState = Owner.Creature.CombatState;
+        if (combatState == null) return;
+        foreach (var enemy in combatState.HittableEnemies)
+        {
+            await CreatureCmd.Damage(choiceContext, enemy, 1m, ValueProp.Move, null, null);
+        }
+        MainFile.Logger.Info("[沾血枪尖] 获得血仇 → 对全体敌人造成 1 伤害");
     }
 }

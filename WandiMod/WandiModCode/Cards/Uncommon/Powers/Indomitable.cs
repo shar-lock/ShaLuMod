@@ -27,7 +27,7 @@ public class Indomitable : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new IntVar("HealPct", 5).WithUpgradeTo(7),  // 战后回血占生命上限的百分比
+        new IntVar("HealPct", 10).WithUpgradeTo(12),  // 战后回血占生命上限的百分比
     ];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

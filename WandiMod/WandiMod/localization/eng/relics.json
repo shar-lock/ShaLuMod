@@ -6,7 +6,7 @@
   "WANDIMOD-UNDYING_ROYAL_BLOOD.description": "At the start of combat, gain [gold]Vengeance[/gold]. At the start of each turn, gain 1 additional [gold]Vengeance[/gold]. [gold]Conquer all lands![/gold] cards added to your hand are Upgraded.\nWhen you would die, prevent it and heal to 30% of your Max HP instead. This can trigger {Charges} times.",
   "WANDIMOD-UNDYING_ROYAL_BLOOD.flavor": "Death itself has become his weapon. The throne of ruin awaits its king.",
   "WANDIMOD-BLOODIED_SPEARHEAD.title": "Bloodied Spearhead",
-  "WANDIMOD-BLOODIED_SPEARHEAD.description": "Whenever you lose HP from a card you play, gain 1 [gold]Vengeance[/gold].",
+  "WANDIMOD-BLOODIED_SPEARHEAD.description": "Whenever you gain [gold]Vengeance[/gold], deal 1 damage to all enemies.",
   "WANDIMOD-BLOODIED_SPEARHEAD.flavor": "The blood on the spearhead never dries. Every drop is added to his ledger.",
   "WANDIMOD-BLOODBURN_EMBLEM.title": "Bloodburn Emblem",
   "WANDIMOD-BLOODBURN_EMBLEM.description": "Whenever you heal, gain 1 [gold]Vengeance[/gold].",

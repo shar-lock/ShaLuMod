@@ -12,7 +12,7 @@ namespace WandiMod.WandiModCode.Cards;
 
 /// <summary>
 /// 饮血反击 / Blood-Drink Counter（罕见 · 攻击）
-/// 造成 8 点伤害，回复造成伤害的 30%。升级：11 伤害，40% 吸血。
+/// 造成 8 点伤害，回复造成伤害的 80%。升级：10 伤害，100% 吸血。
 /// —— 吸血件：攻击后直接读 AttackCommand.Results 的实际 UnblockedDamage 汇总回血。
 ///    不再走 Power 中转，一次结算、代码更简。
 /// </summary>
@@ -28,8 +28,8 @@ public class BloodDrinkCounter : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(8, ValueProp.Move).WithUpgradeTo(11),
-        new IntVar("LifestealPct", 30).WithUpgradeTo(40),
+        new DamageVar(8, ValueProp.Move).WithUpgradeTo(10),
+        new IntVar("LifestealPct", 80).WithUpgradeTo(100),
     ];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

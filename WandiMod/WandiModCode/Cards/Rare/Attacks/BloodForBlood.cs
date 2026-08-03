@@ -18,7 +18,7 @@ public class BloodForBlood : WandiModCard
 {
     public BloodForBlood() : base(2, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy) { }
     public override CardMultiplayerConstraint MultiplayerConstraint => CardMultiplayerConstraint.MultiplayerOnly;
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Pct", 25).WithUpgradeTo(33)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new IntVar("Pct", 10).WithUpgradeTo(15)];
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         if (cardPlay.Target == null || CombatState == null) return;

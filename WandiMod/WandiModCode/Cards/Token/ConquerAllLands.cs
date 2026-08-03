@@ -62,8 +62,8 @@ public class ConquerAllLands : CustomCardModel
         }),
     ];
 
-    // 词条：虚无（回合末未打出则消失）+ 消耗（打出后消失，防囤积）
-    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Ethereal, CardKeyword.Exhaust];
+    // 词条：消耗（打出后消失，防囤积）
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
