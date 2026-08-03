@@ -12,7 +12,7 @@ namespace WandiMod.WandiModCode.Cards;
 /// <summary>
 /// 诛天焚骨的王座 / Throne of Bonescorching Heaven ⭐（稀有 · 攻击 · 全体）
 /// 吞噬所有血仇，每层全体 8 伤；HP≤50% 每层额外+4。升级：10/+5。
-/// —— 万敌的终结技：把积攒的血仇一次性转化为全体核弹。致敬星铁终结技。
+/// 卡面实时显示总伤（CalculatedDamageVar）：DmgPerStack × blood + (HP≤50% ? BonusPerStack × blood : 0)
 /// </summary>
 public class ThroneOfBonescorchingHeaven : WandiModCard
 {
@@ -22,6 +22,20 @@ public class ThroneOfBonescorchingHeaven : WandiModCard
     [
         new IntVar("DmgPerStack", 8).WithUpgradeTo(10),
         new IntVar("BonusPerStack", 4).WithUpgradeTo(5),
+        new CalculationBaseVar(0m),
+        new ExtraDamageVar(1m),  // 哨兵值 1（乘数承担全部伤害计算）
+        // CalculatedDamageVar = 0 + 1 × multiplier = multiplier = (DmgPerStack + 残血加成) × blood
+        new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, _) => {
+            if (card.Owner.Creature == null) return 0m;
+            int blood = card.Owner.Creature.GetPower<VengeancePower>()?.Amount ?? 0;
+            if (blood <= 0) return 0m;
+            int perStack = card.DynamicVars["DmgPerStack"].IntValue;
+            int bonus = card.DynamicVars["BonusPerStack"].IntValue;
+            decimal mul = perStack;
+            if (card.Owner.Creature.CurrentHp <= card.Owner.Creature.MaxHp * 0.5m)
+                mul += bonus;
+            return mul * blood;
+        }),
     ];
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Vengeance];
@@ -37,15 +51,10 @@ public class ThroneOfBonescorchingHeaven : WandiModCard
         // 吞噬所有血仇（留 1 层防 Power 移除）
         await PowerCmd.Apply<VengeancePower>(choiceContext, creature, -(blood - 1), creature, null);
 
-        // 每层基础伤害 + HP≤50% 额外
-        int perStack = DynamicVars["DmgPerStack"].IntValue;
-        int bonus = DynamicVars["BonusPerStack"].IntValue;
-        decimal dmg = blood * perStack;
-        bool lowHp = creature.CurrentHp <= creature.MaxHp * 0.5m;
-        if (lowHp) dmg += blood * bonus;
+        // 用 CalculatedDamageVar 结算（卡面预览与实打同源）
+        await DamageCmd.Attack(DynamicVars.CalculatedDamage)
+            .FromCard(this, cardPlay).TargetingAllOpponents(CombatState).Execute(choiceContext);
 
-        // AttackCommand.DamageProps 默认即 ValueProp.Move，无需（也无 API）再设置
-        await DamageCmd.Attack(dmg).FromCard(this, cardPlay).TargetingAllOpponents(CombatState).Execute(choiceContext);
-        MainFile.Logger.Info($"[诛天焚骨的王座] 吞噬 {blood} 血仇，全体 {dmg} 伤（残血加成={lowHp}）");
+        MainFile.Logger.Info($"[诛天焚骨的王座] 吞噬 {blood} 血仇，全体 {DynamicVars.CalculatedDamage.Calculate(null)} 伤");
     }
 }
