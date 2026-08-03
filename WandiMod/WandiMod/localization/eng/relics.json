@@ -12,7 +12,7 @@
   "WANDIMOD-BLOODBURN_EMBLEM.description": "Whenever you heal, gain 1 [gold]Vengeance[/gold].",
   "WANDIMOD-BLOODBURN_EMBLEM.flavor": "An emblem forged with blood as fuel. Whoever wears it never fears the burning.",
   "WANDIMOD-ALTAR_OF_VENGEANCE.title": "Altar of Vengeance",
-  "WANDIMOD-ALTAR_OF_VENGEANCE.description": "When an enemy dies, heal for 2% of your Max HP.",
+  "WANDIMOD-ALTAR_OF_VENGEANCE.description": "When an enemy dies, heal for 5% of your Max HP.",
   "WANDIMOD-ALTAR_OF_VENGEANCE.flavor": "The altar accepts only one offering: the death of his enemies.",
   "WANDIMOD-CRIMSON_SIGIL.title": "Crimson Sigil",
   "WANDIMOD-CRIMSON_SIGIL.description": "At the start of combat, add a [gold]Conquer All Lands[/gold] to your hand.",

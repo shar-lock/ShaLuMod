@@ -34,6 +34,6 @@ public class AltarOfVengeance : WandiModRelic
         decimal heal = Owner.Creature.MaxHp * 0.05m;
         Flash();
         await CreatureCmd.Heal(Owner.Creature, heal);
-        MainFile.Logger.Info($"[血仇圣坛] 敌方死亡 → 回血 {heal}（MaxHp {Owner.Creature.MaxHp}×2%）");
+        MainFile.Logger.Info($"[血仇圣坛] 敌方死亡 → 回血 {heal}（MaxHp {Owner.Creature.MaxHp}×5%）");
     }
 }

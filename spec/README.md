@@ -14,7 +14,7 @@
 | [keyword-highlight.md](keyword-highlight.md) | 纷争 / 血仇关键词高亮规范（None + [gold] + CanonicalKeywords） |
 | [relic-dev.md](relic-dev.md) | 遗物开发：Pool 强制要求、欧洛巴斯替换、免死 |
 | [build-reference.md](build-reference.md) | 构建约束 + API / 数据参考路径 |
-| [assets.md](assets.md) | 图片资源注册（卡牌/Power/遗物/角色界面的路径、命名、尺寸、回退、Publish） |
+| [assets.md](assets.md) | 图片资源注册（卡牌/Power/遗物/角色 UI）；含 **原版角色 UI 调研**（路径、PNG/Spine/场景、分辨率）与去战士化清单 |
 
 ## 开发记录
 

@@ -37,13 +37,16 @@ public class BloodForBlood : WandiModCard
     {
         if (cardPlay.Target == null || CombatState == null) return;
         var c = Owner.Creature;
-        // 用 CalculatedDamageVar 结算（卡面预览与实打同源）
-        decimal dmg = DynamicVars.CalculatedDamage.Calculate(null);
-        await DamageCmd.Attack(DynamicVars.CalculatedDamage)
+        // CalculatedDamageVar 结算（卡面预览与攻击同源）；回血按实际 UnblockedDamage（对齐饮血反击）
+        var executed = await DamageCmd.Attack(DynamicVars.CalculatedDamage)
             .FromCard(this, cardPlay).Targeting(cardPlay.Target)
             .WithValueProp(ValueProp.Move).Execute(choiceContext);
-        // 回复造成伤害的 50%
-        await CreatureCmd.Heal(c, dmg / 2m);
-        MainFile.Logger.Info($"[此乃天谴] CalculatedDamage={dmg}，回血 {dmg/2m}");
+        decimal dealt = 0;
+        foreach (var results in executed.Results)
+            foreach (var r in results)
+                dealt += r.UnblockedDamage;
+        if (dealt > 0)
+            await CreatureCmd.Heal(c, dealt / 2m);
+        MainFile.Logger.Info($"[此乃天谴] 实伤={dealt}，回血 {dealt / 2m}");
     }
 }

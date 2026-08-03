@@ -12,7 +12,7 @@
   "WANDIMOD-BLOODBURN_EMBLEM.description": "每当你回复生命值，获得1层[gold]血仇[/gold]。",
   "WANDIMOD-BLOODBURN_EMBLEM.flavor": "以血为燃料铸成的勋章，佩戴它的人从不畏惧燃烧。",
   "WANDIMOD-ALTAR_OF_VENGEANCE.title": "血仇圣坛",
-  "WANDIMOD-ALTAR_OF_VENGEANCE.description": "敌方单位死亡后，回复2%最大生命的生命值。",
+  "WANDIMOD-ALTAR_OF_VENGEANCE.description": "敌方单位死亡后，回复5%最大生命的生命值。",
   "WANDIMOD-ALTAR_OF_VENGEANCE.flavor": "祭坛只接受一种祭品：敌人的死亡。",
   "WANDIMOD-CRIMSON_SIGIL.title": "深红契印",
   "WANDIMOD-CRIMSON_SIGIL.description": "战斗开始时，获得1张[gold]荡平万邦[/gold]。",
