@@ -1,4 +1,4 @@
-using MegaCrit.Sts2.Core.Commands;                 // CreatureCmd / DamageCmd
+using MegaCrit.Sts2.Core.Commands;                 // CreatureCmd
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Relics;
@@ -11,8 +11,8 @@ namespace WandiMod.WandiModCode.Relics;
 
 /// <summary>
 /// 沾血枪尖 / Bloodied Spearhead（普通遗物）
-/// 当你获得【血仇】时，对所有敌人造成 1 点伤害。
-/// —— 血仇伤害被动：每次血仇正向增加 → 全体敌人各受 1 点伤害（与血仇引擎联动：挨打→+1血仇→全体1伤）。
+/// 当你获得【血仇】时，对随机一名敌人造成 3 点伤害。
+/// —— 每次血仇正向增加（无论+1还是+3）只触发一次：对随机单体敌人打 3 伤。
 ///   钩子 AfterPowerAmountChanged：监听 VengeancePower 正向变化。
 /// </summary>
 public class BloodiedSpearhead : WandiModRelic
@@ -26,18 +26,22 @@ public class BloodiedSpearhead : WandiModRelic
         Creature? applier,
         CardModel? cardSource)
     {
-        // 仅血仇正向变化（获得血仇）
+        // 仅血仇正向变化（获得血仇）——一次 PowerCmd.Apply 无论 +1 还是 +3 都只触发一次
         if (power is not VengeancePower || amount <= 0) return;
         if (Owner?.Creature == null) return;
 
-        Flash();
-        // 对所有可命中敌人造成 1 点伤害
         var combatState = Owner.Creature.CombatState;
         if (combatState == null) return;
-        foreach (var enemy in combatState.HittableEnemies)
-        {
-            await CreatureCmd.Damage(choiceContext, enemy, 1m, ValueProp.Move, null, null);
-        }
-        MainFile.Logger.Info("[沾血枪尖] 获得血仇 → 对全体敌人造成 1 伤害");
+
+        // 随机选一名可命中敌人
+        var enemies = combatState.HittableEnemies.Where(e => e != null && e.IsAlive).ToList();
+        if (enemies.Count == 0) return;
+
+        Flash();
+        // 随机单体 3 伤
+        int index = Random.Shared.Next(enemies.Count);
+        var target = enemies[index];
+        await CreatureCmd.Damage(choiceContext, target, 3m, ValueProp.Move, null, null);
+        MainFile.Logger.Info($"[沾血枪尖] 获得血仇 → 随机敌人 {target} 受 3 伤害");
     }
 }

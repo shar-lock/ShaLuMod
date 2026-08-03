@@ -25,7 +25,7 @@ public class GildedSlash : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(14, ValueProp.Move).WithUpgradeTo(18),
+        new DamageVar(12, ValueProp.Move).WithUpgradeTo(15),
         new IntVar("Heal", 3),
     ];
 

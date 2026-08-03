@@ -30,7 +30,7 @@ public class Fury : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new IntVar("Multiplier", 3).WithUpgradeTo(4),  // 血仇 → 伤害 倍率 3→4
+        new IntVar("Multiplier", 2).WithUpgradeTo(3),  // 血仇 → 伤害 倍率 2→3
     ];
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => [WandiModKeywords.Vengeance, CardKeyword.Exhaust];

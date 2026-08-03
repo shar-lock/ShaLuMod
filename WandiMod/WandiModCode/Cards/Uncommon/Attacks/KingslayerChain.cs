@@ -28,7 +28,7 @@ public class KingslayerChain : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(11, ValueProp.Move).WithUpgradeTo(15),  // 每段基础伤害 11→15
+        new DamageVar(10, ValueProp.Move).WithUpgradeTo(14),  // 每段基础伤害 10→14
         new RepeatVar(2),                                     // 固定 2 段（升级不变）
         new IntVar("BloodCost", 1),                           // 消耗 1 血仇（BloodCost：基类门控 IsPlayable/金边）
     ];

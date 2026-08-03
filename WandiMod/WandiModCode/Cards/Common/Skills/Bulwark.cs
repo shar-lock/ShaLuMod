@@ -24,7 +24,7 @@ public class Bulwark : WandiModCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new IntVar("Heal", 8).WithUpgradeTo(12),
+        new IntVar("Heal", 8).WithUpgradeTo(10),
         new IntVar("Vengeance", 1).WithUpgradeTo(2),
     ];
 
