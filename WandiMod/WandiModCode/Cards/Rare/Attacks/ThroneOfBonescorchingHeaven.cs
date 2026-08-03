@@ -48,13 +48,15 @@ public class ThroneOfBonescorchingHeaven : WandiModCard
         int blood = creature.GetPower<VengeancePower>()?.Amount ?? 0;
         if (blood <= 0) { MainFile.Logger.Warn("[诛天焚骨的王座] 无血仇，效果落空"); return; }
 
+        // 先读 CalculatedDamage（此时 multiplier 读到的是吞噬前的 blood，与卡面预览一致）
+        decimal dmg = DynamicVars.CalculatedDamage.Calculate(null);
+
         // 吞噬所有血仇（留 1 层防 Power 移除）
         await PowerCmd.Apply<VengeancePower>(choiceContext, creature, -(blood - 1), creature, null);
 
-        // 用 CalculatedDamageVar 结算（卡面预览与实打同源）
-        await DamageCmd.Attack(DynamicVars.CalculatedDamage)
-            .FromCard(this, cardPlay).TargetingAllOpponents(CombatState).Execute(choiceContext);
+        // 用吞噬前算好的伤害结算
+        await DamageCmd.Attack(dmg).FromCard(this, cardPlay).TargetingAllOpponents(CombatState).Execute(choiceContext);
 
-        MainFile.Logger.Info($"[诛天焚骨的王座] 吞噬 {blood} 血仇，全体 {DynamicVars.CalculatedDamage.Calculate(null)} 伤");
+        MainFile.Logger.Info($"[诛天焚骨的王座] 吞噬 {blood} 血仇，全体 {dmg} 伤");
     }
 }
